@@ -9,7 +9,8 @@ import { getThemePoems } from '@/lib/api/queries';
 import { toArabicDigits } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import type { Key } from 'react';
+
+export const runtime = 'edge';
 
 export default function ThemePoemsPage() {
   const params = useParams();
@@ -75,16 +76,14 @@ export default function ThemePoemsPage() {
     <SectionWrapper dynamicTitle={content.header}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         {poems.length > 0 ? (
-          poems.map(
-            (poem: { slug: Key | null | undefined; title: string; poetName: any; meter: any }) => (
-              <ListCard
-                key={poem.slug}
-                href={`/poems/${poem.slug}`}
-                name={poem.title}
-                title={`${poem.poetName} • ${poem.meter}`}
-              />
-            )
-          )
+          poems.map((poem) => (
+            <ListCard
+              key={poem.slug}
+              href={`/poems/${poem.slug}`}
+              name={poem.title}
+              title={`${poem.poetName} • ${poem.meter}`}
+            />
+          ))
         ) : (
           <p className="text-center text-zinc-500">{content.noMore}</p>
         )}

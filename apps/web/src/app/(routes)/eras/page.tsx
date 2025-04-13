@@ -5,6 +5,8 @@ import type { Era } from '@/lib/api/types';
 import { toArabicDigits } from '@/lib/utils';
 import type { Metadata } from 'next';
 
+export const runtime = 'edge';
+
 export const metadata: Metadata = {
   title: 'قافية | صفحة العصور',
 };

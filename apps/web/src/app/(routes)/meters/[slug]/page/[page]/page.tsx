@@ -11,6 +11,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import type { Key } from 'react';
 
+export const runtime = 'edge';
+
 export default function MeterPage() {
   const params = useParams();
 

@@ -8,6 +8,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
+export const runtime = 'edge';
+
 export default function PoemPage() {
   const params = useParams();
   const router = useRouter();

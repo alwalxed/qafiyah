@@ -39,12 +39,12 @@ export function PoetsList() {
 
   return (
     <SectionList title="الشعراء">
-      {poets.map(({ id, name, slug, poemCount }) => (
+      {poets.map(({ id, name, slug, poemsCount }) => (
         <ListCard
           key={id}
           name={name}
           href={`/poets/${slug}/page/1/`}
-          title={`${toArabicDigits(poemCount)} قصيدة`}
+          title={`${toArabicDigits(poemsCount)} قصيدة`}
         />
       ))}
     </SectionList>

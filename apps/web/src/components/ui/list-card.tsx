@@ -1,10 +1,10 @@
-import Link from "next/link"
+import Link from 'next/link';
 
 type ListCardProps = {
-  name: string
-  title: string
-  href: string
-}
+  name: string;
+  title: string;
+  href: string;
+};
 
 export function ListCard({ name, title, href }: ListCardProps) {
   return (
@@ -14,12 +14,12 @@ export function ListCard({ name, title, href }: ListCardProps) {
           href={href}
           className="text-zinc-800 hover:text-zinc-500 hover:underline duration-300 group-hover:underline-offset-auto group-hover:text-zinc-500 group-hover:underline text-sm xxs:text-lg lg:text-xl xl:text-2xl truncate"
         >
-          {name.replace(/"/g, "")}
+          {name.replace(/"/g, '')}
         </Link>
       </h4>
       <p className="text-xs xxs:text-base lg:text-lg text-zinc-600/80 group-hover:text-zinc-500 duration-300 truncate">
         {title}
       </p>
     </div>
-  )
+  );
 }

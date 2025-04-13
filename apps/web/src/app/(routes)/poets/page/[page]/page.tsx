@@ -10,6 +10,8 @@ import { toArabicDigits } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 
+export const runtime = 'edge';
+
 export default function PoetsPage() {
   const params = useParams();
 
