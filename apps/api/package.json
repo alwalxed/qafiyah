@@ -1,0 +1,26 @@
+{
+  "name": "@qaf/api",
+  "scripts": {
+    "dev": "pnpm run build:deps && wrangler dev",
+    "build": "pnpm run build:deps && wrangler build",
+    "build:deps": "cd ../../packages/zod-schemas && pnpm run build",
+    "deploy": "wrangler deploy --minify"
+  },
+  "dependencies": {
+    "@qaf/typescript-config": "workspace:*",
+    "@qaf/zod-schemas": "workspace:*",
+    "@hono/zod-validator": "^0.4.3",
+    "@neondatabase/serverless": "^1.0.0",
+    "drizzle-kit": "^0.30.6",
+    "drizzle-orm": "^0.41.0",
+    "hono": "^4.7.6",
+    "postgres": "^3.4.5",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "wrangler": "^4.4.0"
+  },
+  "type": "module",
+  "types": "./src/app.ts"
+}

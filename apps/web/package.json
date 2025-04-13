@@ -1,28 +1,79 @@
 {
-  "name": "web",
-  "version": "0.1.0",
-  "type": "module",
+  "name": "@qaf/web",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack --port 3000",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --max-warnings 0",
-    "check-types": "tsc --noEmit"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "check": "pnpm run type-check && pnpm run lint",
+    "pages:build": "pnpm next-on-pages",
+    "preview": "pnpm pages:build && wrangler pages dev",
+    "deploy": "pnpm pages:build && wrangler pages deploy",
+    "cf-typegen": "pnpx wrangler types --env-interface CloudflareEnv env.d.ts",
+    "format": "pnpx prettier --write ."
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "pnpx prettier --write"
+    ],
+    "*.{json,md,mdx,css}": [
+      "pnpx prettier --write"
+    ]
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx --no -- pnpm lint-staged"
   },
   "dependencies": {
-    "@repo/ui": "workspace:*",
-    "next": "^15.2.4",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "@neondatabase/serverless": "^1.0.0",
+    "@qaf/zod-schemas": "workspace:*",
+    "@tanstack/react-query": "^5.73.3",
+    "@tanstack/react-query-devtools": "^5.73.3",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.41.0",
+    "hono": "^4.7.6",
+    "lucide-react": "^0.487.0",
+    "next": "15.2.1",
+    "pg": "^8.14.1",
+    "postgres": "^3.4.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.2.0",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.14.0",
-    "@types/react": "19.1.0",
-    "@types/react-dom": "19.1.1",
-    "eslint": "^9.24.0",
-    "typescript": "5.8.2"
+    "@cloudflare/next-on-pages": "1",
+    "@eslint/eslintrc": "^3",
+    "@eslint/js": "^9.24.0",
+    "@next/eslint-plugin-next": "^15.3.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/pg": "^8.11.11",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.29.1",
+    "@typescript-eslint/parser": "^8.29.1",
+    "drizzle-kit": "^0.30.6",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.1",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-sonarjs": "^3.0.2",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.3",
+    "simple-git-hooks": "^2.12.1",
+    "tailwindcss": "^4",
+    "tailwindcss-debug-screens": "^3.0.1",
+    "typescript": "^5",
+    "typescript-eslint": "^8.29.1",
+    "vercel": "^41.5.0",
+    "wrangler": "^4.9.1"
   }
 }

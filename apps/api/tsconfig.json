@@ -1,0 +1,20 @@
+{
+  "extends": "@qaf/typescript-config/base.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "lib": ["ESNext"],
+    "types": ["@cloudflare/workers-types/2023-07-01"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "paths": {
+      "@qaf/zod-schemas": ["../../packages/zod-schemas/dist"],
+      "@qaf/zod-schemas/server": [
+        "../../packages/zod-schemas/dist/utils/server"
+      ]
+    }
+  }
+}

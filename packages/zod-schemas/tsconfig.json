@@ -1,0 +1,17 @@
+{
+  "extends": "@qaf/typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "module": "ESNext",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "moduleResolution": "node",
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "watchOptions": {
+    "excludeDirectories": ["node_modules"]
+  }
+}
