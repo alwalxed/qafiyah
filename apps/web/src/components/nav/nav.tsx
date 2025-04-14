@@ -1,12 +1,20 @@
-import { NAV_LINKS } from "@/lib/constants"
-import { Logo } from "./logo"
-import { MobileMenuButton } from "./mobile-menu-button"
-import { NavLinks } from "./nav-links"
-import { SearchForm } from "./search-form"
+import { NAV_LINKS } from '@/lib/constants';
+import { forwardRef, type ForwardedRef } from 'react';
+import { Logo } from './logo';
+import { MobileMenuButton } from './mobile-menu-button';
+import { NavLinks } from './nav-links';
+import { SearchForm } from './search-form';
 
-export function Nav() {
+interface NavProps {
+  className?: string;
+}
+
+export const Nav = forwardRef(function Nav(
+  { className = '' }: NavProps,
+  ref: ForwardedRef<HTMLElement>
+) {
   return (
-    <header className="w-full z-10">
+    <header ref={ref} className={`w-full z-10 ${className}`}>
       <div className="w-full border-b border-zinc-200/50 py-4">
         <div className="flex justify-between items-center gap-8">
           {/* LOGO */}
@@ -23,5 +31,5 @@ export function Nav() {
         </div>
       </div>
     </header>
-  )
-}
+  );
+});

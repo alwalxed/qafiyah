@@ -1,10 +1,7 @@
-import { Footer } from '@/components/layout/footer';
-import { MobileMenu } from '@/components/nav/mobile-menu';
-import { Nav } from '@/components/nav/nav';
-import { defaultMetadata, isDev, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/lib/constants';
-import { Providers } from '@/providers/react-query';
+import { defaultMetadata, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/lib/constants';
 import type { Metadata, Viewport } from 'next';
 import type React from 'react';
+import ClientRootLayout from './client-layout';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -77,23 +74,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html
-      lang="ar"
-      dir="rtl"
-      className={`h-full w-full overflow-x-hidden ${isDev ? 'debug-screens' : ''}`}
-    >
-      <body
-        style={{ fontFamily: 'IBMPlexSansArabic' }}
-        className="min-h-svh flex flex-col relative overflow-x-hidden bg-zinc-50 text-zinc-950 w-full px-4 gap-10 xs:gap-20 md:gap-24 lg:gap-28 xl:gap-32 md:px-20 lg:px-40 xl:px-60 2xl:px-80"
-      >
-        <Providers>
-          <Nav />
-          <MobileMenu />
-          <main>{children}</main>
-          <Footer />
-        </Providers>
-      </body>
-    </html>
-  );
+  return <ClientRootLayout>{children}</ClientRootLayout>;
 }
