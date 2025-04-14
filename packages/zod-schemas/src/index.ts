@@ -5,6 +5,7 @@ export * from "./schemas/meters.schema";
 export * from "./schemas/poems.schema";
 export * from "./schemas/poets.schema";
 export * from "./schemas/rhymes.schema";
+export * from "./schemas/search.schema";
 export * from "./schemas/themes.schema";
 
 // Export validation utilities

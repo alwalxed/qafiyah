@@ -7,6 +7,7 @@ import meters from "./routes/meters.routes";
 import poems from "./routes/poems.routes";
 import poets from "./routes/poets.routes";
 import rhymes from "./routes/rhymes.routes";
+import search from "./routes/search.routes";
 import sitemaps from "./routes/sitemaps.routes";
 import themes from "./routes/themes.routes";
 import type { AppContext } from "./types";
@@ -39,6 +40,7 @@ const routes = app
   .route("/rhymes", rhymes)
   .route("/sitemaps", sitemaps)
   .route("/themes", themes)
+  .route("/search", search)
   //* Global Error Handler
   .onError((error, c) => {
     console.error("Global Error Route:", error);

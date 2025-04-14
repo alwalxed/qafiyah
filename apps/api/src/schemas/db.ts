@@ -129,6 +129,20 @@ export const topPoetsMaterialized = pgMaterializedView("top_poets_mv", {
   poemsCount: integer("poems_count").notNull(),
 }).existing();
 
+export const poemsSearchMaterialized = pgMaterializedView("poems_search_mv", {
+  id: integer("id").notNull(),
+  title: text("title").notNull(),
+  slug: uuid("slug").notNull(),
+  content: text("content").notNull(),
+  content_tsv: text("content_tsv"), // tsvector column for full-text search
+  poet_id: integer("poet_id").notNull(),
+  poet_name: text("poet_name").notNull(),
+  poet_slug: text("poet_slug").notNull(),
+  meter_name: text("meter_name"),
+  era_name: text("era_name"),
+  era_slug: text("era_slug"),
+}).existing();
+
 /*
 -------------------------------------
 -------- TABLES

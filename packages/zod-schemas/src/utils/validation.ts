@@ -4,6 +4,7 @@ import * as metersSchemas from "../schemas/meters.schema";
 import * as poemsSchemas from "../schemas/poems.schema";
 import * as poetsSchemas from "../schemas/poets.schema";
 import * as rhymesSchemas from "../schemas/rhymes.schema";
+import * as searchSchemas from "../schemas/search.schema";
 import * as themesSchemas from "../schemas/themes.schema";
 
 /**
@@ -72,9 +73,10 @@ export const requestSchemas = {
   getPoemBySlug: poemsSchemas.getPoemBySlugRequestSchema,
   getPoets: poetsSchemas.getPoetsRequestSchema,
   getPoetPoems: poetsSchemas.getPoetPoemsRequestSchema,
-  poetBasicInfo: poetsSchemas.poetBasicInfoResponseSchema,
+  getPoetInfo: poetsSchemas.getPoetRequestSchema,
   getRhymesPoems: rhymesSchemas.getRhymesPoemsRequestSchema,
   getThemesPoems: themesSchemas.getThemesPoemsRequestSchema,
+  search: searchSchemas.searchRequestSchema,
 } as const;
 
 // Map of response validation schemas by endpoint
@@ -92,6 +94,7 @@ export const responseSchemas = {
   rhymesPoems: rhymesSchemas.rhymePoemsResponseSchema,
   themesList: themesSchemas.themesListResponseSchema,
   themesPoems: themesSchemas.themePoemsResponseSchema,
+  search: searchSchemas.searchResponseSchema,
 } as const;
 
 // Export types for use in application code
