@@ -19,6 +19,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://qafiyah.com",
+      "https://react.qafiyah.com",
       "http://localhost:8787",
     ],
     allowMethods: ["GET", "OPTIONS"],
