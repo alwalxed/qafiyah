@@ -74,20 +74,18 @@ export default function PoetPoemsPage() {
 
   return (
     <SectionWrapper dynamicTitle={content.header}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-        {poems.length > 0 ? (
-          poems.map((poem: { slug: Key | null | undefined; title: string; meter: string }) => (
-            <ListCard
-              key={poem.slug}
-              href={`/poems/${poem.slug}`}
-              name={poem.title}
-              title={poem.meter}
-            />
-          ))
-        ) : (
-          <p className="text-center text-zinc-500">{content.noMore}</p>
-        )}
-      </div>
+      {poems.length > 0 ? (
+        poems.map((poem: { slug: Key | null | undefined; title: string; meter: string }) => (
+          <ListCard
+            key={poem.slug}
+            href={`/poems/${poem.slug}`}
+            name={poem.title}
+            title={poem.meter}
+          />
+        ))
+      ) : (
+        <p className="text-center text-zinc-500">{content.noMore}</p>
+      )}
       {totalPages > 1 && (
         <nav className="flex w-full justify-between items-center gap-4 text-base md:text-lg mt-8">
           <PaginationLink href={nextPageUrl} isDisabled={!hasNextPage} prefetch={hasNextPage}>

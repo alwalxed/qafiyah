@@ -10,7 +10,7 @@ type SectionListProps = {
 export function SectionList({ title, dynamicTitle, children }: SectionListProps) {
   return (
     <SectionWrapper title={title} dynamicTitle={dynamicTitle}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 xs:gap-4 w-full">{children}</div>
+      {children}
     </SectionWrapper>
   );
 }

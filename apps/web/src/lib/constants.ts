@@ -25,7 +25,7 @@ export const defaultMetadata = {
 };
 
 // UI constants
-export const responsiveIconSize = 'w-4 h-4 xxs:w-6 xxs:h-6 xs:w-8 xs:h-8';
+export const responsiveIconSize = 'size-4 xxs:size-5 md:size-6 lg:size-8';
 
 // Data constants
 export const ERAS_SORT_ORDER = [
