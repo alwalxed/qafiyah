@@ -35,10 +35,7 @@ export function RhymesList() {
   }
 
   return (
-    <SectionList
-      title="القوافي"
-      dynamicTitle={`حروف القافية (${toArabicDigits(rhymes.length)} حرف)`}
-    >
+    <SectionList title="القوافي" dynamicTitle={`تصفح القوافي`}>
       {rhymes.map(({ id, name, slug, poemsCount }) => (
         <ListCard
           key={id}

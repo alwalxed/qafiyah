@@ -35,7 +35,7 @@ export function ErasList() {
   }
 
   return (
-    <SectionList title="العصور" dynamicTitle={`جميع العصور (${toArabicDigits(eras.length)} عصور)`}>
+    <SectionList title="العصور" dynamicTitle={`تصفح العصور`}>
       {eras.map(({ id, name, poemsCount, poetsCount, slug }) => (
         <ListCard
           key={id}

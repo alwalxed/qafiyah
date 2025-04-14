@@ -35,7 +35,7 @@ export function MetersList() {
   }
 
   return (
-    <SectionList title="البحور" dynamicTitle={`جميع البحور (${toArabicDigits(meters.length)} بحر)`}>
+    <SectionList title="البحور" dynamicTitle={`تصفح البحور`}>
       {meters.map(({ id, name, slug, poemsCount, poetsCount }) => (
         <ListCard
           key={id}
