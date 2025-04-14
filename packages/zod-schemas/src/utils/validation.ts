@@ -72,6 +72,7 @@ export const requestSchemas = {
   getPoemBySlug: poemsSchemas.getPoemBySlugRequestSchema,
   getPoets: poetsSchemas.getPoetsRequestSchema,
   getPoetPoems: poetsSchemas.getPoetPoemsRequestSchema,
+  poetBasicInfo: poetsSchemas.poetBasicInfoResponseSchema,
   getRhymesPoems: rhymesSchemas.getRhymesPoemsRequestSchema,
   getThemesPoems: themesSchemas.getThemesPoemsRequestSchema,
 } as const;
@@ -86,6 +87,7 @@ export const responseSchemas = {
   randomPoemExcerpt: poemsSchemas.randomPoemExcerptSchema,
   poetsList: poetsSchemas.poetsListResponseSchema,
   poetPoems: poetsSchemas.poetPoemsResponseSchema,
+  poetBasicInfo: poetsSchemas.poetBasicInfoResponseSchema,
   rhymesList: rhymesSchemas.rhymesListResponseSchema,
   rhymesPoems: rhymesSchemas.rhymePoemsResponseSchema,
   themesList: themesSchemas.themesListResponseSchema,

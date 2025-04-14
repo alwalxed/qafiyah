@@ -1,6 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import {
   getPoetPoemsRequestSchema,
+  getPoetRequestSchema,
   getPoetsRequestSchema,
 } from "@qaf/zod-schemas";
 import { createValidatedResponse } from "@qaf/zod-schemas/server";
@@ -8,7 +9,11 @@ import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { FETCH_PER_PAGE } from "../constants";
-import { poetPoemsMaterialized, poetStatsMaterialized } from "../schemas/db";
+import {
+  poemsMaterialized,
+  poetPoemsMaterialized,
+  poetStatsMaterialized,
+} from "../schemas/db";
 import type { AppContext } from "../types";
 
 const app = new Hono<AppContext>()
@@ -49,6 +54,49 @@ const app = new Hono<AppContext>()
     return c.json(
       createValidatedResponse("poetsList", responseData, paginationMeta)
     );
+  })
+  .get("/slug/:slug", zValidator("param", getPoetRequestSchema), async (c) => {
+    const { slug } = c.req.valid("param");
+    const db = c.get("db");
+
+    const poetInfo = await db
+      .select({
+        poetId: poetPoemsMaterialized.poetId,
+        poetName: poetPoemsMaterialized.poetName,
+        totalPoems: poetPoemsMaterialized.totalPoemsByPoet,
+      })
+      .from(poetPoemsMaterialized)
+      .where(eq(poetPoemsMaterialized.poetSlug, slug))
+      .limit(1);
+
+    if (!poetInfo.length || !poetInfo[0]) {
+      throw new HTTPException(404, { message: "Poet not found" });
+    }
+
+    const eraInfo = await db
+      .select({
+        eraName: poemsMaterialized.era_name,
+        eraSlug: poemsMaterialized.era_slug,
+      })
+      .from(poemsMaterialized)
+      .where(eq(poemsMaterialized.poet_slug, slug))
+      .limit(1);
+
+    const responseData = {
+      poet: {
+        name: poetInfo[0].poetName,
+        poemsCount: poetInfo[0].totalPoems,
+        era:
+          eraInfo.length && eraInfo[0]
+            ? {
+                name: eraInfo[0].eraName,
+                slug: eraInfo[0].eraSlug,
+              }
+            : null,
+      },
+    };
+
+    return c.json(createValidatedResponse("poetBasicInfo", responseData));
   })
   .get(
     "/:slug/page/:page",

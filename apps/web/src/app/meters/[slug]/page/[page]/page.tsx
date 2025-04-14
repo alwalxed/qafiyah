@@ -50,11 +50,11 @@ export const METERS = new Map([
 ]);
 
 type Props = {
-  params: { slug: string; page?: string };
+  params: Promise<{ slug: string; page?: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
 
   if (METERS.has(slug)) {
     const meterName = METERS.get(slug);

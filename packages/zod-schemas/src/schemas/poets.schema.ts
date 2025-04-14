@@ -3,6 +3,7 @@ import {
   paginatedResponseSchema,
   paginatedSlugSchema,
   paginationSchema,
+  slugSchema,
 } from "./common.schema";
 
 // Schema for a single poet in the list
@@ -42,7 +43,27 @@ export const poetPoemsResponseSchema = paginatedResponseSchema(
     poems: z.array(poetPoemSchema),
   })
 );
+export const poetEraSchema = z.object({
+  name: z.string(),
+  slug: z.string(),
+});
+
+// Schema for basic poet info response
+export const poetBasicInfoSchema = z.object({
+  poet: z.object({
+    name: z.string(),
+    poemsCount: z.number().int().nonnegative(),
+    era: poetEraSchema.nullable(),
+  }),
+});
+
+// Schema for the poet basic info response
+export const poetBasicInfoResponseSchema = z.object({
+  success: z.literal(true),
+  data: poetBasicInfoSchema,
+});
 
 // Request schemas
 export const getPoetsRequestSchema = paginationSchema;
 export const getPoetPoemsRequestSchema = paginatedSlugSchema;
+export const getPoetRequestSchema = slugSchema;

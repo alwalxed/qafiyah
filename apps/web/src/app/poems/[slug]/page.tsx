@@ -4,11 +4,11 @@ import type { Metadata } from 'next';
 import PoemSlugClientPage from './client';
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
 
   try {
     const response = await fetch(`${API_URL}/poems/slug/${slug}`);

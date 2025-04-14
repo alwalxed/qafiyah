@@ -1,103 +1,84 @@
-'use client';
-
-import { ErrorMessage } from '@/components/ui/error-message';
-import { ListCard } from '@/components/ui/list-card';
-import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
-import { SectionPaginationControllers, SectionWrapper } from '@/components/ui/section-wrapper';
-import { getPoetPoems } from '@/lib/api/queries';
+import { API_URL, NOT_FOUND_TITLE } from '@/lib/constants';
 import { toArabicDigits } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
-import type { Key } from 'react';
+import type { Metadata } from 'next';
+import PoetPoemsSlugPaginatedClientPage from './client';
 
-export const runtime = 'edge';
-
-export default function PoetPoemsPage() {
-  const params = useParams();
-
-  const slug = params?.slug as string;
-  const pageParam = params?.page as string;
-  const pageNumber = pageParam ? Number.parseInt(pageParam, 10) : 1;
-
-  const isValidSlug = Boolean(slug);
-  const isValidPage = Number.isFinite(pageNumber) && pageNumber > 0;
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['poet-poems-slugged-paginated', slug, pageNumber],
-    queryFn: () => getPoetPoems(slug, pageNumber.toString()),
-  });
-
-  if (isLoading) {
-    return (
-      <SectionWrapper>
-        <LoadingSkeleton>
-          <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="h-24 bg-gray-200 rounded-md"></div>
-            ))}
-          </div>
-        </LoadingSkeleton>
-      </SectionWrapper>
-    );
-  }
-  if (isError || !data || !isValidSlug || !isValidPage) {
-    return (
-      <SectionWrapper>
-        <ErrorMessage />
-      </SectionWrapper>
-    );
-  }
-
-  // Handle loading state
-
-  const { data: poetData, pagination } = data;
-  const { poetDetails, poems } = poetData;
-
-  // Use API pagination metadata if available
-  const totalPages = pagination?.totalPages || Math.ceil(poetDetails.poemsCount / 30);
-  const hasNextPage = pagination?.hasNextPage || pageNumber < totalPages;
-  const hasPrevPage = pagination?.hasPrevPage || pageNumber > 1;
-
-  const nextPageUrl = `/poets/${slug}/page/${pageNumber + 1}`;
-  const prevPageUrl = `/poets/${slug}/page/${pageNumber - 1}`;
-
-  const content = {
-    header: `${poetDetails.name} (${toArabicDigits(poetDetails.poemsCount)} قصيدة)`,
-    headerTip: `صـ ${toArabicDigits(pageNumber)} من ${toArabicDigits(totalPages)}`,
-    next: 'التالي',
-    previous: 'السابق',
-    noMore: 'لا توجد قصائد لهذا الشاعر.',
+// Define the type for the new response format
+type PoetInfoResponse = {
+  success: boolean;
+  data: {
+    poet: {
+      name: string;
+      poemsCount: number;
+      era: {
+        name: string;
+        slug: string;
+      } | null;
+    };
   };
+};
 
-  return (
-    <SectionWrapper
-      dynamicTitle={content.header}
-      pagination={{
-        totalPages,
-        component: (
-          <SectionPaginationControllers
-            headerTip={content.headerTip}
-            nextPageUrl={nextPageUrl}
-            prevPageUrl={prevPageUrl}
-            hasNextPage={hasNextPage}
-            hasPrevPage={hasPrevPage}
-          />
-        ),
-      }}
-    >
-      {poems.length > 0 ? (
-        poems.map((poem: { slug: Key | null | undefined; title: string; meter: string }) => (
-          <ListCard
-            key={poem.slug}
-            href={`/poems/${poem.slug}`}
-            name={poem.title}
-            title={poem.meter}
-          />
-        ))
-      ) : (
-        <p className="text-center text-zinc-500">{content.noMore}</p>
-      )}
-    </SectionWrapper>
-  );
+type Props = {
+  params: Promise<{ slug: string; page?: number }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+
+  try {
+    const response = await fetch(`${API_URL}/poets/slug/${slug}`);
+
+    if (!response.ok) {
+      return {
+        title: NOT_FOUND_TITLE,
+        robots: {
+          index: false,
+          follow: false,
+        },
+      };
+    }
+
+    const responseJson = (await response.json()) as PoetInfoResponse;
+
+    if (!responseJson.success) {
+      return {
+        title: NOT_FOUND_TITLE,
+        robots: {
+          index: false,
+          follow: false,
+        },
+      };
+    }
+
+    // Extract poet information with fallbacks
+    const poetData = responseJson.data.poet;
+    const poetName = poetData?.name || 'شاعر غير معروف';
+    const poemsCount = poetData?.poemsCount || 0;
+    const eraName = poetData?.era?.name || 'غير محدد';
+
+    return {
+      title: `قافية | ديوان ${poetName}`,
+      description: `قصائد الشاعر ${poetName} من العصر ال${eraName}، عدد القصائد: ${toArabicDigits(poemsCount)}`,
+      keywords: `${poetName}, شعر, قصائد, العصر ال${eraName}, شاعر`,
+      authors: [{ name: poetName }],
+      robots: {
+        index: true,
+        follow: true,
+      },
+    };
+  } catch (error) {
+    // Handle any fetch or parsing errors
+    console.error('Error fetching poet metadata:', error);
+    return {
+      title: NOT_FOUND_TITLE,
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+}
+
+export default function Page() {
+  return <PoetPoemsSlugPaginatedClientPage />;
 }

@@ -1,13 +1,13 @@
 import { toArabicDigits } from './utils';
 
 // API configuration
-export const API_URL = 'https://api.qafiyah.com';
 export const FETCH_PER_PAGE = 30;
 export const MAX_URLS_PER_SITEMAP = 1000;
 
 // Environment
 export const isDev = process.env.NODE_ENV === 'development';
 
+export const API_URL = isDev ? 'http://localhost:8787' : 'https://api.qafiyah.com';
 // Site information
 export const DOMAIN = 'qafiyah.com';
 export const SITE_NAME = 'قافية';
