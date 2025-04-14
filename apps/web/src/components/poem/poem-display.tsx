@@ -1,63 +1,116 @@
-import { toArabicDigits } from "@/lib/utils"
-import type { Metadata } from "next"
-import Link from "next/link"
+'use client';
+
+import { toArabicDigits } from '@/lib/utils';
+import { Minus, Plus, Type } from 'lucide-react';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { useState } from 'react';
 
 export type PoemProps = {
-  clearTitle: string
+  clearTitle: string;
   data: {
-    poet_name: string
-    poet_slug: string
-    era_name: string
-    era_slug: string
-    meter_name: string
-    theme_name: string
-    type_name?: string
-  }
-  verses: string[][]
-  verseCount: string | number
-  metadata: Metadata
-}
+    poet_name: string;
+    poet_slug: string;
+    era_name: string;
+    era_slug: string;
+    meter_name: string;
+    theme_name: string;
+    type_name?: string;
+  };
+  verses: string[][];
+  verseCount: string | number;
+  metadata: Metadata;
+};
 
 export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps) {
+  const [fontSize, setFontSize] = useState(1); // 1 is the default size multiplier
+
+  const increaseFontSize = () => {
+    if (fontSize < 1.5) setFontSize((prev) => prev + 0.1);
+  };
+
+  const decreaseFontSize = () => {
+    if (fontSize > 0.7) setFontSize((prev) => prev - 0.1);
+  };
+
+  // Calculate the dynamic font size classes based on the fontSize state
+  const getVerseFontSize = () => {
+    const baseClasses = 'text-base xxs:text-lg xs:text-xl sm:text-2xl md:text-2xl';
+    const scaleStyle = { transform: `scale(${fontSize})`, transformOrigin: 'center' };
+    return { className: baseClasses, style: scaleStyle };
+  };
+  const getVerseGap = () => {
+    // Base gap is 1rem (16px), scale it with the font size
+    const gapSize = 1 * fontSize * 16;
+    return { gap: `${gapSize}px` };
+  };
+
   return (
     <article className="w-full flex justify-center items-center">
-      <div className="w-full flex flex-col gap-12 justify-center items-center">
+      <div className="w-full flex flex-col gap-8 justify-center items-center">
         {/* Header */}
         <header className="flex justify-center items-center flex-col gap-4 xxs:gap-6 text-center w-full">
           <div className="flex flex-col gap-2 xx:gap-4">
-            <h1 className="text-lg xxs:text-2xl md:text-3xl font-bold text-zinc-800">{clearTitle}</h1>
+            <h1 className="text-base xxs:text-lg xs:text-2xl sm:text-3xl md:text-4xl font-bold text-zinc-800">
+              {clearTitle}
+            </h1>
 
             <h2 className="text-sm xxs:text-base md:text-2xl text-zinc-700">
               <Link href={`/poets/${data.poet_slug}/page/1`} className="hover:underline">
                 {data.poet_name}
-              </Link>{" "}
+              </Link>{' '}
               <a href={`/eras/${data.era_slug}/page/1`} className="hover:underline">
                 {`(${data.era_name})`}
               </a>
             </h2>
           </div>
 
-          <div className="flex w-full md:w-8/12 border border-zinc-300/80 px-2.5 md:px-8 lg:px-16 divide-x text-[10px] xxs:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl justify-between items-center text-zinc-500/90 rounded-full divide-zinc-300/80">
-            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5">{data.meter_name}</p>
-            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5">{toArabicDigits(verseCount)}</p>
-            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5">{data.theme_name}</p>
-            {data.type_name && <p className="flex-1 py-0.5 md:py-1 lg:py-1.5">{data.type_name}</p>}
+          <div className="flex w-full md:w-8/12 border border-zinc-300/80 px-2.5 md:px-8 lg:px-16 text-[10px] xxs:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl justify-between items-center text-zinc-500/90 rounded-full">
+            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">{data.meter_name || ''}</p>
+            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">
+              {toArabicDigits(verseCount) || ''}
+            </p>
+            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">{data.theme_name || ''}</p>
+            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5">{data.type_name || ''}</p>
+          </div>
+
+          <div className="flex items-center gap-4 border rounded-md border-zinc-300/80">
+            <button onClick={decreaseFontSize} className="p-1" aria-label="Decrease font size">
+              <Minus className="w-3 h-3 md:w-5 md:h-5 xl:w-7 xl:h-7  text-zinc-500/40" />
+            </button>
+            <Type className="w-3 h-3 md:w-5 md:h-5 xl:w-7 xl:h-7  text-zinc-500/40" />
+            <button onClick={increaseFontSize} className="p-1" aria-label="Increase font size">
+              <Plus className="w-3 h-3 md:w-5 md:h-5 xl:w-7 xl:h-7  text-zinc-500/40" />
+            </button>
           </div>
         </header>
 
         {/* Content */}
         <div className="relative flex flex-col justify-between items-center bg-white py-1 md:py-8 lg:py-16 px-4 rounded-2xl gap-8 w-full md:w-10/12 xl:w-9/12">
+          {/* Font Size Controller */}
+
           <div className="flex flex-col items-center w-full">
-            <div className="w-full xxs:w-8/12 md:w-9/12 lg:w-8/12 xl:w-6/12">
+            <div className="w-full sm:w-11/12 md:w-10/12 xl:w-6/12">
               {verses.map((verse, index) => (
                 <div
                   key={index}
                   className="py-6 md:py-8 border-b border-zinc-50 last:border-b-0 flex flex-col w-full justify-center items-center gap-4"
+                  style={{ ...getVerseGap() }}
                 >
-                  <p className="text-sm md:text-xl lg:text-2xl text-right w-full" lang="ar" dir="rtl">
+                  <p
+                    className={getVerseFontSize().className}
+                    style={getVerseFontSize().style}
+                    lang="ar"
+                    dir="rtl"
+                  >
                     {verse[0]}
                   </p>
-                  <p className="text-sm md:text-xl lg:text-2xl text-left w-full" lang="ar" dir="rtl">
+                  <p
+                    className={getVerseFontSize().className}
+                    style={getVerseFontSize().style}
+                    lang="ar"
+                    dir="rtl"
+                  >
                     {verse[1]}
                   </p>
                 </div>
@@ -67,5 +120,5 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
         </div>
       </div>
     </article>
-  )
+  );
 }
