@@ -14,3 +14,4 @@ export function SectionList({ title, dynamicTitle, children }: SectionListProps)
     </SectionWrapper>
   );
 }
+

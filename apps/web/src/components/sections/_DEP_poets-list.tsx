@@ -5,8 +5,8 @@ import { toArabicDigits } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { ErrorMessage } from '../ui/error-message';
 import { ListCard } from '../ui/list-card';
-import { LoadingSkeleton } from '../ui/loading-skeleton';
 import { SectionList } from '../ui/section-list';
+import { SectionSkeleton } from '../ui/skeleton-wrapper';
 
 export function PoetsList() {
   const {
@@ -19,11 +19,7 @@ export function PoetsList() {
   });
 
   if (isLoading) {
-    return (
-      <SectionList title="الشعراء">
-        <LoadingSkeleton count={5} />
-      </SectionList>
-    );
+    return <SectionSkeleton title="تصفح الشعراء" itemsCount={10} />;
   }
 
   if (error || !response) {
