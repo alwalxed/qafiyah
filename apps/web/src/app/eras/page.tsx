@@ -1,27 +1,40 @@
+'use client';
+
+import { ErrorMessage } from '@/components/ui/error-message';
 import { ListCard } from '@/components/ui/list-card';
 import { SectionList } from '@/components/ui/section-list';
+import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getEras } from '@/lib/api/queries';
-import type { Era } from '@/lib/api/types';
 import { toArabicDigits } from '@/lib/utils';
-import type { Metadata } from 'next';
+import { useQuery } from '@tanstack/react-query';
 
 export const runtime = 'edge';
 
-export const metadata: Metadata = {
-  title: 'قافية | صفحة العصور',
-};
+export default function ErasPage() {
+  const {
+    data: eras,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['eras'],
+    queryFn: getEras,
+  });
 
-export default async function ErasPage() {
-  let eras: Era[] = [];
+  if (isLoading) {
+    return <SectionSkeleton title="جميع العصور" itemsCount={10} />;
+  }
 
-  try {
-    eras = await getEras();
-  } catch (error) {
-    console.error('Failed to fetch eras:', error);
+  // Handle error state
+  if (isError || !eras) {
+    return (
+      <SectionList title="العصور">
+        <ErrorMessage />
+      </SectionList>
+    );
   }
 
   return (
-    <SectionList title="العصور" dynamicTitle={`جميع العصور (${toArabicDigits(eras.length)} عصور)`}>
+    <SectionList title="العصور" dynamicTitle={`جميع العصور (${toArabicDigits(eras.length)} عصر)`}>
       {eras.length > 0 ? (
         eras.map(({ id, name, poemsCount, poetsCount, slug }) => (
           <ListCard

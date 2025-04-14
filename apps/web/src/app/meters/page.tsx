@@ -1,21 +1,35 @@
+'use client';
+
+import { ErrorMessage } from '@/components/ui/error-message';
 import { ListCard } from '@/components/ui/list-card';
 import { SectionList } from '@/components/ui/section-list';
+import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getMeters } from '@/lib/api/queries';
 import type { Meter } from '@/lib/api/types';
 import { toArabicDigits } from '@/lib/utils';
-import type { Metadata } from 'next';
+import { useQuery } from '@tanstack/react-query';
 
-export const metadata: Metadata = {
-  title: 'قافية | صفحة البحور',
-};
+export default function MetersPage() {
+  const {
+    data: meters,
+    isLoading,
+    isError,
+  } = useQuery<Meter[]>({
+    queryKey: ['meters'],
+    queryFn: getMeters,
+  });
 
-export default async function MetersPage() {
-  let meters: Meter[] = [];
+  if (isLoading) {
+    return <SectionSkeleton title="جميع البحور" itemsCount={10} />;
+  }
 
-  try {
-    meters = await getMeters();
-  } catch (error) {
-    console.error('Failed to fetch meters:', error);
+  // Handle error state
+  if (isError || !meters) {
+    return (
+      <SectionList title="البحور">
+        <ErrorMessage />
+      </SectionList>
+    );
   }
 
   return (

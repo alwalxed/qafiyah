@@ -2,9 +2,9 @@
 
 import { ErrorMessage } from '@/components/ui/error-message';
 import { ListCard } from '@/components/ui/list-card';
-import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 import { PaginationLink } from '@/components/ui/pagination-link';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
+import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getPoets } from '@/lib/api/queries';
 import { toArabicDigits } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -15,34 +15,23 @@ export const runtime = 'edge';
 export default function PoetsPage() {
   const params = useParams();
 
-  // Extract page from URL params
   const pageParam = params?.page as string;
   const pageNumber = pageParam ? Number.parseInt(pageParam, 10) : 1;
+
+  const isValidPage = Number.isFinite(pageNumber) && pageNumber > 0;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['poets', pageNumber],
     queryFn: () => getPoets(pageNumber.toString()),
-    enabled: !isNaN(pageNumber) && pageNumber > 0,
+    enabled: isValidPage,
   });
 
-  // Handle loading state
   if (isLoading) {
-    return (
-      <SectionWrapper>
-        <LoadingSkeleton>
-          <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="h-24 bg-gray-200 rounded-md"></div>
-            ))}
-          </div>
-        </LoadingSkeleton>
-      </SectionWrapper>
-    );
+    return <SectionSkeleton title="جميع الشعراء" itemsCount={10} />;
   }
 
   // Handle error state
-  if (isError || !data) {
+  if (isError || !data || !isValidPage) {
     return (
       <SectionWrapper>
         <ErrorMessage />
@@ -71,35 +60,39 @@ export default function PoetsPage() {
   };
 
   return (
-    <SectionWrapper dynamicTitle={content.header}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-        {poets.length > 0 ? (
-          poets.map((poet) => (
-            <ListCard
-              key={poet.slug}
-              href={`/poets/${String(poet.slug ?? '')
-                .toLowerCase()
-                .replace(/^cat-poet-/, '')}/page/1`}
-              name={poet.name}
-              title={`${toArabicDigits(poet.poemsCount)} قصيدة`}
-            />
-          ))
-        ) : (
-          <p className="text-center text-zinc-500">{content.noMore}</p>
-        )}
-      </div>
+    <SectionWrapper
+      dynamicTitle={content.header}
+      pagination={{
+        totalPages,
+        component: (
+          <nav className="flex w-full justify-between items-center gap-4 text-base md:text-lg mt-8">
+            <PaginationLink href={nextPageUrl} isDisabled={!hasNextPage} prefetch={hasNextPage}>
+              {content.next}
+            </PaginationLink>
 
-      <nav className="flex w-full justify-between items-center gap-4 text-base md:text-lg mt-8">
-        <PaginationLink href={nextPageUrl} isDisabled={!hasNextPage} prefetch={hasNextPage}>
-          {content.next}
-        </PaginationLink>
+            <p className="text-zinc-500 text-base">{content.headerTip}</p>
 
-        <p className="text-zinc-500 text-base">{content.headerTip}</p>
-
-        <PaginationLink href={prevPageUrl} isDisabled={!hasPrevPage} prefetch={hasPrevPage}>
-          {content.previous}
-        </PaginationLink>
-      </nav>
+            <PaginationLink href={prevPageUrl} isDisabled={!hasPrevPage} prefetch={hasPrevPage}>
+              {content.previous}
+            </PaginationLink>
+          </nav>
+        ),
+      }}
+    >
+      {poets.length > 0 ? (
+        poets.map((poet) => (
+          <ListCard
+            key={poet.slug}
+            href={`/poets/${String(poet.slug ?? '')
+              .toLowerCase()
+              .replace(/^cat-poet-/, '')}/page/1`}
+            name={poet.name}
+            title={`${toArabicDigits(poet.poemsCount)} قصيدة`}
+          />
+        ))
+      ) : (
+        <p className="text-center text-zinc-500">{content.noMore}</p>
+      )}
     </SectionWrapper>
   );
 }

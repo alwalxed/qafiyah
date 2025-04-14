@@ -1,21 +1,35 @@
+'use client';
+
+import { ErrorMessage } from '@/components/ui/error-message';
 import { ListCard } from '@/components/ui/list-card';
 import { SectionList } from '@/components/ui/section-list';
+import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getThemes } from '@/lib/api/queries';
 import type { Theme } from '@/lib/api/types';
 import { toArabicDigits } from '@/lib/utils';
-import type { Metadata } from 'next';
+import { useQuery } from '@tanstack/react-query';
 
-export const metadata: Metadata = {
-  title: 'قافية | صفحة المواضيع',
-};
+export default function ThemesPage() {
+  const {
+    data: themes,
+    isLoading,
+    isError,
+  } = useQuery<Theme[]>({
+    queryKey: ['themes'],
+    queryFn: getThemes,
+  });
 
-export default async function ThemesPage() {
-  let themes: Theme[] = [];
+  if (isLoading) {
+    return <SectionSkeleton title="جميع المواضيع" itemsCount={10} />;
+  }
 
-  try {
-    themes = await getThemes();
-  } catch (error) {
-    console.error('Failed to fetch themes:', error);
+  // Handle error state
+  if (isError || !themes) {
+    return (
+      <SectionList title="المواضيع">
+        <ErrorMessage />
+      </SectionList>
+    );
   }
 
   return (

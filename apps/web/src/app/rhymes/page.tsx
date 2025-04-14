@@ -1,27 +1,41 @@
+'use client';
+
+import { ErrorMessage } from '@/components/ui/error-message';
 import { ListCard } from '@/components/ui/list-card';
 import { SectionList } from '@/components/ui/section-list';
+import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getRhymes } from '@/lib/api/queries';
 import type { Rhyme } from '@/lib/api/types';
 import { toArabicDigits } from '@/lib/utils';
-import type { Metadata } from 'next';
+import { useQuery } from '@tanstack/react-query';
 
-export const metadata: Metadata = {
-  title: 'قافية | صفحة القوافي',
-};
+export default function RhymesPage() {
+  const {
+    data: rhymes,
+    isLoading,
+    isError,
+  } = useQuery<Rhyme[]>({
+    queryKey: ['rhymes'],
+    queryFn: getRhymes,
+  });
 
-export default async function RhymesPage() {
-  let rhymes: Rhyme[] = [];
+  if (isLoading) {
+    return <SectionSkeleton title="جميع القوافي" itemsCount={10} />;
+  }
 
-  try {
-    rhymes = await getRhymes();
-  } catch (error) {
-    console.error('Failed to fetch rhymes:', error);
+  // Handle error state
+  if (isError || !rhymes) {
+    return (
+      <SectionList title="القوافي">
+        <ErrorMessage />
+      </SectionList>
+    );
   }
 
   return (
     <SectionList
       title="القوافي"
-      dynamicTitle={`حروف القافية (${toArabicDigits(rhymes.length)} حرف)`}
+      dynamicTitle={`جميع القوافي (${toArabicDigits(rhymes.length)} حرف)`}
     >
       {rhymes.length > 0 ? (
         rhymes.map(({ id, name, poemsCount, poetsCount, slug }) => (
