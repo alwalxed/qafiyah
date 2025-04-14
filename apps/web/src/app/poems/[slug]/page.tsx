@@ -1,98 +1,79 @@
-'use client';
+import type { ProcessedPoem } from '@/lib/api/types';
+import { API_URL, NOT_FOUND_TITLE } from '@/lib/constants';
+import type { Metadata } from 'next';
+import PoemSlugClientPage from './client';
 
-import { PoemDisplay } from '@/components/poem/poem-display';
-import { ErrorMessage } from '@/components/ui/error-message';
-import { getPoem } from '@/lib/api/queries';
-import { SITE_URL } from '@/lib/constants';
-import { useQuery } from '@tanstack/react-query';
-import { Home, RefreshCcw } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+type Props = {
+  params: { slug: string };
+};
 
-export const runtime = 'edge';
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = params;
 
-export default function PoemSlugClientPage() {
-  const params = useParams();
-  const router = useRouter();
-  const slug = params?.slug as string;
+  try {
+    const response = await fetch(`${API_URL}/poems/slug/${slug}`);
 
-  const {
-    data: poem,
-    isLoading,
-    isError,
-    refetch,
-    error,
-  } = useQuery({
-    queryKey: ['single-slugged-poem', slug],
-    queryFn: () => getPoem(slug),
-  });
+    if (!response.ok) {
+      return {
+        title: NOT_FOUND_TITLE,
+        robots: {
+          index: false,
+          follow: false,
+        },
+      };
+    }
 
-  if (isError) {
-    return (
-      <div className="max-w-3xl mx-auto p-4 text-center">
-        <ErrorMessage message="حدث خطأ أثناء تحميل القصيدة" />
-        <p className="mt-2 mb-6 text-muted-foreground">
-          {error instanceof Error ? error.message : 'يرجى المحاولة مرة أخرى أو العودة لاحقًا'}
-        </p>
-        <div className="flex justify-center gap-4 mt-4">
-          <button
-            onClick={() => refetch()}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-          >
-            <RefreshCcw className="h-4 w-4" />
-            إعادة المحاولة
-          </button>
-          <button
-            onClick={() => router.push('/')}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-input text-foreground rounded-md hover:bg-muted transition-colors"
-          >
-            <Home className="h-4 w-4" />
-            العودة للرئيسية
-          </button>
-        </div>
-      </div>
-    );
+    const responseJson = (await response.json()) as { success: boolean; data: ProcessedPoem };
+
+    if (!responseJson.success) {
+      return {
+        title: NOT_FOUND_TITLE,
+        robots: {
+          index: false,
+          follow: false,
+        },
+      };
+    }
+
+    // The poem data is nested inside responseJson.data with fallbacks for each property
+    const poem = responseJson.data as ProcessedPoem;
+
+    // Provide fallbacks for all properties
+    const clearTitle = poem?.clearTitle || 'قصيدة';
+
+    // Fallbacks for data properties
+    const data = poem?.data || {};
+    const poet_name = data.poet_name || 'شاعر غير معروف';
+    const meter_name = data.meter_name || 'غير محدد';
+
+    const processedContent = poem?.processedContent || {};
+    const keywords = processedContent.keywords || '';
+    const sample = processedContent.sample || '';
+    const verseCount = processedContent.verseCount || 0;
+
+    return {
+      title: `${clearTitle} | ${poet_name} | قافية`,
+      description: `قصيدة (${clearTitle}) لـ«${poet_name}» من بحر ${meter_name}، عدد أبياتها ${verseCount}${sample ? `، ومنها: «${sample}»` : ''}`,
+      keywords: keywords,
+      authors: [{ name: poet_name }],
+      robots: {
+        index: true,
+        follow: true,
+      },
+    };
+  } catch (error) {
+    // Handle any fetch or parsing errors
+    console.error('Error fetching poem metadata:', error);
+    return {
+      title: NOT_FOUND_TITLE,
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
+}
 
-  if (isLoading) {
-    return (
-      <div className="animate-pulse max-w-3xl mx-auto p-4">
-        <div className="h-10 bg-zinc-200/70 rounded-md w-3/4 mb-6"></div>
-        <div className="h-6 bg-zinc-200/70 rounded-md w-1/2 mb-8"></div>
-        <div className="space-y-4">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="flex justify-between gap-4">
-              <div className="h-6 bg-zinc-200/70 rounded-md w-1/2"></div>
-              <div className="h-6 bg-zinc-200/70 rounded-md w-1/2"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (!poem) {
-    return <ErrorMessage message="لم يتم العثور على القصيدة" />;
-  }
-
-  const { data, clearTitle, processedContent } = poem;
-  const { verses, readTime, verseCount, sample, keywords } = processedContent;
-
-  const metadata = {
-    title: `${clearTitle} | ${data.poet_name}`,
-    description: `قصيدة (${clearTitle}) لـ«${data.poet_name}» من بحر ${data.meter_name}، عدد أبياتها ${verseCount}، ومنها: «${sample}»`,
-    url: `${SITE_URL}/poems/${slug}/`,
-    keywords,
-    author: data.poet_name,
-    readingTime: readTime,
-  };
-
-  return (
-    <PoemDisplay
-      clearTitle={clearTitle}
-      data={data}
-      verses={verses}
-      verseCount={verseCount}
-      metadata={metadata}
-    />
-  );
+export default function Page() {
+  return <PoemSlugClientPage />;
 }
