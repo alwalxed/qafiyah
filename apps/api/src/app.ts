@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { dbMiddleware } from "./middlewares/drizzle.middleware";
 import eras from "./routes/eras.routes";
+import metadata from "./routes/metadata.routes";
 import meters from "./routes/meters.routes";
 import poems from "./routes/poems.routes";
 import poets from "./routes/poets.routes";
@@ -39,6 +40,7 @@ const routes = app
   .route("/rhymes", rhymes)
   .route("/sitemaps", sitemaps)
   .route("/themes", themes)
+  .route("/metadata", metadata)
   //* Global Error Handler
   .onError((error, c) => {
     console.error("Global Error Route:", error);

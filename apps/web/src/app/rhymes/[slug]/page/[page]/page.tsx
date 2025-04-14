@@ -23,9 +23,8 @@ export default function RhymePoemsPage() {
   const isValidPage = Number.isFinite(pageNumber) && pageNumber > 0;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['rhymePoems', slug, pageNumber],
+    queryKey: ['rhyme-poems-slugged-paginated', slug, pageNumber],
     queryFn: () => getRhymePoems(slug, pageNumber.toString()),
-    enabled: isValidPage && isValidSlug,
   });
 
   // Handle loading state

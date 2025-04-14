@@ -1,3 +1,5 @@
+import { toArabicDigits } from './utils';
+
 // API configuration
 export const API_URL = 'https://api.qafiyah.com';
 export const FETCH_PER_PAGE = 30;
@@ -14,8 +16,8 @@ export const TWITTER_HANDLE = '@qafiyahdotcom';
 
 // Default metadata
 export const defaultMetadata = {
-  title: 'قافية | موسوعة الشعر العربي',
-  description: 'موقع يُعنى بجمع الشعر العربي وحفظه وتيسير الوصول إليه',
+  title: 'قافية | مستودع الشعر العربي',
+  description: 'موقع غير ربحي مفتوح المصدر يُعنى بجمع الشعر العربي وحفظه وتيسير الوصول إليه',
   keywords:
     'شعر، شعر عربي، قصائد، غزل، معلقات، شعر جاهلي، شعر حديث، قافية، ديوان العرب، أدب، قصائد مشهورة، شعر نبطي',
   openGraphUrl: `${SITE_URL}/opengraph.png`,
@@ -74,3 +76,7 @@ export const NAV_LINKS = [
   { name: 'الشعراء', href: '/poets/page/1', external: false },
   { name: 'الرئيسة', href: '/', external: false },
 ];
+
+const NOT_FOUND_CODE = toArabicDigits(404);
+const NOT_FOUND_MESSAGE = 'الصفحة غير موجودة';
+export const NOT_FOUND_TITLE = `${NOT_FOUND_CODE} | ${NOT_FOUND_MESSAGE}`;

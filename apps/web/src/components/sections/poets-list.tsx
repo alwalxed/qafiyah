@@ -14,7 +14,7 @@ export function PoetsList() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['poets', 1],
+    queryKey: ['poets-landing-list', 1],
     queryFn: () => getPoets('1'),
   });
 

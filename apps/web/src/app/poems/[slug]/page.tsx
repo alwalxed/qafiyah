@@ -5,12 +5,12 @@ import { ErrorMessage } from '@/components/ui/error-message';
 import { getPoem } from '@/lib/api/queries';
 import { SITE_URL } from '@/lib/constants';
 import { useQuery } from '@tanstack/react-query';
+import { Home, RefreshCcw } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 export const runtime = 'edge';
 
-export default function PoemPage() {
+export default function PoemSlugClientPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params?.slug as string;
@@ -19,17 +19,39 @@ export default function PoemPage() {
     data: poem,
     isLoading,
     isError,
+    refetch,
+    error,
   } = useQuery({
-    queryKey: ['poem', slug],
+    queryKey: ['single-slugged-poem', slug],
     queryFn: () => getPoem(slug),
-    enabled: !!slug,
   });
 
-  useEffect(() => {
-    if (isError) {
-      router.push('/404');
-    }
-  }, [isError, router]);
+  if (isError) {
+    return (
+      <div className="max-w-3xl mx-auto p-4 text-center">
+        <ErrorMessage message="حدث خطأ أثناء تحميل القصيدة" />
+        <p className="mt-2 mb-6 text-muted-foreground">
+          {error instanceof Error ? error.message : 'يرجى المحاولة مرة أخرى أو العودة لاحقًا'}
+        </p>
+        <div className="flex justify-center gap-4 mt-4">
+          <button
+            onClick={() => refetch()}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+          >
+            <RefreshCcw className="h-4 w-4" />
+            إعادة المحاولة
+          </button>
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-input text-foreground rounded-md hover:bg-muted transition-colors"
+          >
+            <Home className="h-4 w-4" />
+            العودة للرئيسية
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -48,7 +70,6 @@ export default function PoemPage() {
     );
   }
 
-  // Handle error or no data
   if (!poem) {
     return <ErrorMessage message="لم يتم العثور على القصيدة" />;
   }

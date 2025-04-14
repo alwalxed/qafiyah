@@ -14,7 +14,7 @@ export function ErasList() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['eras'],
+    queryKey: ['eras-landing-list'],
     queryFn: () => getEras(),
   });
 

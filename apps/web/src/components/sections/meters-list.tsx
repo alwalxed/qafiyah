@@ -14,7 +14,7 @@ export function MetersList() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['meters'],
+    queryKey: ['meters-landing-list'],
     queryFn: () => getMeters(),
   });
 

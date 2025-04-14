@@ -14,7 +14,7 @@ export function RhymesList() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['rhymes'],
+    queryKey: ['rhymes-landing-list'],
     queryFn: () => getRhymes(),
   });
 

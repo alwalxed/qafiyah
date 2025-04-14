@@ -23,9 +23,8 @@ export default function PoetPoemsPage() {
   const isValidPage = Number.isFinite(pageNumber) && pageNumber > 0;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['poetPoems', slug, pageNumber],
+    queryKey: ['poet-poems-slugged-paginated', slug, pageNumber],
     queryFn: () => getPoetPoems(slug, pageNumber.toString()),
-    enabled: isValidSlug && isValidPage,
   });
 
   if (isLoading) {

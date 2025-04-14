@@ -2,16 +2,17 @@
 
 import { ErrorMessage } from '@/components/ui/error-message';
 import { ListCard } from '@/components/ui/list-card';
-import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 import { SectionPaginationControllers, SectionWrapper } from '@/components/ui/section-wrapper';
-import { getThemePoems } from '@/lib/api/queries';
+import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
+import { getMeterPoems } from '@/lib/api/queries';
 import { toArabicDigits } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
+import type { Key } from 'react';
 
 export const runtime = 'edge';
 
-export default function ThemePoemsPage() {
+export default function MeterSlugClientPage() {
   const params = useParams();
 
   const slug = params?.slug as string;
@@ -19,31 +20,18 @@ export default function ThemePoemsPage() {
   const pageNumber = pageParam ? Number.parseInt(pageParam, 10) : 1;
 
   const isValidSlug = Boolean(slug);
-  const isValidPage = Number.isFinite(pageNumber) && pageNumber > 0;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['theme-poems-slugged-paginated', slug, pageNumber],
-    queryFn: () => getThemePoems(slug, pageNumber.toString()),
+    queryKey: ['meter-poems-slugged-paginated', slug, pageNumber],
+    queryFn: () => getMeterPoems(slug, pageNumber.toString()),
   });
 
-  // Handle loading state
   if (isLoading) {
-    return (
-      <SectionWrapper>
-        <LoadingSkeleton>
-          <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="h-24 bg-gray-200 rounded-md"></div>
-            ))}
-          </div>
-        </LoadingSkeleton>
-      </SectionWrapper>
-    );
+    return <SectionSkeleton title="قصائد بحر بعينه" itemsCount={10} />;
   }
 
   // Handle error state
-  if (isError || !data || !isValidPage || !isValidSlug) {
+  if (isError || !data || !isValidSlug || !isValidSlug) {
     return (
       <SectionWrapper>
         <ErrorMessage />
@@ -51,23 +39,23 @@ export default function ThemePoemsPage() {
     );
   }
 
-  const { data: themeData, pagination } = data;
-  const { themeDetails, poems } = themeData;
+  const { data: meterData, pagination } = data;
+  const { meterDetails, poems } = meterData;
 
   // Use API pagination metadata if available
-  const totalPages = pagination?.totalPages || Math.ceil(themeDetails.poemsCount / 30);
+  const totalPages = pagination?.totalPages || Math.ceil(meterDetails.poemsCount / 30);
   const hasNextPage = pagination?.hasNextPage || pageNumber < totalPages;
   const hasPrevPage = pagination?.hasPrevPage || pageNumber > 1;
 
-  const nextPageUrl = `/themes/${slug}/page/${pageNumber + 1}`;
-  const prevPageUrl = `/themes/${slug}/page/${pageNumber - 1}`;
+  const nextPageUrl = `/meters/${slug}/page/${pageNumber + 1}`;
+  const prevPageUrl = `/meters/${slug}/page/${pageNumber - 1}`;
 
   const content = {
-    header: `قصائد ${themeDetails.name} (${toArabicDigits(themeDetails.poemsCount)} قصيدة)`,
+    header: `قصائد من بحر ${meterDetails.name} (${toArabicDigits(meterDetails.poemsCount)} قصيدة)`,
     headerTip: `صـ ${toArabicDigits(pageNumber)} من ${toArabicDigits(totalPages)}`,
     next: 'التالي',
     previous: 'السابق',
-    noMore: 'لا توجد قصائد لهذا الموضوع.',
+    noMore: 'لا توجد قصائد لهذا البحر.',
   };
 
   return (
@@ -87,12 +75,12 @@ export default function ThemePoemsPage() {
       }}
     >
       {poems.length > 0 ? (
-        poems.map((poem) => (
+        poems.map((poem: { slug: Key | null | undefined; title: string; poetName: string }) => (
           <ListCard
             key={poem.slug}
             href={`/poems/${poem.slug}`}
             name={poem.title}
-            title={`${poem.poetName} • ${poem.meter}`}
+            title={poem.poetName}
           />
         ))
       ) : (
