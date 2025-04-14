@@ -10,6 +10,7 @@ import type {
   ProcessedPoem,
   Rhyme,
   RhymePoems,
+  SearchResponseData,
   Theme,
   ThemePoems,
 } from './types';
@@ -20,6 +21,24 @@ import type {
  */
 const apiClient = (baseUrl: string) => {
   return {
+    // Search
+    async searchPoems(
+      query: string,
+      page: string = '1'
+    ): Promise<{ data: SearchResponseData; pagination?: PaginationMeta }> {
+      const validParams = validateParams('search', { q: query, page });
+
+      const response = await fetchWithValidation(
+        'search',
+        `${baseUrl}/search?q=${encodeURIComponent(validParams.q)}&page=${validParams.page}`
+      );
+
+      return {
+        data: response.data,
+        pagination: response.data.pagination,
+      };
+    },
+
     // Eras
     async getEras(): Promise<Era[]> {
       const response = await fetchWithValidation('erasList', `${baseUrl}/eras`);

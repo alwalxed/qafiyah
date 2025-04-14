@@ -114,3 +114,32 @@ export type NavLink = {
 };
 
 export type Poets = Poet[];
+
+export type SearchResult = {
+  id: number;
+  title: string;
+  slug: string;
+  content_snippet: string;
+  poet_name: string;
+  poet_slug: string;
+  meter_name: string | null;
+  era_name: string | null;
+};
+
+// Search pagination type
+export type SearchPagination = {
+  currentPage: number;
+  totalPages: number;
+  totalResults: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+};
+
+// Search response data type
+export type SearchResponseData = {
+  results: SearchResult[];
+  pagination: SearchPagination;
+};
+
+// Full search response type
+export type SearchResponse = ApiResponse<SearchResponseData>;

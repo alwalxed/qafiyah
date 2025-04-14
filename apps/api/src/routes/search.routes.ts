@@ -1,9 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
-import { searchRequestSchema, searchResponseSchema } from "@qaf/zod-schemas";
-import { createValidatedResponse } from "@qaf/zod-schemas/server";
-import { ilike, or, sql } from "drizzle-orm";
+import { searchRequestSchema } from "@qaf/zod-schemas";
+import { sql } from "drizzle-orm";
 import { Hono } from "hono";
-import { poemsSearchMaterialized } from "../schemas/db";
 import type { AppContext } from "../types";
 
 const MAX_RESULTS_PER_PAGE = 10;
@@ -13,33 +11,26 @@ const app = new Hono<AppContext>().get(
   zValidator("query", searchRequestSchema),
   async (c) => {
     try {
-      // Log the schema definition
-      console.log("Search response schema:", searchResponseSchema);
-
       const { q, page } = c.req.valid("query");
       const db = c.get("db");
 
-      const limit = MAX_RESULTS_PER_PAGE;
-      const offset = (page - 1) * limit;
+      // Keep only Arabic letters and spaces, remove everything else
+      const sanitizedQuery = q
+        .trim()
+        .replace(
+          /[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\u0621-\u064A\s]/g,
+          ""
+        )
+        .replace(/\s+/g, " ")
+        .trim();
 
-      const sanitizedQuery = q.replace(/[%_\\]/g, "\\$&");
+      // Convert to tsquery format (words connected by &)
+      const searchQuery = sanitizedQuery
+        .split(/\s+/)
+        .filter(Boolean)
+        .join(" & ");
 
-      const searchCondition = or(
-        sql`${poemsSearchMaterialized.content_tsv} @@ plainto_tsquery('arabic', ${sanitizedQuery})`,
-        ilike(poemsSearchMaterialized.title, `%${sanitizedQuery}%`),
-        ilike(poemsSearchMaterialized.poet_name, `%${sanitizedQuery}%`)
-      );
-
-      const countResult = await db
-        .select({ count: sql`count(*)` })
-        .from(poemsSearchMaterialized)
-        .where(searchCondition);
-
-      const totalResults = Number(countResult[0]?.count || 0);
-      const totalPages = Math.ceil(totalResults / limit);
-
-      if (totalResults === 0) {
-        // Return empty results directly
+      if (!searchQuery) {
         return c.json({
           success: true,
           data: {
@@ -55,43 +46,18 @@ const app = new Hono<AppContext>().get(
         });
       }
 
-      const searchResults = await db
-        .select({
-          id: poemsSearchMaterialized.id,
-          title: poemsSearchMaterialized.title,
-          slug: poemsSearchMaterialized.slug,
-          content_snippet: sql`
-            CASE 
-              WHEN ${poemsSearchMaterialized.content_tsv} @@ plainto_tsquery('arabic', ${sanitizedQuery})
-              THEN ts_headline('arabic', ${poemsSearchMaterialized.content}, plainto_tsquery('arabic', ${sanitizedQuery}), 'MaxFragments=1, MaxWords=30, MinWords=15, StartSel="", StopSel=""')
-              WHEN position(lower(${sanitizedQuery}) in lower(${poemsSearchMaterialized.content})) > 0 
-              THEN substring(
-                ${poemsSearchMaterialized.content} 
-                from greatest(1, position(lower(${sanitizedQuery}) in lower(${poemsSearchMaterialized.content})) - 50) 
-                for 200
-              )
-              ELSE substring(${poemsSearchMaterialized.content} from 1 for 150)
-            END
-          `.as("content_snippet"),
-          poet_name: poemsSearchMaterialized.poet_name,
-          poet_slug: poemsSearchMaterialized.poet_slug,
-          meter_name: poemsSearchMaterialized.meter_name,
-          era_name: poemsSearchMaterialized.era_name,
-        })
-        .from(poemsSearchMaterialized)
-        .where(searchCondition)
-        .orderBy(
-          sql`
-            CASE 
-              WHEN ${poemsSearchMaterialized.title} ILIKE ${`%${sanitizedQuery}%`} THEN 1
-              WHEN ${poemsSearchMaterialized.poet_name} ILIKE ${`%${sanitizedQuery}%`} THEN 2
-              ELSE 3
-            END
-          `
-        )
-        .limit(limit)
-        .offset(offset);
+      const searchResults = await db.execute(
+        sql`SELECT * FROM search_poems(${searchQuery}, ${page}, ${MAX_RESULTS_PER_PAGE})`
+      );
 
+      const countResult = await db.execute(
+        sql`SELECT count_search_poems(${searchQuery}) as total`
+      );
+
+      const totalResults = Number((countResult as any)[0]?.total || 0);
+      const totalPages = Math.ceil(totalResults / MAX_RESULTS_PER_PAGE);
+
+      // Format results to match the schema
       const formattedResults = searchResults.map((result) => ({
         id: Number(result.id),
         title: String(result.title || ""),
@@ -103,6 +69,7 @@ const app = new Hono<AppContext>().get(
         era_name: result.era_name ? String(result.era_name) : null,
       }));
 
+      // Create pagination metadata
       const paginationMeta = {
         currentPage: Number(page),
         totalPages: Number(totalPages),
@@ -111,12 +78,14 @@ const app = new Hono<AppContext>().get(
         hasPrevPage: Boolean(page > 1),
       };
 
-      return c.json(
-        createValidatedResponse("search", {
+      // Return the response
+      return c.json({
+        success: true,
+        data: {
           results: formattedResults,
           pagination: paginationMeta,
-        })
-      );
+        },
+      });
     } catch (error) {
       console.error("Search route error:", error);
       return c.json(

@@ -10,6 +10,7 @@ import type {
   ProcessedPoem,
   Rhyme,
   RhymePoems,
+  SearchResponseData,
   Theme,
   ThemePoems,
 } from './types';
@@ -19,6 +20,14 @@ import type {
  * using the validated client
  */
 export const queries = {
+  // Search
+  async searchPoems(
+    query: string,
+    page: string = '1'
+  ): Promise<{ data: SearchResponseData; pagination?: PaginationMeta }> {
+    return client.searchPoems(query, page);
+  },
+
   // Eras
   async getEras(): Promise<Era[]> {
     return client.getEras();
@@ -100,6 +109,7 @@ export const queries = {
 
 // For convenience, also export individual functions
 export const {
+  searchPoems,
   getEras,
   getEraPoems,
   getMeters,
