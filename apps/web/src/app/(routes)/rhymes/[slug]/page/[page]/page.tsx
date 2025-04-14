@@ -3,8 +3,7 @@
 import { ErrorMessage } from '@/components/ui/error-message';
 import { ListCard } from '@/components/ui/list-card';
 import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
-import { PaginationLink } from '@/components/ui/pagination-link';
-import { SectionWrapper } from '@/components/ui/section-wrapper';
+import { SectionPaginationControllers, SectionWrapper } from '@/components/ui/section-wrapper';
 import { getRhymePoems } from '@/lib/api/queries';
 import { toArabicDigits } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -74,7 +73,21 @@ export default function RhymePoemsPage() {
   };
 
   return (
-    <SectionWrapper dynamicTitle={content.header}>
+    <SectionWrapper
+      dynamicTitle={content.header}
+      pagination={{
+        totalPages,
+        component: (
+          <SectionPaginationControllers
+            headerTip={content.headerTip}
+            nextPageUrl={nextPageUrl}
+            prevPageUrl={prevPageUrl}
+            hasNextPage={hasNextPage}
+            hasPrevPage={hasPrevPage}
+          />
+        ),
+      }}
+    >
       {poems.length > 0 ? (
         poems.map((poem: { slug: Key | null | undefined; title: string; meter: string }) => (
           <ListCard
@@ -86,20 +99,6 @@ export default function RhymePoemsPage() {
         ))
       ) : (
         <p className="text-center text-zinc-500">{content.noMore}</p>
-      )}
-
-      {totalPages > 1 && (
-        <nav className="flex w-full justify-between items-center gap-4 text-base md:text-lg mt-8">
-          <PaginationLink href={nextPageUrl} isDisabled={!hasNextPage} prefetch={hasNextPage}>
-            {content.next}
-          </PaginationLink>
-
-          <p className="text-zinc-500 text-base">{content.headerTip}</p>
-
-          <PaginationLink href={prevPageUrl} isDisabled={!hasPrevPage} prefetch={hasPrevPage}>
-            {content.previous}
-          </PaginationLink>
-        </nav>
       )}
     </SectionWrapper>
   );
