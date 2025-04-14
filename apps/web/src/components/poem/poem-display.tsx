@@ -1,7 +1,7 @@
 'use client';
 
 import { toArabicDigits } from '@/lib/utils';
-import { Minus, Plus, Type } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -73,22 +73,24 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
             <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">{data.theme_name || ''}</p>
             <p className="flex-1 py-0.5 md:py-1 lg:py-1.5">{data.type_name || ''}</p>
           </div>
-
-          <div className="flex items-center gap-4 border rounded-md border-zinc-300/80">
-            <button onClick={decreaseFontSize} className="p-1" aria-label="Decrease font size">
-              <Minus className="w-3 h-3 md:w-5 md:h-5 xl:w-7 xl:h-7  text-zinc-500/40" />
-            </button>
-            <Type className="w-3 h-3 md:w-5 md:h-5 xl:w-7 xl:h-7  text-zinc-500/40" />
-            <button onClick={increaseFontSize} className="p-1" aria-label="Increase font size">
-              <Plus className="w-3 h-3 md:w-5 md:h-5 xl:w-7 xl:h-7  text-zinc-500/40" />
-            </button>
-          </div>
         </header>
 
         {/* Content */}
-        <div className="relative flex flex-col justify-between items-center bg-white py-1 md:py-8 lg:py-16 px-4 rounded-2xl gap-8 w-full md:w-10/12 xl:w-9/12">
-          {/* Font Size Controller */}
+        <div className="relative flex flex-col justify-between items-center bg-white gap-4 py-10 md:py-8 lg:py-16 px-4 rounded-2xl w-full md:w-10/12 xl:w-9/12">
+          {/* CONTROLLER FOR FONTS */}
+          <div className="flex items-center gap-4 border rounded-md border-zinc-300/50 bg-zinc-50/30">
+            <button onClick={decreaseFontSize} className="p-1" aria-label="Decrease font size">
+              <Minus className="w-3 h-3 md:w-5 md:h-5 xl:w-7 xl:h-7  text-zinc-500/60" />
+            </button>
+            <p className="text-zinc-500/90 text-[10px] xxs:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
+              حجم الخط
+            </p>
+            <button onClick={increaseFontSize} className="p-1" aria-label="Increase font size">
+              <Plus className="w-3 h-3 md:w-5 md:h-5 xl:w-7 xl:h-7  text-zinc-500/60" />
+            </button>
+          </div>
 
+          {/* POEM */}
           <div className="flex flex-col items-center w-full">
             <div className="w-full sm:w-11/12 md:w-10/12 xl:w-6/12">
               {verses.map((verse, index) => (
