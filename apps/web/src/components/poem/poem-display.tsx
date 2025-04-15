@@ -68,10 +68,9 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
           <div className="flex w-full md:w-8/12 border border-zinc-300/80 px-2.5 md:px-8 lg:px-16 text-[10px] xxs:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl justify-between items-center text-zinc-500/90 rounded-full">
             <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">{data.meter_name || ''}</p>
             <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">
-              {toArabicDigits(verseCount) || ''}
+              {`${toArabicDigits(verseCount)} بيت` || ''}
             </p>
-            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">{data.theme_name || ''}</p>
-            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5">{data.type_name || ''}</p>
+            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5">{data.theme_name || ''}</p>
           </div>
         </header>
 

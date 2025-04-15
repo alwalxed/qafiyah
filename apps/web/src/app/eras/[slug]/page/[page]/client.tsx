@@ -41,7 +41,7 @@ export default function EraSlugClientPage() {
 
   const { data: eraData, pagination } = data;
   const { eraDetails, poems } = eraData;
-  const title = `${eraDetails.name}ة`;
+  const title = `${eraDetails.name}ين`;
 
   // Use API pagination metadata if available
   const totalPages = pagination?.totalPages || Math.ceil(eraDetails.poemsCount / 30);

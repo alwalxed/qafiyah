@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (ERAS.has(slug)) {
     const eraName = ERAS.get(slug);
     return {
-      title: `قافية | قصائد العصر ال${eraName}`,
+      title: `قافية | قصائد عصر ال${eraName}ين`,
     };
   }
   return {
