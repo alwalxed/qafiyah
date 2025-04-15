@@ -89,7 +89,7 @@ export default function SearchClientPage() {
 
   return (
     <main className="w-full min-h-screen">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto px-1">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-zinc-900 mb-2">ابحث في مليون بيت</h1>

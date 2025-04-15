@@ -6,12 +6,18 @@ import { useRouter } from 'next/navigation';
 type SearchFormProps = {
   className?: string;
   isMobile?: boolean;
+  onSearchClick?: () => void;
 };
 
-export function SearchForm({ className = '', isMobile = false }: SearchFormProps) {
+export function SearchForm({ className = '', isMobile = false, onSearchClick }: SearchFormProps) {
   const router = useRouter();
 
   const handleSearchClick = () => {
+    // Call the callback if provided (to close the menu)
+    if (onSearchClick) {
+      onSearchClick();
+    }
+
     router.push('/search');
   };
 
