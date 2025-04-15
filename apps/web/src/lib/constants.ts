@@ -16,7 +16,7 @@ export const TWITTER_HANDLE = '@qafiyahdotcom';
 
 // Default metadata
 export const defaultMetadata = {
-  title: 'قافية | مستودع الشعر العربي',
+  title: 'قافية | مرجع الشعر العربي',
   description: 'موقع غير ربحي مفتوح المصدر يُعنى بجمع الشعر العربي وحفظه وتيسير الوصول إليه',
   keywords:
     'شعر، شعر عربي، قصائد، غزل، معلقات، شعر جاهلي، شعر حديث، قافية، ديوان العرب، أدب، قصائد مشهورة، شعر نبطي',

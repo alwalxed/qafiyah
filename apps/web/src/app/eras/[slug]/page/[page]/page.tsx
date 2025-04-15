@@ -16,11 +16,11 @@ export const ERAS = new Map([
 ]);
 
 type Props = {
-  params: { slug: string; page?: string };
+  params: Promise<{ slug: string; page?: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
 
   if (ERAS.has(slug)) {
     const eraName = ERAS.get(slug);
