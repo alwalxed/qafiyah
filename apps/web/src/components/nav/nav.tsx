@@ -3,7 +3,6 @@ import { forwardRef, type ForwardedRef } from 'react';
 import { Logo } from './logo';
 import { MobileMenuButton } from './mobile-menu-button';
 import { NavLinks } from './nav-links';
-import { SearchForm } from './search-form';
 
 interface NavProps {
   className?: string;
@@ -24,7 +23,7 @@ export const Nav = forwardRef(function Nav(
           <MobileMenuButton />
 
           {/* SEARCH (Desktop) */}
-          <SearchForm className="relative w-5/12 max-w-md hidden md:block" />
+          {/* <SearchForm className="relative w-5/12 max-w-md hidden md:block" /> */}
 
           {/* MENU (Desktop) */}
           <NavLinks links={NAV_LINKS} className="hidden md:block" />

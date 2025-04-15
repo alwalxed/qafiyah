@@ -5,7 +5,6 @@ import { useNavStore } from '@/store/nav-store';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 import { NavLinks } from './nav-links';
-import { SearchForm } from './search-form';
 
 export function MobileMenu() {
   const { mobileMenuOpen, toggleMobileMenu } = useNavStore();
@@ -27,11 +26,11 @@ export function MobileMenu() {
       }`}
     >
       {/* SEARCH (Mobile) - Pass toggleMobileMenu to close menu on search */}
-      <SearchForm
+      {/* <SearchForm
         className="relative w-full mb-6"
         isMobile={true}
         onSearchClick={toggleMobileMenu}
-      />
+      /> */}
 
       {/* MOBILE LINKS */}
       <NavLinks links={NAV_LINKS} isMobile={true} onLinkClick={toggleMobileMenu} />
