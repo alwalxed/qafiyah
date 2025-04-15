@@ -1,6 +1,7 @@
 import { NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import RhymePoemsSlugClientPage from './client';
+export const runtime = 'edge';
 
 export const RHYMES = new Map([
   ['3316b009-7212-4d5f-831f-f5f2d6febaa6', 'القاف'],

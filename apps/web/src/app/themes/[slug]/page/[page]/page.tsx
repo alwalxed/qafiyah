@@ -1,6 +1,7 @@
 import { NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import ThemePoemsSlugClientPage from './client';
+export const runtime = 'edge';
 
 // Create a Map of themes where the key is the slug and the value is the theme name
 export const THEMES = new Map([

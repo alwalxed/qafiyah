@@ -2,6 +2,7 @@ import { API_URL, NOT_FOUND_TITLE } from '@/lib/constants';
 import { toArabicDigits } from '@/lib/utils';
 import type { Metadata } from 'next';
 import PoetPoemsSlugPaginatedClientPage from './client';
+export const runtime = 'edge';
 
 // Define the type for the new response format
 type PoetInfoResponse = {

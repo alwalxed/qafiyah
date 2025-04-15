@@ -2,6 +2,7 @@ import type { ProcessedPoem } from '@/lib/api/types';
 import { API_URL, NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import PoemSlugClientPage from './client';
+export const runtime = 'edge';
 
 type Props = {
   params: Promise<{ slug: string }>;

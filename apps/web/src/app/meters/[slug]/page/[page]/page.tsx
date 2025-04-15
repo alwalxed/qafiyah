@@ -1,6 +1,7 @@
 import { NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import MeterSlugClientPage from './client';
+export const runtime = 'edge';
 
 export const METERS = new Map([
   ['ahd-alkamil', 'أحذ الكامل'],

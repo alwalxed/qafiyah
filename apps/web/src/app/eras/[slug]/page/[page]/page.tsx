@@ -2,6 +2,8 @@ import { NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import EraSlugClientPage from './client';
 
+export const runtime = 'edge';
+
 export const ERAS = new Map([
   ['islamic', 'إسلامي'],
   ['abbasid', 'عباسي'],
