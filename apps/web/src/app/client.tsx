@@ -5,7 +5,7 @@ import type React from 'react';
 import { searchPoems } from '@/lib/api/queries';
 import type { PaginationMeta, SearchResponseData } from '@/lib/api/types';
 import { responsiveIconSize } from '@/lib/constants';
-import { toArabicDigits } from '@/lib/utils';
+import { removeTashkeel, toArabicDigits } from '@/lib/utils';
 import { useNavStore } from '@/store/nav-store';
 import { cleanSearchResponseText } from '@/utils/clean-search-response-text';
 import { isArabicText } from '@/utils/is-arabic-text';
@@ -204,7 +204,7 @@ const SearchResultItem = ({ result }: SearchResultItemProps) => {
           )}
         </div>
         <p className="text-zinc-700 line-clamp-3 text-right leading-relaxed" dir="rtl">
-          {cleanSearchResponseText(result.content_snippet.split('*').join(' ** '))}
+          {removeTashkeel(cleanSearchResponseText(result.content_snippet.split('*').join(' — ')))}
         </p>
       </div>
     </Link>
