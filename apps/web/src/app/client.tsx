@@ -30,6 +30,7 @@ type SearchFormProps = {
   handleSearchClearClick: () => void;
   searchError: string | null;
   setSearchError: (error: string | null) => void;
+  resetSearchResults: () => void;
 };
 
 const SearchForm = ({
@@ -39,9 +40,11 @@ const SearchForm = ({
   handleSearchClearClick,
   searchError,
   setSearchError,
+  resetSearchResults,
 }: SearchFormProps) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const previousQueryRef = useRef<string>(searchQuery);
 
   useEffect(() => {
     if (searchQuery && !isArabicText(searchQuery)) {
@@ -53,7 +56,13 @@ const SearchForm = ({
     } else {
       setSearchError(null);
     }
-  }, [searchQuery, setSearchError]);
+
+    // If user is typing a new query (different from previous), reset results
+    if (searchQuery !== previousQueryRef.current) {
+      resetSearchResults();
+      previousQueryRef.current = searchQuery;
+    }
+  }, [searchQuery, setSearchError, resetSearchResults]);
 
   return (
     <div className="mb-10">
@@ -182,12 +191,6 @@ type SearchResultItemProps = {
 };
 
 const SearchResultItem = ({ result, searchQuery }: SearchResultItemProps) => {
-  // Remove this line:
-  // const { searchQuery } = useNavStore();
-
-  // const [searchQuery, setSearchQuery] = useState<string>("")
-
-  // Function to highlight matching text
   const highlightMatches = (text: string, query: string) => {
     if (!query || query.length <= 1 || !text) return text;
 
@@ -333,6 +336,8 @@ type SearchResultsContainerProps = {
   loadMoreRef: (node?: Element | null | undefined) => void;
   totalResults: number;
   searchError: string | null;
+  searchTrigger: string;
+  isTypingNewQuery: boolean;
 };
 
 const SearchResultsContainer = ({
@@ -345,10 +350,17 @@ const SearchResultsContainer = ({
   loadMoreRef,
   totalResults,
   searchError,
+  searchTrigger,
+  isTypingNewQuery,
 }: SearchResultsContainerProps) => {
   // Don't show any search results if there's an error with the input
   if (searchError) {
     return null;
+  }
+
+  // Show empty state if no search has been triggered yet or user is typing a new query
+  if (!searchTrigger || isTypingNewQuery) {
+    return <EmptySearchState />;
   }
 
   // Don't show anything for empty or single character queries
@@ -361,7 +373,7 @@ const SearchResultsContainer = ({
     return null;
   }
 
-  if (status === 'pending' && !data) {
+  if (status === 'pending' && !data && searchTrigger.length > 1) {
     return <LoadingState />;
   }
 
@@ -390,16 +402,19 @@ export default function SearchClientPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const { ref, inView } = useInView();
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchTrigger, setSearchTrigger] = useState<string>('');
+  const [isTypingNewQuery, setIsTypingNewQuery] = useState<boolean>(false);
+  const lastSubmittedQueryRef = useRef<string>('');
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
-    queryKey: ['search-poems', searchQuery],
+    queryKey: ['search-poems', searchTrigger],
     queryFn: ({ pageParam = 1 }: { pageParam?: number }) =>
-      searchPoems(searchQuery, pageParam.toString()),
+      searchPoems(searchTrigger, pageParam.toString()),
     getNextPageParam: (lastPage) =>
       lastPage.data.pagination?.hasNextPage
         ? Number(lastPage.data.pagination.currentPage) + 1
         : undefined,
-    enabled: searchQuery.length > 1 && isArabicText(searchQuery),
+    enabled: searchTrigger.length > 1 && isArabicText(searchTrigger),
     staleTime: 1000 * 60 * 60,
     initialPageParam: 1,
   });
@@ -409,6 +424,15 @@ export default function SearchClientPage() {
       fetchNextPage();
     }
   }, [inView, fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  // Check if user is typing a new query different from the last submitted one
+  useEffect(() => {
+    if (searchTrigger && searchQuery !== searchTrigger) {
+      setIsTypingNewQuery(true);
+    } else {
+      setIsTypingNewQuery(false);
+    }
+  }, [searchQuery, searchTrigger]);
 
   const allResults =
     data?.pages.flatMap((page, pageIndex) =>
@@ -423,13 +447,21 @@ export default function SearchClientPage() {
 
   const handleSearchClearClick = () => {
     setSearchQuery('');
+    setSearchTrigger('');
     setSearchError(null);
+    setIsTypingNewQuery(false);
+    lastSubmittedQueryRef.current = '';
+  };
+
+  const resetSearchResults = () => {
+    if (searchTrigger && searchQuery !== searchTrigger) {
+      setIsTypingNewQuery(true);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate search query
     if (!searchQuery.trim()) {
       setSearchError('الرجاء إدخال نص للبحث');
       return;
@@ -448,7 +480,10 @@ export default function SearchClientPage() {
     // If validation passes
     setSearchError(null);
     const sanitizedQuery = sanitizeArabicText(searchQuery.trim().slice(0, 50));
-    setSearchQuery(sanitizedQuery); // Now sanitize when submitting
+    setSearchQuery(sanitizedQuery); // Sanitize when submitting
+    setSearchTrigger(sanitizedQuery); // Only trigger search on submit
+    setIsTypingNewQuery(false);
+    lastSubmittedQueryRef.current = sanitizedQuery;
   };
 
   return (
@@ -465,6 +500,7 @@ export default function SearchClientPage() {
           handleSearchClearClick={handleSearchClearClick}
           searchError={searchError}
           setSearchError={setSearchError}
+          resetSearchResults={resetSearchResults}
         />
 
         {/* Search results */}
@@ -479,6 +515,8 @@ export default function SearchClientPage() {
             loadMoreRef={ref}
             totalResults={totalResults}
             searchError={searchError}
+            searchTrigger={searchTrigger}
+            isTypingNewQuery={isTypingNewQuery}
           />
         </div>
       </div>
