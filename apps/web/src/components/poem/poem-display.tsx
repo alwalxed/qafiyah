@@ -3,7 +3,6 @@
 import { toArabicDigits } from '@/lib/utils';
 import { Minus, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { useState } from 'react';
 
 export type PoemProps = {
@@ -56,9 +55,9 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
             </h1>
 
             <h2 className="text-sm xxs:text-base md:text-2xl text-zinc-700">
-              <Link href={`/poets/${data.poet_slug}/page/1`} className="hover:underline">
+              <a href={`/poets/${data.poet_slug}/page/1`} className="hover:underline">
                 {data.poet_name}
-              </Link>{' '}
+              </a>{' '}
               <a href={`/eras/${data.era_slug}/page/1`} className="hover:underline">
                 {`(${data.era_name})`}
               </a>

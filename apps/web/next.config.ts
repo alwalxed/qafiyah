@@ -7,6 +7,11 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   devIndicators: false,
+  config: {
+    rules: {
+      '@next/next/no-html-link-for-pages': 'off',
+    },
+  },
 };
 
 export default nextConfig;

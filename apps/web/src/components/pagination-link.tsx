@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { ReactNode } from 'react';
 
 type Props = {
@@ -10,16 +9,15 @@ type Props = {
   children: ReactNode;
 };
 
-export function PaginationLink({ href, isDisabled, prefetch, children }: Props) {
+export function PaginationLink({ href, isDisabled, children }: Props) {
   return (
-    <Link
+    <a
       href={isDisabled ? '#' : href}
       className={isDisabled ? 'cursor-not-allowed text-zinc-500' : 'text-zinc-800'}
       aria-disabled={isDisabled}
       onClick={(e) => isDisabled && e.preventDefault()}
-      prefetch={prefetch}
     >
       {children}
-    </Link>
+    </a>
   );
 }

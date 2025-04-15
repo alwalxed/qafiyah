@@ -11,7 +11,6 @@ import { isArabicText } from '@/utils/is-arabic-text';
 import { sanitizeArabicText } from '@/utils/sanitize-arabic-text';
 import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query';
 import { Loader2, Search, X } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -219,7 +218,7 @@ const SearchResultItem = ({ result, searchQuery }: SearchResultItemProps) => {
   };
 
   return (
-    <Link
+    <a
       href={`/poems/${result.slug}`}
       key={`page-${result._pageIndex}-item-${result._resultIndex}-id-${result.id}`}
       className="block bg-white p-5 hover:bg-zinc-50 transition-colors rounded-xl border border-zinc-100 shadow-sm hover:shadow-md hover:border-zinc-200 duration-200"
@@ -250,7 +249,7 @@ const SearchResultItem = ({ result, searchQuery }: SearchResultItemProps) => {
           )}
         </p>
       </div>
-    </Link>
+    </a>
   );
 };
 

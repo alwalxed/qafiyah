@@ -1,28 +1,27 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { useEffect } from "react"
+import { useEffect } from 'react';
 
 export default function GlobalError({
   error,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error)
-  }, [error])
+    console.error(error);
+  }, [error]);
 
-  const message = "حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى"
+  const message = 'حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى';
 
   const refreshPage = () => {
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   return (
     <html lang="ar" dir="rtl">
       <body
-        style={{ fontFamily: "IBMPlexSansArabic" }}
+        style={{ fontFamily: 'IBMPlexSansArabic' }}
         className="bg-zinc-50 text-zinc-900 min-h-svh flex items-center justify-center p-4"
       >
         <div className="max-w-md w-full bg-white border border-zinc-200 rounded-md p-6 text-center">
@@ -53,16 +52,18 @@ export default function GlobalError({
             >
               تحديث الصفحة
             </button>
-            <Link
+            <a
               href="/"
               className="px-4 py-2 bg-zinc-500/20 hover:bg-zinc-700/20 text-zinc-700 rounded-md transition-colors cursor-pointer"
             >
               الصفحة الرئيسية
-            </Link>
+            </a>
           </div>
-          {error.digest && <p className="mt-4 text-xs text-zinc-500 font-mono">رمز الخطأ: {error.digest}</p>}
+          {error.digest && (
+            <p className="mt-4 text-xs text-zinc-500 font-mono">رمز الخطأ: {error.digest}</p>
+          )}
         </div>
       </body>
     </html>
-  )
+  );
 }
