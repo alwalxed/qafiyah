@@ -16,10 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     if (!response.ok) {
       return {
         title: NOT_FOUND_TITLE,
-        robots: {
-          index: false,
-          follow: false,
-        },
+        robots: { index: false, follow: false },
       };
     }
 
@@ -28,48 +25,62 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     if (!responseJson.success) {
       return {
         title: NOT_FOUND_TITLE,
-        robots: {
-          index: false,
-          follow: false,
-        },
+        robots: { index: false, follow: false },
       };
     }
 
-    // The poem data is nested inside responseJson.data with fallbacks for each property
     const poem = responseJson.data as ProcessedPoem;
 
-    // Provide fallbacks for all properties
     const clearTitle = poem?.clearTitle || 'قصيدة';
 
-    // Fallbacks for data properties
     const data = poem?.data || {};
     const poet_name = data.poet_name || 'شاعر غير معروف';
-    const meter_name = data.meter_name || 'غير محدد';
 
     const processedContent = poem?.processedContent || {};
     const keywords = processedContent.keywords || '';
-    const sample = processedContent.sample || '';
-    const verseCount = processedContent.verseCount || 0;
+
+    const flattenVerses = (verses: [string, string][]): string => {
+      if (!verses || !verses.length) return '';
+
+      // For SEO, we want to include as many verses as possible within the optimal length
+      // Google shows ~155-160 characters in snippets, but indexes up to 300
+      const OPTIMAL_LENGTH = 300;
+
+      let result = '';
+
+      for (let i = 0; i < verses.length; i++) {
+        const nextVerseLength = (verses[i][0]?.length || 0) + (verses[i][1]?.length || 0) + 2; // +2 for asterisks
+        if (result.length + nextVerseLength > OPTIMAL_LENGTH) {
+          break;
+        }
+
+        if (i > 0) result += ' * ';
+        if (verses[i][0]) result += verses[i][0];
+        result += ' * ';
+        if (verses[i][1]) result += verses[i][1];
+      }
+
+      if (result.length > OPTIMAL_LENGTH) {
+        return result.substring(0, OPTIMAL_LENGTH);
+      }
+
+      return result;
+    };
+
+    const description = flattenVerses(processedContent.verses);
 
     return {
       title: `${clearTitle} | ${poet_name} | قافية`,
-      description: `قصيدة (${clearTitle}) لـ«${poet_name}» من بحر ${meter_name}، عدد أبياتها ${verseCount}${sample ? `، ومنها: «${sample}»` : ''}`,
+      description,
       keywords: keywords,
       authors: [{ name: poet_name }],
-      robots: {
-        index: true,
-        follow: true,
-      },
+      robots: { index: true, follow: true },
     };
   } catch (error) {
-    // Handle any fetch or parsing errors
     console.error('Error fetching poem metadata:', error);
     return {
       title: NOT_FOUND_TITLE,
-      robots: {
-        index: false,
-        follow: false,
-      },
+      robots: { index: false, follow: false },
     };
   }
 }
