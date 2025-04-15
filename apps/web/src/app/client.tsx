@@ -6,14 +6,12 @@ import { searchPoems } from '@/lib/api/queries';
 import type { PaginationMeta, SearchResponseData } from '@/lib/api/types';
 import { responsiveIconSize } from '@/lib/constants';
 import { removeTashkeel, toArabicDigits } from '@/lib/utils';
-import { useNavStore } from '@/store/nav-store';
 import { cleanSearchResponseText } from '@/utils/clean-search-response-text';
 import { isArabicText } from '@/utils/is-arabic-text';
 import { sanitizeArabicText } from '@/utils/sanitize-arabic-text';
 import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query';
 import { Loader2, Search, X } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -50,6 +48,8 @@ const SearchForm = ({
       setSearchError('الرجاء إدخال نص باللغة العربية فقط');
     } else if (searchQuery && searchQuery.trim().length === 1) {
       setSearchError('الرجاء إدخال حرفين فأكثر');
+    } else if (searchQuery && searchQuery.trim().length > 50) {
+      setSearchError('الرجاء إدخال نص لا يتجاوز ٥٠ حرفاً');
     } else {
       setSearchError(null);
     }
@@ -69,6 +69,7 @@ const SearchForm = ({
             placeholder="ابحث عن قصيدة أو شاعر أو بيت"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            maxLength={50}
             className={`w-full pr-12 pl-12 py-4 text-lg bg-white border ${
               searchError
                 ? 'border-red-300 focus:ring-red-500'
@@ -139,9 +140,9 @@ type NoResultsProps = {
 const NoResults = ({ query }: NoResultsProps) => {
   return (
     <div className="p-8 text-center max-w-lg mx-auto">
-      <X className="h-10 w-10 text-zinc-400 mx-auto mb-3" />
-      <h3 className="text-xl font-medium text-zinc-800 mb-2">لم نجد قصيدة</h3>
-      <p className="text-zinc-500">{`لم نتمكن من العثور على نتائج لـ "${sanitizeArabicText(query)}"`}</p>
+      <X className="h-10 w-10 text-zinc-300 mx-auto mb-3" />
+      <h3 className="text-xl font-medium text-zinc-500 mb-2">لم نجد قصيدة</h3>
+      <p className="text-zinc-500">{`لم نتمكن من العثور على نتائج لـ "${sanitizeArabicText(query).slice(0, 10)}..."`}</p>
     </div>
   );
 };
@@ -177,9 +178,43 @@ interface SearchResult {
 
 type SearchResultItemProps = {
   result: SearchResult;
+  searchQuery: string; // Add this prop
 };
 
-const SearchResultItem = ({ result }: SearchResultItemProps) => {
+const SearchResultItem = ({ result, searchQuery }: SearchResultItemProps) => {
+  // Remove this line:
+  // const { searchQuery } = useNavStore();
+
+  // const [searchQuery, setSearchQuery] = useState<string>("")
+
+  // Function to highlight matching text
+  const highlightMatches = (text: string, query: string) => {
+    if (!query || query.length <= 1 || !text) return text;
+
+    // Clean and prepare the query for highlighting
+    const cleanQuery = removeTashkeel(sanitizeArabicText(query.trim()));
+
+    // If no valid query to highlight, return original text
+    if (!cleanQuery) return text;
+
+    // Split query into words for individual matching
+    const queryWords = cleanQuery.split(/\s+/).filter((word) => word.length > 1);
+
+    if (queryWords.length === 0) return text;
+
+    // Create a safe text for rendering with highlighted matches
+    let highlightedText = text;
+
+    // Replace each query word with a highlighted version
+    queryWords.forEach((word) => {
+      // Create a regex that matches the word with word boundaries
+      const regex = new RegExp(`(${word})`, 'gi');
+      highlightedText = highlightedText.replace(regex, '<span class="text-red-600">$1</span>');
+    });
+
+    return <span dangerouslySetInnerHTML={{ __html: highlightedText }} />;
+  };
+
   return (
     <Link
       href={`/poems/${result.slug}`}
@@ -187,10 +222,12 @@ const SearchResultItem = ({ result }: SearchResultItemProps) => {
       className="block bg-white p-5 hover:bg-zinc-50 transition-colors rounded-xl border border-zinc-100 shadow-sm hover:shadow-md hover:border-zinc-200 duration-200"
     >
       <div className="text-right">
-        <h2 className="font-bold text-xl text-zinc-900 mb-2">{result.title.replace(/"/g, '')}</h2>
+        <h2 className="font-bold text-xl text-zinc-900 mb-2">
+          {highlightMatches(result.title.replace(/"/g, ''), searchQuery)}
+        </h2>
         <div className="flex justify-end items-center gap-2 text-sm mb-3">
           <span className="bg-zinc-100 px-2 py-0.5 rounded-md text-zinc-700">
-            {result.poet_name}
+            {highlightMatches(result.poet_name, searchQuery)}
           </span>
           {result.meter_name && (
             <span className="bg-zinc-100 px-2 py-0.5 rounded-md text-zinc-700">
@@ -204,7 +241,10 @@ const SearchResultItem = ({ result }: SearchResultItemProps) => {
           )}
         </div>
         <p className="text-zinc-700 line-clamp-3 text-right leading-relaxed" dir="rtl">
-          {removeTashkeel(cleanSearchResponseText(result.content_snippet.split('*').join(' — ')))}
+          {highlightMatches(
+            removeTashkeel(cleanSearchResponseText(result.content_snippet.split('*').join(' — '))),
+            searchQuery
+          )}
         </p>
       </div>
     </Link>
@@ -261,6 +301,7 @@ const SearchResultsList = ({
           <SearchResultItem
             key={`page-${result._pageIndex}-item-${result._resultIndex}-id-${result.id}`}
             result={result}
+            searchQuery={query} // Pass the query as a prop
           />
         ))}
 
@@ -346,29 +387,19 @@ const SearchResultsContainer = ({
 
 // Main Component
 export default function SearchClientPage() {
-  const searchParams = useSearchParams();
-  const { searchQuery, setSearchQuery } = useNavStore();
-  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const { ref, inView } = useInView();
   const [searchError, setSearchError] = useState<string | null>(null);
 
-  const query = searchParams.get('q') || searchQuery;
-
-  useEffect(() => {
-    if (query) {
-      setSearchQuery(query);
-    }
-  }, [query, setSearchQuery]);
-
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
-    queryKey: ['search-poems', query],
+    queryKey: ['search-poems', searchQuery],
     queryFn: ({ pageParam = 1 }: { pageParam?: number }) =>
-      searchPoems(query, pageParam.toString()),
+      searchPoems(searchQuery, pageParam.toString()),
     getNextPageParam: (lastPage) =>
       lastPage.data.pagination?.hasNextPage
         ? Number(lastPage.data.pagination.currentPage) + 1
         : undefined,
-    enabled: query.length > 1 && isArabicText(query),
+    enabled: searchQuery.length > 1 && isArabicText(searchQuery),
     staleTime: 1000 * 60 * 60,
     initialPageParam: 1,
   });
@@ -416,9 +447,8 @@ export default function SearchClientPage() {
 
     // If validation passes
     setSearchError(null);
-    const sanitizedQuery = sanitizeArabicText(searchQuery.trim());
+    const sanitizedQuery = sanitizeArabicText(searchQuery.trim().slice(0, 50));
     setSearchQuery(sanitizedQuery); // Now sanitize when submitting
-    router.push(`/?q=${encodeURIComponent(sanitizedQuery)}`);
   };
 
   return (
@@ -440,7 +470,7 @@ export default function SearchClientPage() {
         {/* Search results */}
         <div className="mt-6">
           <SearchResultsContainer
-            query={query}
+            query={searchQuery}
             status={status}
             data={data}
             allResults={allResults}
