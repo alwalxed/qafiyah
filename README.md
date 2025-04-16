@@ -1,84 +1,85 @@
-# Turborepo starter
+# Qafiyah (قافية)
 
-This Turborepo starter is maintained by the Turborepo core team.
+A non-profit open-source platform for Arabic poetry preservation and accessibility.
 
-## Using this example
+## Project Overview
 
-Run the following command:
+- **Website**: [qafiyah.com](https://qafiyah.com)
+- **API**: [api.qafiyah.com](https://api.qafiyah.com)
+- **Twitter**: [qafiyahdotcom](https://twitter.com/qafiyahdotcom)
+- **DB Dumps**: [github.com/alwalxed/qafiyah/.db_dumps](https://github.com/alwalxed/qafiyah/.db_dumps)
 
-```sh
-npx create-turbo@latest
-```
+> **Important**: No need to scrape the website or API. All data is freely available in the database dumps.
 
-## What's inside?
+## Architecture
 
-This Turborepo includes the following packages/apps:
+This monorepo contains:
 
-### Apps and Packages
+- **Web**: Nextjs app running on Cloudflare Pages (Edge)
+- **API**: Hono-based Cloudflare Worker
+- **Bot**: Twitter bot posting poems every 30 minutes
+- **Packages**: Shared Zod schemas, ESLint configs, and TypeScript configs
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Tech Stack
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- **Frontend**: Nextjs, React Query
+- **Backend**: Hono, Cloudflare Workers
+- **Database**: Supabase PostgreSQL with Drizzle ORM
+- **Search-Endpoint**: AWS EC2 instance with materialized views
 
-### Utilities
+## Development
 
-This Turborepo has some additional tools already setup for you:
+```bash
+# Install dependencies
+pnpm install
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+# Run development server
+pnpm dev
 
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
+# Build all packages and apps
 pnpm build
 ```
 
-### Develop
+## Database Structure
 
-To develop all apps and packages, run the following command:
+### Poems Table
 
-```
-cd my-turborepo
-pnpm dev
-```
+| Column   | Type    | Description           |
+| -------- | ------- | --------------------- |
+| id       | integer | Primary key           |
+| title    | text    | Poem title            |
+| content  | text    | Full poem text        |
+| slug     | uuid    | URL identifier        |
+| poet_id  | integer | Foreign key to poets  |
+| meter_id | integer | Foreign key to meters |
+| theme_id | integer | Foreign key to themes |
+| rhyme_id | integer | Foreign key to rhymes |
+| type_id  | integer | Foreign key to types  |
 
-### Remote Caching
+### Poets Table
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+| Column | Type    | Description         |
+| ------ | ------- | ------------------- |
+| id     | integer | Primary key         |
+| name   | text    | Poet name           |
+| slug   | text    | URL identifier      |
+| era_id | integer | Foreign key to eras |
+| bio    | text    | Poet biography      |
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+### Other Tables
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+- **Themes**: Poetry themes categorization
+- **Meters**: Arabic poetry meters
+- **Eras**: Historical periods
+- **Rhymes**: Rhyming patterns
+- **Types**: Poetry types
 
-```
-cd my-turborepo
-npx turbo login
-```
+Materialized views are used for performance optimization and search functionality.
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## Contributing
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+Contributions are welcomed via pull requests. Feel free to help improve the project.
 
-```
-npx turbo link
-```
+## License
 
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/docs/reference/command-line-reference)
+Open source
