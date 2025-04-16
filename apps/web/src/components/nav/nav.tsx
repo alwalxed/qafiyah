@@ -1,19 +1,16 @@
+'use client';
+
 import { NAV_LINKS } from '@/lib/constants';
-import { forwardRef, type ForwardedRef } from 'react';
+import { useMeasureElement } from '@/store/layout-store';
 import { Logo } from './logo';
 import { MobileMenuButton } from './mobile-menu-button';
 import { NavLinks } from './nav-links';
 
-interface NavProps {
-  className?: string;
-}
+export function Nav() {
+  const navRef = useMeasureElement('nav');
 
-export const Nav = forwardRef(function Nav(
-  { className = '' }: NavProps,
-  ref: ForwardedRef<HTMLElement>
-) {
   return (
-    <header ref={ref} className={`w-full z-10 ${className}`}>
+    <header ref={navRef} className={`w-full z-10`}>
       <div className="w-full border-b border-zinc-200/50 py-4">
         <div className="flex justify-between items-center gap-8">
           {/* LOGO */}
@@ -31,4 +28,4 @@ export const Nav = forwardRef(function Nav(
       </div>
     </header>
   );
-});
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { create } from 'zustand';
 
 type LayoutStore = {
@@ -8,7 +8,6 @@ type LayoutStore = {
   footerHeight: number;
   viewportHeight: number;
   additionalOffset: number;
-
   remainingHeight: number;
 
   setNavHeight: (height: number) => void;
@@ -17,69 +16,110 @@ type LayoutStore = {
   setAdditionalOffset: (offset: number) => void;
 };
 
-export const useLayoutStore = create<LayoutStore>((set, get) => ({
-  navHeight: 0,
-  footerHeight: 0,
-  viewportHeight: typeof window !== 'undefined' ? window.innerHeight : 0,
-  additionalOffset: 0,
+// Helper function to calculate remaining height
+function calculateRemainingHeight(
+  navHeight: number,
+  footerHeight: number,
+  viewportHeight: number,
+  additionalOffset: number
+): number {
+  console.log('Calculating remaining height with:', {
+    navHeight,
+    footerHeight,
+    viewportHeight,
+    additionalOffset,
+  });
+  const calculated = viewportHeight - navHeight - footerHeight - additionalOffset;
+  return calculated > 0 ? calculated : 0;
+}
 
-  get remainingHeight() {
-    const { navHeight, footerHeight, viewportHeight, additionalOffset } = get();
-    const calculated = viewportHeight - navHeight - footerHeight - additionalOffset;
-    return calculated > 0 ? calculated : 0;
-  },
+export const useLayoutStore = create<LayoutStore>((set) => {
+  // Initialize with default values
+  const initialViewportHeight = typeof window !== 'undefined' ? window.innerHeight : 0;
 
-  setNavHeight: (height) =>
-    set((state) => {
-      // Only update if the height has actually changed
-      if (state.navHeight !== height) {
-        return { navHeight: height };
-      }
-      return {};
-    }),
+  return {
+    navHeight: 0,
+    footerHeight: 0,
+    viewportHeight: initialViewportHeight,
+    additionalOffset: 0,
+    remainingHeight: initialViewportHeight, // Start with full height
 
-  setFooterHeight: (height) =>
-    set((state) => {
-      // Only update if the height has actually changed
-      if (state.footerHeight !== height) {
-        return { footerHeight: height };
-      }
-      return {};
-    }),
+    setNavHeight: (height) =>
+      set((state) => {
+        if (state.navHeight !== height) {
+          console.log('Setting nav height:', height);
+          const remainingHeight = calculateRemainingHeight(
+            height,
+            state.footerHeight,
+            state.viewportHeight,
+            state.additionalOffset
+          );
+          return { navHeight: height, remainingHeight };
+        }
+        return {};
+      }),
 
-  setViewportHeight: (height) =>
-    set((state) => {
-      // Only update if the height has actually changed
-      if (state.viewportHeight !== height) {
-        return { viewportHeight: height };
-      }
-      return {};
-    }),
+    setFooterHeight: (height) =>
+      set((state) => {
+        if (state.footerHeight !== height) {
+          console.log('Setting footer height:', height);
+          const remainingHeight = calculateRemainingHeight(
+            state.navHeight,
+            height,
+            state.viewportHeight,
+            state.additionalOffset
+          );
+          return { footerHeight: height, remainingHeight };
+        }
+        return {};
+      }),
 
-  setAdditionalOffset: (offset) =>
-    set((state) => {
-      // Only update if the offset has actually changed
-      if (state.additionalOffset !== offset) {
-        return { additionalOffset: offset };
-      }
-      return {};
-    }),
-}));
+    setViewportHeight: (height) =>
+      set((state) => {
+        if (state.viewportHeight !== height) {
+          console.log('Setting viewport height:', height);
+          const remainingHeight = calculateRemainingHeight(
+            state.navHeight,
+            state.footerHeight,
+            height,
+            state.additionalOffset
+          );
+          return { viewportHeight: height, remainingHeight };
+        }
+        return {};
+      }),
+
+    setAdditionalOffset: (offset) =>
+      set((state) => {
+        if (state.additionalOffset !== offset) {
+          const remainingHeight = calculateRemainingHeight(
+            state.navHeight,
+            state.footerHeight,
+            state.viewportHeight,
+            offset
+          );
+          return { additionalOffset: offset, remainingHeight };
+        }
+        return {};
+      }),
+  };
+});
 
 /**
  * Hook to measure an element and update its height in the layout store
  */
 export function useMeasureElement(elementType: 'nav' | 'footer') {
+  const setNavHeight = useLayoutStore((state) => state.setNavHeight);
+  const setFooterHeight = useLayoutStore((state) => state.setFooterHeight);
+  const [measured, setMeasured] = useState(false);
+
   // Store the previous height to avoid unnecessary updates
   const prevHeightRef = useRef<number>(0);
   // Store the ResizeObserver instance for cleanup
   const observerRef = useRef<ResizeObserver | null>(null);
 
   // Get the setter function based on element type
-  const setter =
-    elementType === 'nav'
-      ? useLayoutStore.getState().setNavHeight
-      : useLayoutStore.getState().setFooterHeight;
+  const setter = elementType === 'nav' ? setNavHeight : setFooterHeight;
 
   // Create a callback ref function
   const refCallback = (element: HTMLElement | null) => {
@@ -92,17 +132,19 @@ export function useMeasureElement(elementType: 'nav' | 'footer') {
     if (!element) return;
 
     const updateHeight = () => {
-      const height = element.offsetHeight || 0;
+      const height = element.getBoundingClientRect().height;
 
       // Only update if the height has changed
-      if (height !== prevHeightRef.current) {
+      if (height !== prevHeightRef.current || !measured) {
+        console.log(`Measured ${elementType} height:`, height);
         prevHeightRef.current = height;
         setter(height);
+        setMeasured(true);
       }
     };
 
-    // Initial measurement
-    updateHeight();
+    // Initial measurement - use setTimeout to ensure the element is fully rendered
+    setTimeout(updateHeight, 0);
 
     // Set up resize observer for dynamic height changes
     observerRef.current = new ResizeObserver(() => {
@@ -130,6 +172,7 @@ export function useMeasureElement(elementType: 'nav' | 'footer') {
  * Hook to update viewport height on resize
  */
 export function useViewportHeight() {
+  const setViewportHeight = useLayoutStore((state) => state.setViewportHeight);
   const prevHeightRef = useRef<number>(0);
 
   useEffect(() => {
@@ -138,13 +181,14 @@ export function useViewportHeight() {
 
       // Only update if the height has changed
       if (height !== prevHeightRef.current) {
+        console.log('Setting viewport height:', height);
         prevHeightRef.current = height;
-        useLayoutStore.getState().setViewportHeight(height);
+        setViewportHeight(height);
       }
     };
 
-    // Initial height
-    updateViewportHeight();
+    // Initial height - use setTimeout to ensure it runs after the component mounts
+    setTimeout(updateViewportHeight, 0);
 
     // Throttle resize events
     let timeoutId: NodeJS.Timeout;
@@ -159,5 +203,28 @@ export function useViewportHeight() {
       window.removeEventListener('resize', handleResize);
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [setViewportHeight]);
+}
+
+/**
+ * Debug hook to log layout store values
+ */
+export function useLayoutDebug() {
+  const store = useLayoutStore();
+
+  useEffect(() => {
+    console.log('Layout store values:', {
+      navHeight: store.navHeight,
+      footerHeight: store.footerHeight,
+      viewportHeight: store.viewportHeight,
+      additionalOffset: store.additionalOffset,
+      remainingHeight: store.remainingHeight,
+    });
+  }, [
+    store.navHeight,
+    store.footerHeight,
+    store.viewportHeight,
+    store.additionalOffset,
+    store.remainingHeight,
+  ]);
 }

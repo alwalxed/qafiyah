@@ -10,6 +10,7 @@ import { isArabicText } from '@/utils/is-arabic-text';
 import { sanitizeArabicText } from '@/utils/sanitize-arabic-text';
 import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query';
 // Import the Equal icon from lucide-react
+import { useLayoutStore, useViewportHeight } from '@/store/layout-store';
 import { CircleCheck, Eraser, Loader2, Search, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -532,9 +533,14 @@ export default function SearchClientPage() {
     lastSubmittedQueryRef.current = sanitizedQuery;
   };
 
+  useViewportHeight();
+
+  // Get the remaining height from the store
+  const { remainingHeight, viewportHeight } = useLayoutStore();
   return (
-    <main className="w-full min-h-screen">
+    <div style={{ height: `${viewportHeight}px` }} className="w-full bg-blue-200">
       <div className="max-w-4xl mx-auto px-1">
+        <div style={{ height: viewportHeight }} className={`bg-red-200 w-2 absolute top-0`}></div>
         {/* Header */}
         <SearchHeader />
 
@@ -568,6 +574,6 @@ export default function SearchClientPage() {
           />
         </div>
       </div>
-    </main>
+    </div>
   );
 }
