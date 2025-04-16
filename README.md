@@ -7,9 +7,9 @@ A non-profit open-source platform for Arabic poetry preservation and accessibili
 - **Website**: [qafiyah.com](https://qafiyah.com)
 - **API**: [api.qafiyah.com](https://api.qafiyah.com)
 - **Twitter**: [qafiyahdotcom](https://twitter.com/qafiyahdotcom)
-- **DB Dumps**: [github.com/alwalxed/qafiyah/.db_dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps)
+- **DB Dumps**: [github.com/alwalxed/qafiyah/tree/main/.db_dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps)
 
-> **Important**: No need to scrape the website or API. All data is freely available in the database dumps.
+> **Important**: No need to scrape the website or API. All data is freely available in the [database dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps).
 
 ## Architecture
 
