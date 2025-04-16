@@ -12,7 +12,7 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
   return (
     <footer
       ref={ref}
-      className="w-full flex justify-between items-center pb-8 lg:pb-4 py-4 text-xs xss:text-sm md:text-base xl:text-lg border-t border-zinc-200/50 text-zinc-700/90 gap-4"
+      className="w-full flex justify-between items-center py-4 text-xs xss:text-sm md:text-base xl:text-lg border-t border-zinc-200/50 text-zinc-700/90 gap-4"
     >
       <div className="flex md:gap-3 gap-[6px]">
         <a
