@@ -14,7 +14,7 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
       ref={ref}
       className="w-full flex justify-between items-center pb-8 lg:pb-4 py-4 text-xs xss:text-sm md:text-base xl:text-lg border-t border-zinc-200/50 text-zinc-700/90 gap-4"
     >
-      <div className="flex md:gap-3 gap-[2px]">
+      <div className="flex md:gap-3 gap-[6px]">
         <a
           className="hover:cursor-pointer hover:underline"
           href={`https://x.com/${TWITTER_HANDLE}`}
