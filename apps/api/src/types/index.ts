@@ -2,8 +2,7 @@ import type { NeonClient, NeonDatabase } from "drizzle-orm/neon-serverless";
 
 export type Bindings = {
   DATABASE_URL: string;
-  UPSTASH_REDIS_REST_URL: string;
-  UPSTASH_REDIS_REST_TOKEN: string;
+  SEARCH_DATABASE_URL: string;
 };
 
 export type AppContext = {

@@ -3,7 +3,7 @@ main = "src/app.ts"
 compatibility_date = "2025-04-12"
 
 # Uncomment these sections as needed
-# compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat"]
 
 # [vars]
 # MY_VAR = "my-variable"

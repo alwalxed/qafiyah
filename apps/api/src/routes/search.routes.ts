@@ -1,21 +1,26 @@
 import { zValidator } from "@hono/zod-validator";
-import { searchRequestSchema, searchResultSchema } from "@qaf/zod-schemas";
+import { searchRequestSchema } from "@qaf/zod-schemas";
 import { createValidatedResponse } from "@qaf/zod-schemas/server";
-import { sql } from "drizzle-orm";
 import { Hono } from "hono";
+import postgres from "postgres";
 import type { AppContext } from "../types";
-
-const MAX_RESULTS_PER_PAGE = 10;
 
 const app = new Hono<AppContext>().get(
   "/",
   zValidator("query", searchRequestSchema),
   async (c) => {
     try {
-      const { q, page } = c.req.valid("query");
-      const db = c.get("db");
+      const { q, page, exact } = c.req.valid("query");
+      const exactMatch = exact === "true";
 
-      // Keep only Arabic letters and spaces, remove everything else
+      const sqlClient = postgres(c.env.SEARCH_DATABASE_URL, {
+        prepare: false,
+        max: 3,
+        idle_timeout: 20,
+        connect_timeout: 10,
+        fetch_types: false,
+      });
+
       const sanitizedQuery = q
         .trim()
         .replace(
@@ -25,99 +30,70 @@ const app = new Hono<AppContext>().get(
         .replace(/\s+/g, " ")
         .trim();
 
-      // Convert to tsquery format (words connected by &)
-      const searchQuery = sanitizedQuery
-        .split(/\s+/)
-        .filter(Boolean)
-        .join(" & ");
-
-      if (!searchQuery) {
-        // Return empty results with pagination
-        const emptyResponse = createValidatedResponse("search", {
-          results: [],
-          pagination: {
-            currentPage: page,
-            totalPages: 0,
-            totalResults: 0,
-            hasNextPage: false,
-            hasPrevPage: page > 1,
+      if (!sanitizedQuery) {
+        return c.json({
+          success: true,
+          data: {
+            results: [],
+            pagination: {
+              currentPage: page,
+              totalPages: 0,
+              totalResults: 0,
+              hasNextPage: false,
+              hasPrevPage: page > 1,
+            },
           },
         });
-
-        return c.json(emptyResponse);
       }
 
-      // Execute search query
-      const searchResults = await db.execute(
-        sql`SELECT * FROM search_poems(${searchQuery}::text, ${page}::int, ${MAX_RESULTS_PER_PAGE}::int)`
-      );
+      const searchResults = await sqlClient`
+  SELECT * FROM search_poems(${sanitizedQuery}, ${page}, ${exactMatch})
+`;
 
-      // Get total count
-      const countResult = await db.execute(
-        sql`SELECT count_search_poems(${searchQuery}::text) as total`
-      );
+      // Get the total count from the first result (all rows have the same total_result_count)
+      const totalResults =
+        searchResults.length > 0
+          ? Number(searchResults[0]?.total_result_count)
+          : 0;
+      const resultsPerPage = 5; // This should match the value in your search_poems function
+      const totalPages = Math.ceil(totalResults / resultsPerPage);
 
-      // Extract the total count safely
-      let totalResults = 0;
-      if (countResult?.rows?.[0]?.total !== undefined) {
-        totalResults = Number(countResult.rows[0].total);
-      }
+      const formattedResults = searchResults.map((result: any) => ({
+        id: result.id ?? null,
+        title: result.poem_title ?? null,
+        slug: result.poem_slug ?? null,
+        content_snippet: result.poem_snippet ?? null,
+        poet_name: result.poet_name ?? null,
+        poet_slug: result.poet_slug ?? null,
+        meter_name: result.poem_meter ?? null,
+        era_name: result.poet_era ?? null,
+      }));
 
-      const totalPages = Math.ceil(totalResults / MAX_RESULTS_PER_PAGE);
-
-      // Format and validate results
-      const formattedResults = [];
-
-      if (searchResults?.rows?.length) {
-        for (const result of searchResults.rows) {
-          try {
-            // Parse each result through the schema
-            const validatedResult = searchResultSchema.parse({
-              id: Number(result.id || 0),
-              title: String(result.title || ""),
-              slug: String(result.slug || ""),
-              content_snippet: String(result.content_snippet || ""),
-              poet_name: String(result.poet_name || ""),
-              poet_slug: String(result.poet_slug || ""),
-              meter_name: result.meter_name ? String(result.meter_name) : null,
-              era_name: result.era_name ? String(result.era_name) : null,
-            });
-
-            formattedResults.push(validatedResult);
-          } catch (parseError) {
-            console.error("Failed to validate search result:", parseError);
-            // Skip invalid results instead of failing the entire request
-          }
-        }
-      }
-
-      // Create pagination metadata
-      const paginationMeta = {
-        currentPage: Number(page),
-        totalPages: Number(totalPages),
-        totalResults: Number(totalResults),
-        hasNextPage: Boolean(page < totalPages),
-        hasPrevPage: Boolean(page > 1),
+      const pagination = {
+        currentPage: page,
+        totalPages: totalPages,
+        totalResults: totalResults,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
       };
 
-      // Create and validate the response using the utility
-      const response = createValidatedResponse("search", {
+      const data = {
         results: formattedResults,
-        pagination: paginationMeta,
-      });
+        pagination,
+      };
+
+      const response = createValidatedResponse("search", data);
 
       return c.json(response);
     } catch (error) {
-      console.error("Search route error:", error);
+      console.error("Search error:", error);
 
-      // Log more details about the error
       if (error instanceof Error) {
         console.error("Error name:", error.name);
         console.error("Error message:", error.message);
         console.error("Error stack:", error.stack);
       }
 
-      // Return a structured error response
       return c.json(
         {
           success: false,
@@ -129,5 +105,4 @@ const app = new Hono<AppContext>().get(
     }
   }
 );
-
 export default app;

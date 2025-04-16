@@ -116,12 +116,12 @@ export type NavLink = {
 export type Poets = Poet[];
 
 export type SearchResult = {
-  id: number;
+  id: number | null;
   title: string;
   slug: string;
   content_snippet: string;
   poet_name: string;
-  poet_slug: string;
+  poet_slug: string | null;
   meter_name: string | null;
   era_name: string | null;
 };

@@ -23,9 +23,10 @@ export const queries = {
   // Search
   async searchPoems(
     query: string,
-    page: string = '1'
+    page: string = '1',
+    exact: string = 'false'
   ): Promise<{ data: SearchResponseData; pagination?: PaginationMeta }> {
-    return client.searchPoems(query, page);
+    return client.searchPoems(query, page, exact);
   },
 
   // Eras

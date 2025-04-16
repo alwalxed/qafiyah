@@ -4,13 +4,13 @@ import type React from 'react';
 
 import { searchPoems } from '@/lib/api/queries';
 import type { PaginationMeta, SearchResponseData } from '@/lib/api/types';
-import { responsiveIconSize } from '@/lib/constants';
-import { removeTashkeel, toArabicDigits } from '@/lib/utils';
+import { cn, removeTashkeel, toArabicDigits } from '@/lib/utils';
 import { cleanSearchResponseText } from '@/utils/clean-search-response-text';
 import { isArabicText } from '@/utils/is-arabic-text';
 import { sanitizeArabicText } from '@/utils/sanitize-arabic-text';
 import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query';
-import { Loader2, Search, X } from 'lucide-react';
+// Import the Equal icon from lucide-react
+import { CircleCheck, Eraser, Loader2, Search, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -30,8 +30,12 @@ type SearchFormProps = {
   searchError: string | null;
   setSearchError: (error: string | null) => void;
   resetSearchResults: () => void;
+  exactSearch: boolean;
+  setExactSearch: (exact: boolean) => void;
 };
 
+// Update the SearchForm component to show the Equal icon only when there's text
+// and to reset exactSearch when text is cleared
 const SearchForm = ({
   searchQuery,
   setSearchQuery,
@@ -40,6 +44,8 @@ const SearchForm = ({
   searchError,
   setSearchError,
   resetSearchResults,
+  exactSearch,
+  setExactSearch,
 }: SearchFormProps) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -61,7 +67,18 @@ const SearchForm = ({
       resetSearchResults();
       previousQueryRef.current = searchQuery;
     }
-  }, [searchQuery, setSearchError, resetSearchResults]);
+
+    // Reset exactSearch when text is cleared
+    if (!searchQuery) {
+      setExactSearch(false);
+    }
+  }, [searchQuery, setSearchError, resetSearchResults, setExactSearch]);
+
+  // Custom function to handle clearing the search
+  const handleClear = () => {
+    handleSearchClearClick();
+    setExactSearch(false); // Reset exact search when clearing
+  };
 
   return (
     <div className="mb-10">
@@ -86,21 +103,48 @@ const SearchForm = ({
             dir="rtl"
           />
 
+          {/* Show Equal icon for exact search only when there's text */}
           {searchQuery && (
             <button
               type="button"
-              onClick={handleSearchClearClick}
+              onClick={() => setExactSearch(!exactSearch)}
+              className={`absolute inset-y-0 left-12 flex items-center pl-2 transition-colors duration-200 z-10 ${
+                exactSearch ? 'text-blue-600' : 'text-zinc-400 hover:text-zinc-700'
+              }`}
+              aria-label={exactSearch ? 'بحث تقريبي' : 'بحث مطابق'}
+              title={exactSearch ? 'بحث مطابق (مفعّل)' : 'بحث مطابق'}
+            >
+              <CircleCheck className="size-5" />
+            </button>
+          )}
+
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={handleClear}
               className="absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400 hover:text-zinc-700 transition-colors duration-200 z-10"
               aria-label="مسح البحث"
             >
-              <X className={responsiveIconSize} />
+              <Eraser className="size-5" />
             </button>
           )}
         </form>
 
         {searchError && (
-          <div className="mt-2 text-right text-red-500 text-sm absolute w-full" dir="rtl">
+          <div
+            className={cn('mt-2 text-right text-red-500 text-sm absolute w-full', {
+              'text-left': exactSearch,
+            })}
+            dir="rtl"
+          >
             {searchError}
+          </div>
+        )}
+
+        {/* Add a small indicator for exact search mode */}
+        {exactSearch && searchQuery && (
+          <div className="mt-2 text-right text-xs text-blue-600 absolute right-0" dir="rtl">
+            <span className="bg-blue-50 px-2 py-0.5 rounded-full">بحث مطابق</span>
           </div>
         )}
       </div>
@@ -174,12 +218,12 @@ const SearchResultsHeader = ({ totalResults, query }: SearchResultsHeaderProps) 
 interface SearchResult {
   _pageIndex: number;
   _resultIndex: number;
-  id: number;
+  id: number | null;
   title: string;
   slug: string;
   content_snippet: string;
   poet_name: string;
-  poet_slug: string;
+  poet_slug: string | null;
   meter_name: string | null;
   era_name: string | null;
 }
@@ -404,11 +448,12 @@ export default function SearchClientPage() {
   const [searchTrigger, setSearchTrigger] = useState<string>('');
   const [isTypingNewQuery, setIsTypingNewQuery] = useState<boolean>(false);
   const lastSubmittedQueryRef = useRef<string>('');
+  const [exactSearch, setExactSearch] = useState<boolean>(false);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
-    queryKey: ['search-poems', searchTrigger],
+    queryKey: ['search-poems', searchTrigger, exactSearch],
     queryFn: ({ pageParam = 1 }: { pageParam?: number }) =>
-      searchPoems(searchTrigger, pageParam.toString()),
+      searchPoems(searchTrigger, pageParam.toString(), exactSearch ? 'true' : 'false'),
     getNextPageParam: (lastPage) =>
       lastPage.data.pagination?.hasNextPage
         ? Number(lastPage.data.pagination.currentPage) + 1
@@ -444,11 +489,13 @@ export default function SearchClientPage() {
 
   const totalResults = data?.pages[0]?.data.pagination.totalResults || 0;
 
+  // Update the handleSearchClearClick function in the main component to also reset exactSearch
   const handleSearchClearClick = () => {
     setSearchQuery('');
     setSearchTrigger('');
     setSearchError(null);
     setIsTypingNewQuery(false);
+    setExactSearch(false); // Reset exact search when clearing
     lastSubmittedQueryRef.current = '';
   };
 
@@ -500,6 +547,8 @@ export default function SearchClientPage() {
           searchError={searchError}
           setSearchError={setSearchError}
           resetSearchResults={resetSearchResults}
+          exactSearch={exactSearch}
+          setExactSearch={setExactSearch}
         />
 
         {/* Search results */}

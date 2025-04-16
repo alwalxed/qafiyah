@@ -24,13 +24,14 @@ const apiClient = (baseUrl: string) => {
     // Search
     async searchPoems(
       query: string,
-      page: string = '1'
+      page: string = '1',
+      exact: string = 'false'
     ): Promise<{ data: SearchResponseData; pagination?: PaginationMeta }> {
-      const validParams = validateParams('search', { q: query, page });
+      const validParams = validateParams('search', { q: query, page, exact });
 
       const response = await fetchWithValidation(
         'search',
-        `${baseUrl}/search?q=${encodeURIComponent(validParams.q)}&page=${validParams.page}`
+        `${baseUrl}/search?q=${encodeURIComponent(validParams.q)}&page=${validParams.page}&exact=${validParams.exact}`
       );
 
       return {

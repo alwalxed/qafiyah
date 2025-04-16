@@ -214,10 +214,9 @@ const app = new Hono<AppContext>()
   .get("/poets", async (c) => {
     const db = c.get("db");
     const totalPoetsResult = await db
-      .select()
-      .from(poetStatsMaterialized)
-      .limit(1);
-    const totalPoets = totalPoetsResult[0]?.totalPoets || 0;
+      .select({ count: sql`count(*)` })
+      .from(poetStatsMaterialized);
+    const totalPoets = Number(totalPoetsResult[0]?.count) || 0;
 
     // Calculate total pages for poets based on actual FETCH_PER_PAGE
     const totalPoetPages = Math.ceil(totalPoets / FETCH_PER_PAGE);
@@ -236,7 +235,7 @@ const app = new Hono<AppContext>()
     // Create entries for individual poet pages
     const poetEntries = poets.flatMap((poet) => {
       // Calculate total pages for this poet's poems based on actual FETCH_PER_PAGE
-      const totalPages = Math.ceil(poet.poemCount / FETCH_PER_PAGE);
+      const totalPages = Math.ceil(poet.poemsCount / FETCH_PER_PAGE);
 
       // Create an array of entries for each page of this poet's poems
       return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
