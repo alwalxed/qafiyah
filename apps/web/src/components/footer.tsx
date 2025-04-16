@@ -35,7 +35,7 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
         <p>•</p>
         <a
           className="hover:cursor-pointer hover:underline"
-          href={`https://github.com/alwalxed/qafiyah-turborepo`}
+          href={`https://github.com/alwalxed/qafiyah/tree/main/.db_dumps`}
           target="_blank"
           rel="noreferrer"
         >
