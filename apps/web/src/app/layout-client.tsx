@@ -19,15 +19,14 @@ export function RootLayoutClient({
   useLayoutMeasurements({ navRef, footerRef });
 
   const { remainingHeight } = useLayoutStore();
+
+  const minHeight = remainingHeight === 0 ? '86svh' : `${remainingHeight}px`;
   return (
     <div className="justify-start items-center flex flex-col relative overflow-x-hidden text-zinc-950 w-full px-4 md:px-20 lg:px-40 xl:px-60 2xl:px-80">
       <Providers>
         <Nav ref={navRef} />
         <MobileMenu />
-        <main
-          style={{ minHeight: remainingHeight }}
-          className="min-h-[80svh] w-full flex justify-center items-center"
-        >
+        <main style={{ minHeight }} className="w-full flex justify-center items-start">
           {children}
         </main>
         <Footer ref={footerRef} />

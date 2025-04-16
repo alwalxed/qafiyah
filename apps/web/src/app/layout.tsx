@@ -80,7 +80,7 @@ export default function RootLayout({
       style={{ fontFamily: 'IBMPlexSansArabic' }}
       className={`overflow-x-hidden bg-zinc-50 text-zinc-950 w-full ${isDev ? 'debug-screens' : ''}`}
     >
-      <body>
+      <body className="min-h-[80svh]">
         <RootLayoutClient>{children}</RootLayoutClient>
       </body>
     </html>

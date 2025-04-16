@@ -5,23 +5,44 @@ import { forwardRef } from 'react';
 import { getArabicYear } from '../utils/get-arabic-year';
 
 const FOOTER_TITLE = 'قافية';
-const FOOTER_SYMBOL = '©';
+const FOOTER_SYMBOL = '/';
 const FOOTER_YEAR = getArabicYear();
 
 export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
   return (
     <footer
       ref={ref}
-      className="flex justify-between items-center pb-8 lg:pb-4 py-4 text-xs xss:text-sm md:text-base xl:text-lg border-t border-zinc-200/50 text-zinc-700/80 gap-4"
+      className="w-full flex justify-between items-center pb-8 lg:pb-4 py-4 text-xs xss:text-sm md:text-base xl:text-lg border-t border-zinc-200/50 text-zinc-700/90 gap-4"
     >
-      <a
-        className="hover:cursor-pointer hover:underline"
-        href={`https://x.com/${TWITTER_HANDLE}`}
-        target="_blank"
-        rel="noreferrer"
-      >
-        تويتر
-      </a>
+      <div className="flex gap-3">
+        <a
+          className="hover:cursor-pointer hover:underline"
+          href={`https://x.com/${TWITTER_HANDLE}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          تويترنا
+        </a>
+        <p>•</p>
+        <a
+          className="hover:cursor-pointer hover:underline"
+          href={`https://github.com/alwalxed/qafiyah-turborepo`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          كود الموقع
+        </a>
+        <p>•</p>
+        <a
+          className="hover:cursor-pointer hover:underline"
+          href={`https://github.com/alwalxed/qafiyah-turborepo`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          قاعدة البيانات
+        </a>
+      </div>
+
       <p>{`${FOOTER_TITLE} ${FOOTER_SYMBOL} ${FOOTER_YEAR}`}</p>
     </footer>
   );

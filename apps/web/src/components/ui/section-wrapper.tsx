@@ -49,7 +49,7 @@ export function SectionPaginationControllers({
   hasPrevPage,
 }: SectionPaginationControllersProps) {
   return (
-    <nav className="flex flex-row md:flex-row-reverse w-full justify-between items-center gap-4 text-base md:text-lg mt-8">
+    <nav className="flex flex-row-reverse w-full justify-between items-center gap-4 text-base md:text-lg mt-8">
       <PaginationLink href={nextPageUrl} isDisabled={!hasNextPage} prefetch={hasNextPage}>
         {'التالي'}
       </PaginationLink>
