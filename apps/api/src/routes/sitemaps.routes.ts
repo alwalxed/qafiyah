@@ -3,6 +3,7 @@ import { sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import {
+  API_URL,
   FETCH_PER_PAGE,
   MAX_URLS_PER_SITEMAP,
   NAV_LINKS,
@@ -38,34 +39,34 @@ const app = new Hono<AppContext>()
 
     const sitemapEntries = [
       {
-        url: `${SITE_URL}/sitemaps/nav`,
+        url: `${API_URL}/sitemaps/nav`,
         lastmod: new Date().toISOString(),
       },
       {
-        url: `${SITE_URL}/sitemaps/poets`,
+        url: `${API_URL}/sitemaps/poets`,
         lastmod: new Date().toISOString(),
       },
       {
-        url: `${SITE_URL}/sitemaps/eras`,
+        url: `${API_URL}/sitemaps/eras`,
         lastmod: new Date().toISOString(),
       },
       {
-        url: `${SITE_URL}/sitemaps/meters`,
+        url: `${API_URL}/sitemaps/meters`,
         lastmod: new Date().toISOString(),
       },
       {
-        url: `${SITE_URL}/sitemaps/rhymes`,
+        url: `${API_URL}/sitemaps/rhymes`,
         lastmod: new Date().toISOString(),
       },
       {
-        url: `${SITE_URL}/sitemaps/themes`,
+        url: `${API_URL}/sitemaps/themes`,
         lastmod: new Date().toISOString(),
       },
     ];
 
     for (let i = 1; i <= totalPoemSitemaps; i++) {
       sitemapEntries.push({
-        url: `${SITE_URL}/sitemaps/poems/${i}`,
+        url: `${API_URL}/sitemaps/poems/${i}`,
         lastmod: new Date().toISOString(),
       });
     }
@@ -397,7 +398,7 @@ const app = new Hono<AppContext>()
 
     // Create sitemap index entries
     const sitemapEntries = Array.from({ length: totalSitemaps }, (_, i) => ({
-      url: `${SITE_URL}/sitemaps/poems/${i + 1}`,
+      url: `${API_URL}/sitemaps/poems/${i + 1}`,
       lastmod: new Date().toISOString(),
     }));
 

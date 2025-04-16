@@ -68,6 +68,7 @@ export const MAX_EXCERPT_LENGTH = 280;
 export const DOMAIN = "qafiyah.com";
 export const SITE_NAME = "قافية";
 export const SITE_URL = `https://${DOMAIN}`;
+export const API_URL = `https://api.${DOMAIN}`;
 export const TWITTER_HANDLE = "@qafiyahdotcom";
 
 export const defaultMetadata = {
