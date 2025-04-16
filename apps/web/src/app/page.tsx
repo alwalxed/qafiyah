@@ -1,4 +1,4 @@
-import SearchClientPage from './client';
+import { SearchClientPage } from './page-client';
 
 export default function Page() {
   return <SearchClientPage />;

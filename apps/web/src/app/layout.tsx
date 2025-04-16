@@ -1,8 +1,8 @@
 import { defaultMetadata, isDev, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/lib/constants';
-import { Providers } from '@/providers/react-query';
 import type { Metadata, Viewport } from 'next';
 import type React from 'react';
 import './globals.css';
+import { RootLayoutClient } from './layout-client';
 
 export const metadata: Metadata = {
   title: defaultMetadata.title,
@@ -77,19 +77,11 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`w-full overflow-x-hidden ${isDev ? 'debug-screens' : ''}`}
+      style={{ fontFamily: 'IBMPlexSansArabic' }}
+      className={`overflow-x-hidden bg-zinc-50 text-zinc-950 w-full ${isDev ? 'debug-screens' : ''}`}
     >
-      <body
-        style={{ fontFamily: 'IBMPlexSansArabic' }}
-        className="flex flex-col relative overflow-x-hidden bg-zinc-50 text-zinc-950 w-full px-4 gap-10 xs:gap-20 md:gap-24 lg:gap-28 xl:gap-32 md:px-20 lg:px-40 xl:px-60 2xl:px-80"
-      >
-        <Providers>
-          {/* <Nav /> */}
-          {/* <MobileMenu /> */}
-          <main>{children}</main>
-          {/* <Footer /> */}
-          {/* <LayoutDebug /> */}
-        </Providers>
+      <body>
+        <RootLayoutClient>{children}</RootLayoutClient>
       </body>
     </html>
   );

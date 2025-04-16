@@ -1,16 +1,14 @@
 'use client';
 
 import { NAV_LINKS } from '@/lib/constants';
-import { useMeasureElement } from '@/store/layout-store';
+import { forwardRef } from 'react';
 import { Logo } from './logo';
 import { MobileMenuButton } from './mobile-menu-button';
 import { NavLinks } from './nav-links';
 
-export function Nav() {
-  const navRef = useMeasureElement('nav');
-
+export const Nav = forwardRef<HTMLElement>(function Nav(_props, ref) {
   return (
-    <header ref={navRef} className={`w-full z-10`}>
+    <header ref={ref} className={`w-full z-10`}>
       <div className="w-full border-b border-zinc-200/50 py-4">
         <div className="flex justify-between items-center gap-8">
           {/* LOGO */}
@@ -28,4 +26,4 @@ export function Nav() {
       </div>
     </header>
   );
-}
+});

@@ -1,6 +1,7 @@
 'use client';
 
 import { toArabicDigits } from '@/lib/utils';
+import { useLayoutStore } from '@/store/layout-store';
 import { Minus, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
 import { useState } from 'react';
@@ -44,8 +45,13 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
     return { gap: `${gapSize}px` };
   };
 
+  const { remainingHeight } = useLayoutStore();
+
   return (
-    <article className="w-full flex justify-center items-center">
+    <article
+      style={{ minHeight: remainingHeight }}
+      className="w-full min-h-[80svh] flex justify-center items-center my-14 xs:my-20 lg:my-28"
+    >
       <div className="w-full flex flex-col gap-8 justify-center items-center">
         {/* Header */}
         <header className="flex justify-center items-center flex-col gap-4 xxs:gap-6 text-center w-full">

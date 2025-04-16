@@ -2,15 +2,15 @@
 
 import type React from 'react';
 
+import { NAV_LINKS } from '@/constants/links';
 import { searchPoems } from '@/lib/api/queries';
 import type { PaginationMeta, SearchResponseData } from '@/lib/api/types';
 import { cn, removeTashkeel, toArabicDigits } from '@/lib/utils';
+import { useLayoutStore } from '@/store/layout-store';
 import { cleanSearchResponseText } from '@/utils/clean-search-response-text';
 import { isArabicText } from '@/utils/is-arabic-text';
 import { sanitizeArabicText } from '@/utils/sanitize-arabic-text';
 import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query';
-// Import the Equal icon from lucide-react
-import { useLayoutStore, useViewportHeight } from '@/store/layout-store';
 import { CircleCheck, Eraser, Loader2, Search, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -155,11 +155,20 @@ const SearchForm = ({
 
 const EmptySearchState = () => {
   return (
-    <div className="text-center py-16">
-      <div className="p-8 rounded-2xl max-w-lg mx-auto">
-        <Search className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
-        <h3 className="text-xl font-medium text-zinc-500 mb-2">ابدأ رحلتك الشعرية</h3>
-        <p className="text-zinc-500">ابحث بحرفين فأكثر في أكثر من مليون بيت</p>
+    <div className="flex flex-col justify-center items-center h-[40svh]">
+      <div className="grid grid-cols-3 gap-4 w-full h-full">
+        {NAV_LINKS.map(
+          (link) =>
+            link.external !== true && (
+              <a
+                key={link.href}
+                href={link.href}
+                className="bg-zinc-100/50 border border-zinc-300/40 rounded-md justify-center items-center flex"
+              >
+                {link.name}
+              </a>
+            )
+        )}
       </div>
     </div>
   );
@@ -442,7 +451,7 @@ const SearchResultsContainer = ({
 };
 
 // Main Component
-export default function SearchClientPage() {
+export function SearchClientPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const { ref, inView } = useInView();
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -533,14 +542,13 @@ export default function SearchClientPage() {
     lastSubmittedQueryRef.current = sanitizedQuery;
   };
 
-  useViewportHeight();
-
-  // Get the remaining height from the store
-  const { remainingHeight, viewportHeight } = useLayoutStore();
+  const { remainingHeight } = useLayoutStore();
   return (
-    <div style={{ height: `${viewportHeight}px` }} className="w-full bg-blue-200">
-      <div className="max-w-4xl mx-auto px-1">
-        <div style={{ height: viewportHeight }} className={`bg-red-200 w-2 absolute top-0`}></div>
+    <div
+      className="w-full flex justify-center items-center min-h-[80svh]"
+      style={{ minHeight: `${remainingHeight}px` }}
+    >
+      <div className="w-full md:max-w-2xl">
         {/* Header */}
         <SearchHeader />
 

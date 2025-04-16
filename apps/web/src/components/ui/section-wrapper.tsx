@@ -15,7 +15,7 @@ export function SectionWrapper({ title, dynamicTitle, children, pagination }: Se
   const fullTitle = title ? `تصفح ${title}` : '';
 
   return (
-    <section className="w-full flex justify-center items-center flex-col relative overflow-hidden">
+    <section className="w-full flex justify-center items-center flex-col relative overflow-hidden my-14 xs:my-20 lg:my-28">
       <div className="flex justify-start flex-col items-start gap-6 xs:gap-8 sm:gap-14 w-full 3xl:gap-16">
         <h3 className="text-lg xxs:text-2xl xs:text-4xl xl:text-4xl font-medium">
           {dynamicTitle ? dynamicTitle : fullTitle}
