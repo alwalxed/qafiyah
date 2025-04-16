@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://qafiyah.com/opengraph.png" alt="Qafiyah Logo" width="1080"/>
+</p>
+
 # Qafiyah (قافية)
 
 A non-profit open-source platform for Arabic poetry preservation and accessibility.
