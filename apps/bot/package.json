@@ -1,0 +1,25 @@
+{
+  "name": "@qaf/bot",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc --project tsconfig.json",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ext .ts",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "node-fetch": "^2.6.12",
+    "twitter-api-v2": "^1.22.0"
+  },
+  "devDependencies": {
+    "@qaf/typescript-config": "workspace:*",
+    "@types/node": "^22.14.1",
+    "@types/node-fetch": "^2.6.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}

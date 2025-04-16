@@ -1,5 +1,5 @@
 {
-  "name": "qafiyah-turborepo",
+  "name": "qafiyah",
   "private": true,
   "scripts": {
     "build": "turbo run build",
