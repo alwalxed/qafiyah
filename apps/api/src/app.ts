@@ -17,12 +17,7 @@ const app = new Hono<AppContext>();
 app.use(
   "*",
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://qafiyah.com",
-      "https://react.qafiyah.com",
-      "http://localhost:8787",
-    ],
+    origin: ["http://localhost:3000", "https://qafiyah.com"],
     allowMethods: ["GET", "OPTIONS"],
     exposeHeaders: ["Content-Length", "Content-Type"],
     maxAge: 600,

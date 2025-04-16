@@ -136,6 +136,7 @@ const app = new Hono<AppContext>()
       const totalPages = Math.ceil(era.poemsCount / FETCH_PER_PAGE);
 
       return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
+        // Updated URL format to match your app structure
         url: `${SITE_URL}/eras/${era.slug}/page/${i + 1}`,
         lastmod: new Date().toISOString(),
         changefreq: "monthly",
@@ -182,6 +183,7 @@ const app = new Hono<AppContext>()
       const totalPages = Math.ceil(meter.poemsCount / FETCH_PER_PAGE);
 
       return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
+        // Updated URL format to match your app structure
         url: `${SITE_URL}/meters/${meter.slug}/page/${i + 1}`,
         lastmod: new Date().toISOString(),
         changefreq: "monthly",
@@ -223,6 +225,7 @@ const app = new Hono<AppContext>()
 
     // Create entries for poet list pages
     const poetListEntries = Array.from({ length: totalPoetPages }, (_, i) => ({
+      // Updated URL format to match your app structure
       url: `${SITE_URL}/poets/page/${i + 1}`,
       lastmod: new Date().toISOString(),
       changefreq: "weekly",
@@ -239,6 +242,7 @@ const app = new Hono<AppContext>()
 
       // Create an array of entries for each page of this poet's poems
       return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
+        // Updated URL format to match your app structure
         url: `${SITE_URL}/poets/${poet.slug}/page/${i + 1}`,
         lastmod: new Date().toISOString(),
         changefreq: "monthly",
@@ -291,6 +295,7 @@ const app = new Hono<AppContext>()
 
       // Create an array of entries for each page of this rhyme's poems
       return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
+        // Updated URL format to match your app structure
         url: `${SITE_URL}/rhymes/${rhyme.slug}/page/${i + 1}`,
         lastmod: new Date().toISOString(),
         changefreq: "monthly",
@@ -343,6 +348,7 @@ const app = new Hono<AppContext>()
 
       // Create an array of entries for each page of this theme's poems
       return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
+        // Updated URL format to match your app structure
         url: `${SITE_URL}/themes/${theme.slug}/page/${i + 1}`,
         lastmod: new Date().toISOString(),
         changefreq: "monthly",
