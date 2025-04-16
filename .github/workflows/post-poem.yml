@@ -37,7 +37,8 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile
+        # Remove the --frozen-lockfile flag to allow installation without a lockfile
+        run: pnpm install
 
       - name: 🏗️ Build bot directly
         run: |
