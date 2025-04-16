@@ -2,6 +2,7 @@
 
 import { toArabicDigits } from '@/lib/utils';
 import { cleanSearchResponseText } from '@/utils/clean-search-response-text';
+import { removeTashkeel } from '@/utils/remove-tashkeel';
 import { sanitizeArabicText } from '@/utils/sanitize-arabic-text';
 import { Loader2 } from 'lucide-react';
 import type { SearchResult } from '../hooks/use-poem-search';
@@ -57,7 +58,7 @@ export function SearchResultItem({ result, searchQuery }: SearchResultItemProps)
         </div>
         <p className="text-zinc-700 line-clamp-3 text-right leading-relaxed" dir="rtl">
           {highlightMatches(
-            cleanSearchResponseText(result.content_snippet.split('*').join(' — ')),
+            removeTashkeel(cleanSearchResponseText(result.content_snippet.split('*').join(' — '))),
             searchQuery
           )}
         </p>
