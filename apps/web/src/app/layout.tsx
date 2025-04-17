@@ -1,5 +1,6 @@
 import { defaultMetadata, isDev, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/lib/constants';
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import type React from 'react';
 import './globals.css';
 import { RootLayoutClient } from './layout-client';
@@ -82,6 +83,12 @@ export default function RootLayout({
     >
       <body className="min-h-[80svh]">
         <RootLayoutClient>{children}</RootLayoutClient>
+        <Script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "06489115d0274ef48365b8f35fd857ee"}'
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
