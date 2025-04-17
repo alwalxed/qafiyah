@@ -744,10 +744,6 @@ create index idx_poets_name_tsvector
     using gin (to_tsvector('arabic'::regconfig, name));
 ```
 
-## 🚧 Limitations
-
-The search endpoint was moved to AWS EC2 because Supabase's free tier limits were exceeded when creating optimized search views and indexes. While Supabase provides free and fast unlimited API calls, the search functionality required setting up a VPS with PostgreSQL that connects to Supabase and synchronizes data.
-
 ## 🚀 Development
 
 ```bash
@@ -773,13 +769,9 @@ pnpm dev
 pnpm build
 ```
 
-## 🤝 Contributing
+## 🚧 Limitations
 
-Contributions are welcomed via pull requests. Feel free to help improve the project.
-
-## 📄 License
-
-This project is open source.
+The search endpoint was moved to AWS EC2 because Supabase's free tier limits were exceeded when creating optimized search views and indexes. While Supabase provides free and fast unlimited API calls, the search functionality required setting up a VPS with PostgreSQL that connects to Supabase and synchronizes data.
 
 ## ❓ FAQ
 
@@ -797,3 +789,11 @@ This separation allows us to:
 - Keep the main API on Supabase's free tier
 - Optimize the search experience with dedicated resources
 - Scale each component independently based on usage patterns
+
+## 🤝 Contributing
+
+Contributions are welcomed via PRs. Feel free to help improve the project.
+
+## 📄 License
+
+This project is open source.
