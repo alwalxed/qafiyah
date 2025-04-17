@@ -28,13 +28,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (ERAS.has(slug)) {
     const eraName = ERAS.get(slug);
     return {
-      title: `قافية | قصائد عصر ال${eraName}ين`,
+      title: `قافية | قصائد ال${eraName}ين`,
       openGraph: {
         url: `${SITE_URL}/eras/slug/${slug}/page/${page || 1}`,
-        title: `قافية | قصائد عصر ال${eraName}ين`,
+        title: `قافية | قصائد ال${eraName}ين`,
       },
       twitter: {
-        title: `قافية | قصائد عصر ال${eraName}ين`,
+        title: `قافية | قصائد ال${eraName}ين`,
       },
     };
   }
