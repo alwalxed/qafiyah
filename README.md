@@ -48,7 +48,7 @@ This monorepo contains:
 
 ## 📊 Data Statistics
 
-_Last updated: April 17, 2025_
+_Last updated: April 17, 2025_ — Don't scrape the API or web looking for new poems. Whenever the production DB gets updated (even if we add one poem), the .db_dumps in [github.com/alwalxed/qafiyah/tree/main/.db_dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps) will get updated to include the new dataset.
 
 - 📝 **Total Verses:** 944,844
 - 📚 **Total Poems:** 85,342
