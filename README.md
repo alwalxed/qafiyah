@@ -769,6 +769,12 @@ pnpm dev
 pnpm build
 ```
 
+## 📚 Terminology
+
+- **Meter (بحر)**: Rhythmic pattern of syllables that structures a poem. Arabic poetry has 16 classical meters.
+- **Rhyme (قافية)**: Repeating sound pattern at the end of verses, based on the final letter and vowel patterns.
+- **Verse (بيت)**: Single line of poetry, typically composed of two hemistichs in classical Arabic poetry.
+
 ## ❓ FAQ
 
 ### Why is the search endpoint separated from the main API?
