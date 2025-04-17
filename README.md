@@ -631,13 +631,13 @@ The search endpoint was moved to AWS EC2 because Supabase's free tier limits wer
 touch ./apps/api/.dev.vars
 
 # 2. Set up your database connections
-# Add DATABASE_URL and SEARCH_DATABASE_URL to your .dev.vars file
+Add DATABASE_URL and SEARCH_DATABASE_URL to your .dev.vars file
 
 # 3. Import database dump
-# Download and restore from https://github.com/alwalxed/qafiyah/tree/main/.db_dumps
+Download and restore from https://github.com/alwalxed/qafiyah/tree/main/.db_dumps
 
 # 4. Recreate views and functions
-# Run the materialized views and functions SQL from the Database Optimizations section
+Run the materialized views and functions SQL from the Database Optimizations section
 
 # 5. Install dependencies
 pnpm install
