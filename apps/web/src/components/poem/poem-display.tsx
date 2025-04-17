@@ -4,7 +4,7 @@ import { useLayoutStore } from '@/store/layout-store';
 import { getFormattedVersesCount } from '@/utils/get-verse-count';
 import { Minus, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type PoemProps = {
   clearTitle: string;
@@ -24,6 +24,15 @@ export type PoemProps = {
 
 export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps) {
   const [fontSize, setFontSize] = useState(1); // 1 is the default size multiplier
+  const [currentUrl, setCurrentUrl] = useState('');
+
+  const handleTwitterShare = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    const twitterShareUrl = `https://x.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`;
+
+    window.open(twitterShareUrl, '_blank', 'noopener,noreferrer');
+  };
 
   const increaseFontSize = () => {
     if (fontSize < 1.5) setFontSize((prev) => prev + 0.1);
@@ -50,6 +59,10 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
   const { remainingHeight } = useLayoutStore();
 
   const minHeight = remainingHeight === 0 ? '85svh' : `${remainingHeight}px`;
+
+  useEffect(() => {
+    setCurrentUrl(window.location.href);
+  }, []);
   return (
     <article
       style={{ minHeight }}
@@ -59,7 +72,7 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
         {/* Header */}
         <header className="flex justify-center items-center flex-col gap-4 xxs:gap-6 text-center w-full">
           <div className="flex flex-col gap-2 xx:gap-4">
-            <h1 className="text-base xxs:text-lg xs:text-2xl sm:text-3xl md:text-4xl font-bold text-zinc-800">
+            <h1 className="text-lg xxs:text-xl xs:text-2xl sm:text-3xl md:text-4xl font-bold text-zinc-800">
               {clearTitle}
             </h1>
 
@@ -71,9 +84,18 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
                 {`(${data.era_name})`}
               </a>
             </h2>
+
+            <a
+              onClick={handleTwitterShare}
+              className="flex w-full justify-center items-center mt-1 sm:mt-2"
+            >
+              <div className="bg-white/5 px-2 lg:px-4 rounded-md border border-zinc-300/60 flex justify-center items-center text-zinc-600 text-[8px] xxs:text-xs md:text-base">
+                <p>غردها</p>
+              </div>
+            </a>
           </div>
 
-          <div className="flex w-full md:w-8/12 border border-zinc-300/80 px-2.5 md:px-8 lg:px-16 text-[10px] xxs:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl justify-between items-center text-zinc-500/90 rounded-full">
+          <div className="flex w-full md:w-8/12 border border-zinc-300/80 px-2.5 md:px-8 lg:px-16 text-[10px] xxs:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl justify-between items-center text-zinc-600 rounded-full">
             <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">{data.meter_name || ''}</p>
             <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">
               {`${getFormattedVersesCount(verseCountNum)}` || ''}
