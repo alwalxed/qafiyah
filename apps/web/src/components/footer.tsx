@@ -1,8 +1,8 @@
 'use client';
 
-import { TWITTER_HANDLE } from '@/constants/site';
+import { DB_DUMPS_URL, GITHUB_REPO_URL, TWITTER_URL } from '@/constants/GLOBALS';
+import { getArabicYear } from '@/utils/dates/get-arabic-year';
 import { forwardRef } from 'react';
-import { getArabicYear } from '../utils/get-arabic-year';
 
 const FOOTER_TITLE = 'قافية';
 const FOOTER_SYMBOL = '/';
@@ -17,7 +17,7 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
       <div className="flex md:gap-3 gap-[6px]">
         <a
           className="hover:cursor-pointer hover:underline"
-          href={`https://x.com/${TWITTER_HANDLE}`}
+          href={TWITTER_URL}
           target="_blank"
           rel="noreferrer"
         >
@@ -26,7 +26,7 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
         <p>•</p>
         <a
           className="hover:cursor-pointer hover:underline"
-          href={`https://github.com/alwalxed/qafiyah`}
+          href={GITHUB_REPO_URL}
           target="_blank"
           rel="noreferrer"
         >
@@ -35,7 +35,7 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
         <p>•</p>
         <a
           className="hover:cursor-pointer hover:underline"
-          href={`https://github.com/alwalxed/qafiyah/tree/main/.db_dumps`}
+          href={DB_DUMPS_URL}
           target="_blank"
           rel="noreferrer"
         >

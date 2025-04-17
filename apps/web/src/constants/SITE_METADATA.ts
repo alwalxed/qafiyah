@@ -1,11 +1,8 @@
-export const DOMAIN = 'qafiyah.com';
-export const SITE_NAME = 'قافية';
-export const SITE_URL = `https://${DOMAIN}`;
-export const TWITTER_HANDLE = '@qafiyahdotcom';
+import { SITE_URL } from './GLOBALS';
 
-export const defaultMetadata = {
-  title: 'قافية | موسوعة الشعر العربي',
-  description: 'موقع يُعنى بجمع الشعر العربي وحفظه وتيسير الوصول إليه',
+export const htmlHeadMetadata = {
+  title: 'قافية | مرجع الشعر العربي',
+  description: 'موقع غير ربحي مفتوح المصدر يُعنى بجمع الشعر العربي وحفظه وتيسير الوصول إليه',
   keywords:
     'شعر، شعر عربي، قصائد، غزل، معلقات، شعر جاهلي، شعر حديث، قافية، ديوان العرب، أدب، قصائد مشهورة، شعر نبطي',
   openGraphUrl: `${SITE_URL}/opengraph.png`,
@@ -13,4 +10,5 @@ export const defaultMetadata = {
   poetName: 'قافية',
   author: 'قافية',
   articleSection: 'شعر',
+  themeColorHexCode: '#fafafa',
 };

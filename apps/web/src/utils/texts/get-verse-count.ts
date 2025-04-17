@@ -1,4 +1,4 @@
-import { toArabicDigits } from './to-arabic-digits';
+import { toArabicDigits } from '../numbers/to-arabic-digits';
 
 const formatVerseNumbersInArabic = (verses: number): string => {
   const arabicDigits = toArabicDigits(verses);

@@ -1,4 +1,3 @@
-// Import types from our zod-schemas package
 import type {
   eraDetailsSchema,
   eraPoemSchema,
@@ -105,13 +104,6 @@ export type MeterPoems = MeterResponseData;
 export type PoetPoems = PoetResponseData;
 export type RhymePoems = RhymeResponseData;
 export type ThemePoems = ThemeResponseData;
-
-// Navigation
-export type NavLink = {
-  name: string;
-  href: string;
-  external: boolean;
-};
 
 export type Poets = Poet[];
 

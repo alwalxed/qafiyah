@@ -1,4 +1,3 @@
-// tailwind.config.mjs
 import debugScreens from 'tailwindcss-debug-screens';
 
 /** @type {import('tailwindcss').Config} */

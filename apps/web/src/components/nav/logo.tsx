@@ -1,4 +1,4 @@
-import { responsiveIconSize } from '@/lib/constants';
+import { responsiveIconSize } from '@/constants/GLOBALS';
 import Image from 'next/image';
 
 export function Logo() {

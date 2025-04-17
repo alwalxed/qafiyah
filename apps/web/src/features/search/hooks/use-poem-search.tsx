@@ -7,8 +7,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { searchPoems } from '@/lib/api/queries';
-import { isArabicText } from '@/utils/is-arabic-text';
-import { sanitizeArabicText } from '@/utils/sanitize-arabic-text';
+import { isArabicText } from '@/utils/texts/is-arabic-text';
+import { sanitizeArabicText } from '@/utils/texts/sanitize-arabic-text';
 
 export interface SearchResult {
   _pageIndex: number;

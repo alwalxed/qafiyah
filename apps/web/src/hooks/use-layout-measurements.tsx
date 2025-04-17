@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutStore } from '@/store/layout-store';
+import { useLayoutStore } from '@/stores/layout-store';
 import { type RefObject, useEffect } from 'react';
 
 type LayoutMeasurementsProps = {

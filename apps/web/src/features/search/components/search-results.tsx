@@ -1,9 +1,9 @@
 'use client';
 
-import { toArabicDigits } from '@/lib/utils';
-import { cleanSearchResponseText } from '@/utils/clean-search-response-text';
-import { removeTashkeel } from '@/utils/remove-tashkeel';
-import { sanitizeArabicText } from '@/utils/sanitize-arabic-text';
+import { toArabicDigits } from '@/utils/numbers/to-arabic-digits';
+import { cleanSearchResponseText } from '@/utils/texts/clean-search-response-text';
+import { removeTashkeel } from '@/utils/texts/remove-tashkeel';
+import { sanitizeArabicText } from '@/utils/texts/sanitize-arabic-text';
 import { Loader2 } from 'lucide-react';
 import type { SearchResult } from '../hooks/use-poem-search';
 import { useTextHighlighter } from '../hooks/use-text-highlighter';

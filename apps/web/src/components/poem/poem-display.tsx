@@ -1,7 +1,7 @@
 'use client';
 
-import { useLayoutStore } from '@/store/layout-store';
-import { getFormattedVersesCount } from '@/utils/get-verse-count';
+import { useLayoutStore } from '@/stores/layout-store';
+import { getFormattedVersesCount } from '@/utils/texts/get-verse-count';
 import { Minus, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
 import { useEffect, useState } from 'react';

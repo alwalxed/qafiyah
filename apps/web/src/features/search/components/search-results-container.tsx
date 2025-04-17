@@ -1,7 +1,7 @@
 'use client';
 
 import type { PaginationMeta, SearchResponseData } from '@/lib/api/types';
-import { isArabicText } from '@/utils/is-arabic-text';
+import { isArabicText } from '@/utils/texts/is-arabic-text';
 import type { InfiniteData } from '@tanstack/react-query';
 import type { SearchResult } from '../hooks/use-poem-search';
 import { SearchResultsList } from './search-results';

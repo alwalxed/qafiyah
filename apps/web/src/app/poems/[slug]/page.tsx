@@ -1,6 +1,6 @@
-import { defaultMetadata, SITE_URL } from '@/constants/site';
+import { API_URL, NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
+import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import type { ProcessedPoem } from '@/lib/api/types';
-import { API_URL, NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import PoemSlugClientPage from './client';
 export const runtime = 'edge';
@@ -83,7 +83,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description,
         images: [
           {
-            url: defaultMetadata.openGraphUrl,
+            url: htmlHeadMetadata.openGraphUrl,
             width: 1200,
             height: 630,
             type: 'image/png',
@@ -99,7 +99,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: `ديوان «${poet_name}» على موقع قافية`,
 
         images: {
-          url: defaultMetadata.twitterSummaryCardImageUrl,
+          url: htmlHeadMetadata.twitterSummaryCardImageUrl,
           height: 480,
           width: 480,
           alt: `ديوان «${poet_name}» على موقع قافية`,

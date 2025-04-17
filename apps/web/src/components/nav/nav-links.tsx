@@ -1,7 +1,7 @@
 'use client';
 
-import type { NavLink } from '@/lib/api/types';
-import { useNavStore } from '@/store/nav-store';
+import type { NavLink } from '@/constants/NAV_LINKS';
+import { useNavStore } from '@/stores/nav-store';
 import { usePathname } from 'next/navigation';
 
 interface NavLinksProps {

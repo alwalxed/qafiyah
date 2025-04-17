@@ -1,10 +1,9 @@
-import { defaultMetadata, SITE_URL } from '@/constants/site';
-import { NOT_FOUND_TITLE } from '@/lib/constants';
+import { NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
+import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import type { Metadata } from 'next';
 import ThemePoemsSlugClientPage from './client';
 export const runtime = 'edge';
 
-// Create a Map of themes where the key is the slug and the value is the theme name
 export const THEMES = new Map([
   ['f2668136-60ce-4e37-b1e7-9efb84b3eade', 'دينية'],
   ['0a5db87f-f102-4dc0-be02-7204b2dd5f47', 'عتاب'],
@@ -51,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: `قافية | قصائد ${themeName}`,
         images: [
           {
-            url: defaultMetadata.openGraphUrl,
+            url: htmlHeadMetadata.openGraphUrl,
             width: 1200,
             height: 630,
             type: 'image/png',
@@ -60,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
       twitter: {
         title: `قافية | قصائد ${themeName}`,
-        images: [defaultMetadata.openGraphUrl],
+        images: [htmlHeadMetadata.openGraphUrl],
       },
     };
   }

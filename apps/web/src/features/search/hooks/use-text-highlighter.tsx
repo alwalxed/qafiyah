@@ -1,7 +1,7 @@
 'use client';
 
-import { removeTashkeel } from '@/lib/utils';
-import { sanitizeArabicText } from '@/utils/sanitize-arabic-text';
+import { removeTashkeel } from '@/utils/texts/remove-tashkeel';
+import { sanitizeArabicText } from '@/utils/texts/sanitize-arabic-text';
 
 export function useTextHighlighter() {
   const highlightMatches = (text: string, query: string) => {

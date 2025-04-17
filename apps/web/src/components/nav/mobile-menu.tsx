@@ -1,7 +1,8 @@
 'use client';
 
-import { NAV_LINKS, responsiveIconSize } from '@/lib/constants';
-import { useNavStore } from '@/store/nav-store';
+import { responsiveIconSize } from '@/constants/GLOBALS';
+import { NAV_LINKS } from '@/constants/NAV_LINKS';
+import { useNavStore } from '@/stores/nav-store';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 import { NavLinks } from './nav-links';
@@ -25,13 +26,6 @@ export function MobileMenu() {
         mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}
     >
-      {/* SEARCH (Mobile) - Pass toggleMobileMenu to close menu on search */}
-      {/* <SearchForm
-        className="relative w-full mb-6"
-        isMobile={true}
-        onSearchClick={toggleMobileMenu}
-      /> */}
-
       {/* MOBILE LINKS */}
       <NavLinks links={NAV_LINKS} isMobile={true} onLinkClick={toggleMobileMenu} />
 

@@ -6,7 +6,7 @@ import { SectionList } from '@/components/ui/section-list';
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getThemes } from '@/lib/api/queries';
 import type { Theme } from '@/lib/api/types';
-import { toArabicDigits } from '@/lib/utils';
+import { toArabicDigits } from '@/utils/numbers/to-arabic-digits';
 import { useQuery } from '@tanstack/react-query';
 
 export default function ThemesClientPage() {

@@ -1,15 +1,20 @@
-"use client"
+'use client';
 
-import { responsiveIconSize } from "@/lib/constants"
-import { useNavStore } from "@/store/nav-store"
-import { Menu } from "lucide-react"
+import { responsiveIconSize } from '@/constants/GLOBALS';
+import { useNavStore } from '@/stores/nav-store';
+import { Menu } from 'lucide-react';
 
 export function MobileMenuButton() {
-  const { toggleMobileMenu } = useNavStore()
+  const { toggleMobileMenu } = useNavStore();
 
   return (
-    <button id="menu-toggle" className="md:hidden" aria-label="فتح القائمة" onClick={toggleMobileMenu}>
+    <button
+      id="menu-toggle"
+      className="md:hidden"
+      aria-label="فتح القائمة"
+      onClick={toggleMobileMenu}
+    >
       <Menu className={responsiveIconSize} />
     </button>
-  )
+  );
 }

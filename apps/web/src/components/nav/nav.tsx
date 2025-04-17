@@ -1,6 +1,6 @@
 'use client';
 
-import { NAV_LINKS } from '@/lib/constants';
+import { NAV_LINKS } from '@/constants/NAV_LINKS';
 import { forwardRef } from 'react';
 import { Logo } from './logo';
 import { MobileMenuButton } from './mobile-menu-button';

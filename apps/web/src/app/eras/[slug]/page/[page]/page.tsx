@@ -1,5 +1,5 @@
-import { defaultMetadata, SITE_URL } from '@/constants/site';
-import { NOT_FOUND_TITLE } from '@/lib/constants';
+import { NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
+import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import type { Metadata } from 'next';
 import EraSlugClientPage from './client';
 
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: `قافية | قصائد ال${eraName}ين`,
         images: [
           {
-            url: defaultMetadata.openGraphUrl,
+            url: htmlHeadMetadata.openGraphUrl,
             width: 1200,
             height: 630,
             type: 'image/png',
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
       twitter: {
         title: `قافية | قصائد ال${eraName}ين`,
-        images: [defaultMetadata.openGraphUrl],
+        images: [htmlHeadMetadata.openGraphUrl],
       },
     };
   }

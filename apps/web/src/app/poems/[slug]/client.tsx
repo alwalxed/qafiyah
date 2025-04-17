@@ -2,8 +2,8 @@
 
 import { PoemDisplay } from '@/components/poem/poem-display';
 import { ErrorMessage } from '@/components/ui/error-message';
+import { SITE_URL } from '@/constants/GLOBALS';
 import { getPoem } from '@/lib/api/queries';
-import { SITE_URL } from '@/lib/constants';
 import { useQuery } from '@tanstack/react-query';
 import { Home, RefreshCcw } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';

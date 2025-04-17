@@ -11,7 +11,7 @@ export const ERAS_SORT_ORDER = [
   'متأخر',
 ];
 
-export const FORMAL_METERS = [
+export const METERS_SORT_ORDER = [
   'الطويل',
   'المديد',
   'البسيط',
@@ -30,7 +30,7 @@ export const FORMAL_METERS = [
   'المتدارك',
 ];
 
-export const ARABIC_LETTERS_MAP = new Map<string, string[]>([
+export const ARABIC_LETTERS = new Map<string, string[]>([
   ['ألف', ['ا', 'أ', 'إ', 'آ', 'ء', 'الف', 'ألف', 'الالف', 'الألف']],
   ['باء', ['ب', 'باء', 'الباء']],
   ['تاء', ['ت', 'ة', 'تاء', 'التاء']],

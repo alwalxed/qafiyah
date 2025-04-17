@@ -5,7 +5,7 @@ import { ListCard } from '@/components/ui/list-card';
 import { SectionPaginationControllers, SectionWrapper } from '@/components/ui/section-wrapper';
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getThemePoems } from '@/lib/api/queries';
-import { toArabicDigits } from '@/lib/utils';
+import { toArabicDigits } from '@/utils/numbers/to-arabic-digits';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 

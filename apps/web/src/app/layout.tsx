@@ -1,5 +1,6 @@
-import { defaultMetadata, isDev, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/lib/constants';
-import { cn } from '@/lib/utils';
+import { isDev, SITE_NAME, SITE_URL, TWITTER_HANDLE, TWITTER_ID } from '@/constants/GLOBALS';
+import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
+import { cn } from '@/utils/conversions/cn';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import type React from 'react';
@@ -8,11 +9,11 @@ import './globals.css';
 import { RootLayoutClient } from './layout-client';
 
 export const metadata: Metadata = {
-  title: defaultMetadata.title,
-  description: defaultMetadata.description,
-  keywords: defaultMetadata.keywords,
-  authors: [{ name: defaultMetadata.author }],
-  creator: defaultMetadata.poetName,
+  title: htmlHeadMetadata.title,
+  description: htmlHeadMetadata.description,
+  keywords: htmlHeadMetadata.keywords,
+  authors: [{ name: htmlHeadMetadata.author }],
+  creator: htmlHeadMetadata.poetName,
   publisher: SITE_NAME,
   metadataBase: new URL(SITE_URL),
   alternates: {
@@ -37,11 +38,11 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: 'ar_AR',
     url: SITE_URL,
-    title: defaultMetadata.title,
-    description: defaultMetadata.description,
+    title: htmlHeadMetadata.title,
+    description: htmlHeadMetadata.description,
     images: [
       {
-        url: defaultMetadata.openGraphUrl,
+        url: htmlHeadMetadata.openGraphUrl,
         width: 1200,
         height: 630,
         type: 'image/png',
@@ -49,18 +50,24 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: defaultMetadata.title,
-    description: defaultMetadata.description,
+    card: 'summary',
+    title: htmlHeadMetadata.title,
+    description: htmlHeadMetadata.description,
     site: TWITTER_HANDLE,
     creator: TWITTER_HANDLE,
-    images: [defaultMetadata.openGraphUrl],
+    creatorId: TWITTER_ID,
+    images: {
+      url: htmlHeadMetadata.twitterSummaryCardImageUrl,
+      height: 480,
+      width: 480,
+      alt: htmlHeadMetadata.description,
+    },
   },
   other: {
     'apple-mobile-web-app-title': SITE_NAME,
     'application-name': SITE_NAME,
-    copyright: defaultMetadata.poetName,
-    abstract: defaultMetadata.description,
+    copyright: htmlHeadMetadata.author,
+    abstract: htmlHeadMetadata.description,
     google: 'notranslate',
   },
 };
@@ -81,14 +88,14 @@ export default function RootLayout({
       lang="ar"
       dir="rtl"
       className={cn(
-        'overflow-x-hidden bg-zinc-50 text-zinc-950 w-full',
+        'overflow-x-hidden bg-zinc-50 text-zinc-950 font-sans',
         ibmPlexSansArabic.variable,
         {
           'debug-screens': isDev,
         }
       )}
     >
-      <body className="min-h-svh h-svh font-sans">
+      <body className="font-sans min-h-svh justify-center items-center flex flex-col relative overflow-x-hidden text-zinc-950 w-full px-4 md:px-20 lg:px-40 xl:px-60 2xl:px-80">
         <RootLayoutClient>{children}</RootLayoutClient>
         <Script
           defer

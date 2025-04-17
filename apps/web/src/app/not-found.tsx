@@ -1,9 +1,5 @@
-import type { Metadata } from "next"
-import { toArabicDigits } from "@/lib/utils"
-
-const NOT_FOUND_CODE = toArabicDigits(404)
-const NOT_FOUND_MESSAGE = "الصفحة غير موجودة"
-const NOT_FOUND_TITLE = `${NOT_FOUND_CODE} | ${NOT_FOUND_MESSAGE}`
+import { NOT_FOUND_CODE, NOT_FOUND_MESSAGE, NOT_FOUND_TITLE } from '@/constants/GLOBALS';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: NOT_FOUND_TITLE,
@@ -21,15 +17,15 @@ export const metadata: Metadata = {
   openGraph: {
     title: NOT_FOUND_TITLE,
     description: NOT_FOUND_MESSAGE,
-    type: "website",
+    type: 'website',
   },
   // Override Twitter metadata for 404 page
   twitter: {
     title: NOT_FOUND_TITLE,
     description: NOT_FOUND_MESSAGE,
-    card: "summary",
+    card: 'summary',
   },
-}
+};
 
 export default function NotFound() {
   return (
@@ -39,5 +35,5 @@ export default function NotFound() {
         <p className="text-4xl text-zinc-500">{NOT_FOUND_MESSAGE}</p>
       </div>
     </div>
-  )
+  );
 }

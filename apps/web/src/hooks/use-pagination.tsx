@@ -1,6 +1,6 @@
 'use client';
 
-import { FETCH_PER_PAGE } from '@/lib/constants';
+import { FETCH_PER_PAGE } from '@/constants/GLOBALS';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 

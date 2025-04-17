@@ -1,5 +1,5 @@
-import { NAV_LINKS } from '@/constants/links';
-import { sanitizeArabicText } from '@/utils/sanitize-arabic-text';
+import { NAV_LINKS } from '@/constants/NAV_LINKS';
+import { sanitizeArabicText } from '@/utils/texts/sanitize-arabic-text';
 import { Loader2, X } from 'lucide-react';
 
 export function EmptySearchState() {

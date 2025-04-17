@@ -1,4 +1,4 @@
-import { TWITTER_HANDLE } from '@/constants/site';
+import { TWITTER_HANDLE } from './GLOBALS';
 
 export type NavLink = {
   name: string;

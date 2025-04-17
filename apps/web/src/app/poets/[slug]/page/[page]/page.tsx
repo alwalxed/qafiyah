@@ -1,11 +1,10 @@
-import { defaultMetadata, SITE_URL } from '@/constants/site';
-import { API_URL, NOT_FOUND_TITLE } from '@/lib/constants';
-import { toArabicDigits } from '@/lib/utils';
+import { API_URL, NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
+import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
+import { toArabicDigits } from '@/utils/numbers/to-arabic-digits';
 import type { Metadata } from 'next';
 import PoetPoemsSlugPaginatedClientPage from './client';
 export const runtime = 'edge';
 
-// Define the type for the new response format
 type PoetInfoResponse = {
   success: boolean;
   data: {
@@ -73,7 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: `قصائد الشاعر ${poetName} من العصر ال${eraName}، عدد القصائد: ${toArabicDigits(poemsCount)}`,
         images: [
           {
-            url: defaultMetadata.openGraphUrl,
+            url: htmlHeadMetadata.openGraphUrl,
             width: 1200,
             height: 630,
             type: 'image/png',
@@ -83,11 +82,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       twitter: {
         title: `قافية | ديوان ${poetName}`,
         description: `قصائد الشاعر ${poetName} من العصر ال${eraName}، عدد القصائد: ${toArabicDigits(poemsCount)}`,
-        images: [defaultMetadata.openGraphUrl],
+        images: [htmlHeadMetadata.openGraphUrl],
       },
     };
   } catch (error) {
-    // Handle any fetch or parsing errors
     console.error('Error fetching poet metadata:', error);
     return {
       title: NOT_FOUND_TITLE,

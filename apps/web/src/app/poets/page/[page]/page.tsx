@@ -1,5 +1,5 @@
-import { defaultMetadata, SITE_URL } from '@/constants/site';
-import { NOT_FOUND_TITLE } from '@/lib/constants';
+import { NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
+import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import type { Metadata } from 'next';
 import PoetsClientPage from './client';
 
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: 'قافية | تصفح حسب الدواوين',
         images: [
           {
-            url: defaultMetadata.openGraphUrl,
+            url: htmlHeadMetadata.openGraphUrl,
             width: 1200,
             height: 630,
             type: 'image/png',
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
       twitter: {
         title: 'قافية | تصفح حسب الدواوين',
-        images: [defaultMetadata.openGraphUrl],
+        images: [htmlHeadMetadata.openGraphUrl],
       },
     };
   }

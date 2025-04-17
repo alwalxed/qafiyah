@@ -6,7 +6,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',
-    'prettier', // Add this line
+    'prettier',
   ],
   plugins: [
     '@typescript-eslint',
@@ -15,13 +15,11 @@ module.exports = {
     'jsx-a11y',
     'import',
     'sonarjs',
-    'prettier', // Add this line
+    'prettier',
   ],
   rules: {
-    // Add Prettier rules
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
 
-    // Your existing rules...
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     'react/jsx-uses-react': 'off',

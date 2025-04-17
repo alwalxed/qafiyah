@@ -1,4 +1,4 @@
-import { DOMAIN } from '@/constants/site';
+import { DOMAIN } from '@/constants/GLOBALS';
 import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev';
 
 setupDevPlatform().catch(console.error);

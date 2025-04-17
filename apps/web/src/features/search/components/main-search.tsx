@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutStore } from '@/store/layout-store';
+import { useLayoutStore } from '@/stores/layout-store';
 import { usePoemSearch } from '../hooks/use-poem-search';
 import { SearchForm } from './search-form';
 import { SearchHeader } from './search-header';

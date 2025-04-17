@@ -6,7 +6,7 @@ import { PaginationLink } from '@/components/ui/pagination-link';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getPoets } from '@/lib/api/queries';
-import { toArabicDigits } from '@/lib/utils';
+import { toArabicDigits } from '@/utils/numbers/to-arabic-digits';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 
