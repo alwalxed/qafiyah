@@ -91,9 +91,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ],
       },
       twitter: {
-        title: `${clearTitle} | ${poet_name} | قافية`,
-        description,
-        images: [defaultMetadata.openGraphUrl],
+        title: `${clearTitle} — ${poet_name}`,
+        card: 'summary',
+        creatorId: '1570116567538475010',
+        creator: '@qafiyahdotcom',
+        site: '@qafiyahdotcom',
+        images: {
+          url: defaultMetadata.openGraphSummaryCardUrl,
+          height: 720,
+          width: 720,
+          alt: `ديوان ${poet_name}`,
+        },
       },
     };
   } catch (error) {

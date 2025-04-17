@@ -9,6 +9,7 @@ export const defaultMetadata = {
   keywords:
     'شعر، شعر عربي، قصائد، غزل، معلقات، شعر جاهلي، شعر حديث، قافية، ديوان العرب، أدب، قصائد مشهورة، شعر نبطي',
   openGraphUrl: `${SITE_URL}/opengraph.png`,
+  openGraphSummaryCardUrl: `${SITE_URL}/opengraph-summary-card.png`,
   poetName: 'قافية',
   author: 'قافية',
   articleSection: 'شعر',
