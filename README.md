@@ -48,6 +48,8 @@ This monorepo contains:
 
 ## 📊 Data Statistics
 
+_Last updated: April 17, 2025_
+
 - 📝 **Total Verses:** 944,844
 - 📚 **Total Poems:** 85,342
 - 🧑‍🎤 **Unique Poets:** 932
