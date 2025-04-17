@@ -1,6 +1,20 @@
 # Qafiyah (قافية)
 
-A non-profit open-source platform dedicated to Arabic poetry preservation and accessibility.
+Open-source. Non-profit. Accessible. Arabic poetry, beautifully archived.
+
+## 📑 Navigation
+
+- [📋 Project Overview](#-project-overview)
+- [🏗️ Architecture](#️-architecture)
+- [💻 Tech Stack](#-tech-stack)
+- [📊 Database Statistics](#-database-statistics)
+- [🗄️ Database Schema](#️-database-schema)
+- [⚡ Database Optimizations](#-database-optimizations)
+- [🚀 Development](#-development)
+- [📚 Terminology](#-terminology)
+- [❓ FAQ](#-faq)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
 
 ## 📋 Project Overview
 
