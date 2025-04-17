@@ -2,34 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'IBMPlexSansArabic';
-  src: url('/fonts/IBMPlexSansArabic-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'IBMPlexSansArabic';
-  src: url('/fonts/IBMPlexSansArabic-Medium.ttf') format('truetype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'IBMPlexSansArabic';
-  src: url('/fonts/IBMPlexSansArabic-SemiBold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'IBMPlexSansArabic';
-  src: url('/fonts/IBMPlexSansArabic-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+body {
+  font-family: Arial, Helvetica, sans-serif;
 }

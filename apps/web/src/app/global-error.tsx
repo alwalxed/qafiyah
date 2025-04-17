@@ -1,6 +1,9 @@
 'use client';
 
+import { isDev } from '@/constants/globals';
+import { cn } from '@/lib/utils';
 import { useEffect } from 'react';
+import { ibmPlexSansArabic } from './font';
 
 export default function GlobalError({
   error,
@@ -19,11 +22,18 @@ export default function GlobalError({
   };
 
   return (
-    <html lang="ar" dir="rtl">
-      <body
-        style={{ fontFamily: 'IBMPlexSansArabic' }}
-        className="bg-zinc-50 text-zinc-900 min-h-svh flex items-center justify-center p-4"
-      >
+    <html
+      lang="ar"
+      dir="rtl"
+      className={cn(
+        'overflow-x-hidden bg-zinc-50 text-zinc-950 w-full',
+        ibmPlexSansArabic.variable,
+        {
+          'debug-screens': isDev,
+        }
+      )}
+    >
+      <body className="bg-zinc-50 text-zinc-900 min-h-svh h-svh flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white border border-zinc-200 rounded-md p-6 text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-zinc-100 text-zinc-500 rounded-full flex items-center justify-center">
             <svg

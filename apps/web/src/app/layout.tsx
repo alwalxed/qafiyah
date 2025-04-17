@@ -1,7 +1,9 @@
 import { defaultMetadata, isDev, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import type React from 'react';
+import { ibmPlexSansArabic } from './font';
 import './globals.css';
 import { RootLayoutClient } from './layout-client';
 
@@ -78,10 +80,15 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      style={{ fontFamily: 'IBMPlexSansArabic' }}
-      className={`overflow-x-hidden bg-zinc-50 text-zinc-950 w-full ${isDev ? 'debug-screens' : ''}`}
+      className={cn(
+        'overflow-x-hidden bg-zinc-50 text-zinc-950 w-full',
+        ibmPlexSansArabic.variable,
+        {
+          'debug-screens': isDev,
+        }
+      )}
     >
-      <body className="min-h-[80svh]">
+      <body className="min-h-svh h-svh font-sans">
         <RootLayoutClient>{children}</RootLayoutClient>
         <Script
           defer

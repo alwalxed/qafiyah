@@ -20,7 +20,7 @@ export function RootLayoutClient({
 
   const { remainingHeight } = useLayoutStore();
 
-  const minHeight = remainingHeight === 0 ? '86svh' : `${remainingHeight}px`;
+  const minHeight = remainingHeight === 0 ? '85svh' : `${remainingHeight}px`;
   return (
     <div className="justify-start items-center flex flex-col relative overflow-x-hidden text-zinc-950 w-full px-4 md:px-20 lg:px-40 xl:px-60 2xl:px-80">
       <Providers>

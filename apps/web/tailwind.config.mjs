@@ -18,7 +18,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ['IBMPlexSansArabic', 'sans-serif'],
+        sans: ['var(--font-ibm-plex-sans-arabic)'],
       },
     },
   },

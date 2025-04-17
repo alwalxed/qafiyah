@@ -49,7 +49,7 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
 
   const { remainingHeight } = useLayoutStore();
 
-  const minHeight = remainingHeight === 0 ? '86svh' : `${remainingHeight}px`;
+  const minHeight = remainingHeight === 0 ? '85svh' : `${remainingHeight}px`;
   return (
     <article
       style={{ minHeight }}

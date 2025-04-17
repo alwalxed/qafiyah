@@ -35,7 +35,7 @@ export function SearchClientPage() {
 
   const { remainingHeight } = useLayoutStore();
 
-  const minHeight = remainingHeight === 0 ? '86svh' : `${remainingHeight}px`;
+  const minHeight = remainingHeight === 0 ? '85svh' : `${remainingHeight}px`;
   return (
     <div
       className="w-full flex justify-center items-center py-14 xs:py-20 lg:py-28"
