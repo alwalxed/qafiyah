@@ -96,11 +96,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         creatorId: '1570116567538475010',
         creator: '@qafiyahdotcom',
         site: '@qafiyahdotcom',
+        description: `ديوان «${poet_name}» | قافية`,
+
         images: {
           url: defaultMetadata.openGraphSummaryCardUrl,
           height: 720,
           width: 720,
-          alt: `ديوان ${poet_name}`,
+          alt: `ديوان «${poet_name}» | قافية`,
         },
       },
     };
