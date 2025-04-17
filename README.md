@@ -25,12 +25,12 @@ This monorepo contains:
 
 ## 💻 Tech Stack
 
-| Component    | Technologies                                                                         |
-| ------------ | ------------------------------------------------------------------------------------ |
-| **Frontend** | Next.js, React Query, Tailwind CSS, Zustand, Zod                                     |
-| **Backend**  | Hono, Cloudflare Workers, Zod                                                        |
-| **Database** | Supabase PostgreSQL with Drizzle ORM                                                 |
-| **Search**   | AWS EC2 instance with materialized views ([Why is search separated?](#-limitations)) |
+| Component    | Technologies                                                                 |
+| ------------ | ---------------------------------------------------------------------------- |
+| **Frontend** | Next.js, React Query, Tailwind CSS, Zustand, Zod                             |
+| **Backend**  | Hono, Cloudflare Workers, Zod                                                |
+| **Database** | Supabase PostgreSQL with Drizzle ORM                                         |
+| **Search**   | AWS EC2 instance with materialized views ([Why is search separated?](#-faq)) |
 
 ## 📊 Database Statistics
 
@@ -769,26 +769,18 @@ pnpm dev
 pnpm build
 ```
 
-## 🚧 Limitations
-
-The search endpoint was moved to AWS EC2 because Supabase's free tier limits were exceeded when creating optimized search views and indexes. While Supabase provides free and fast unlimited API calls, the search functionality required setting up a VPS with PostgreSQL that connects to Supabase and synchronizes data.
-
 ## ❓ FAQ
 
 ### Why is the search endpoint separated from the main API?
 
-As mentioned in the [Limitations](#-limitations) section, we had to move the search functionality to a separate AWS EC2 instance because:
-
-1. Supabase's free tier has limits on database size and resources
-2. Creating optimized search views and indexes for Arabic text search exceeded these limits
-3. We wanted to maintain the benefits of Supabase for the rest of the API (free unlimited API calls, easy management)
-4. The search functionality requires specialized PostgreSQL configurations for Arabic text search
+The search endpoint was moved to AWS EC2 because Supabase's free tier limits were exceeded when creating optimized search views and indexes. While Supabase provides free and fast unlimited API calls, the search functionality required setting up a VPS with PostgreSQL that connects to Supabase and synchronizes data.
 
 This separation allows us to:
 
 - Keep the main API on Supabase's free tier
-- Optimize the search experience with dedicated resources
+- Optimize the search experience with dedicated resources for Arabic text search
 - Scale each component independently based on usage patterns
+- Maintain the benefits of Supabase for the rest of the API (free unlimited API calls, easy management)
 
 ## 🤝 Contributing
 
