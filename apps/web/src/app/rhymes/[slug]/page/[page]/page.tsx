@@ -1,4 +1,4 @@
-import { SITE_URL } from '@/constants/site';
+import { defaultMetadata, SITE_URL } from '@/constants/site';
 import { NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import RhymePoemsSlugClientPage from './client';
@@ -68,9 +68,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       openGraph: {
         url: `${SITE_URL}/rhymes/${slug}/page/${page || 1}`,
         title: `قافية | قصائد على قافية ${rhymePattern}`,
+        images: [
+          {
+            url: defaultMetadata.openGraphUrl,
+            width: 1200,
+            height: 630,
+            type: 'image/png',
+          },
+        ],
       },
       twitter: {
         title: `قافية | قصائد على قافية ${rhymePattern}`,
+        images: [defaultMetadata.openGraphUrl],
       },
     };
   }

@@ -1,4 +1,4 @@
-import { SITE_URL } from '@/constants/site';
+import { defaultMetadata, SITE_URL } from '@/constants/site';
 import { API_URL, NOT_FOUND_TITLE } from '@/lib/constants';
 import { toArabicDigits } from '@/lib/utils';
 import type { Metadata } from 'next';
@@ -71,10 +71,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         url: `${SITE_URL}/poets/slug/${slug}/page/${page || 1}`,
         title: `قافية | ديوان ${poetName}`,
         description: `قصائد الشاعر ${poetName} من العصر ال${eraName}، عدد القصائد: ${toArabicDigits(poemsCount)}`,
+        images: [
+          {
+            url: defaultMetadata.openGraphUrl,
+            width: 1200,
+            height: 630,
+            type: 'image/png',
+          },
+        ],
       },
       twitter: {
         title: `قافية | ديوان ${poetName}`,
         description: `قصائد الشاعر ${poetName} من العصر ال${eraName}، عدد القصائد: ${toArabicDigits(poemsCount)}`,
+        images: [defaultMetadata.openGraphUrl],
       },
     };
   } catch (error) {

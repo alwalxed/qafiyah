@@ -1,4 +1,4 @@
-import { SITE_URL } from '@/constants/site';
+import { defaultMetadata, SITE_URL } from '@/constants/site';
 import { NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import ThemePoemsSlugClientPage from './client';
@@ -49,9 +49,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       openGraph: {
         url: `${SITE_URL}/themes/${slug}/page/${page || 1}`,
         title: `قافية | قصائد ${themeName}`,
+        images: [
+          {
+            url: defaultMetadata.openGraphUrl,
+            width: 1200,
+            height: 630,
+            type: 'image/png',
+          },
+        ],
       },
       twitter: {
         title: `قافية | قصائد ${themeName}`,
+        images: [defaultMetadata.openGraphUrl],
       },
     };
   }

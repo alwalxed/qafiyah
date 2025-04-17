@@ -1,4 +1,4 @@
-import { SITE_URL } from '@/constants/site';
+import { defaultMetadata, SITE_URL } from '@/constants/site';
 import type { ProcessedPoem } from '@/lib/api/types';
 import { API_URL, NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
@@ -81,10 +81,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         url: `${SITE_URL}/poems/${slug}`,
         title: `${clearTitle} | ${poet_name} | قافية`,
         description,
+        images: [
+          {
+            url: defaultMetadata.openGraphUrl,
+            width: 1200,
+            height: 630,
+            type: 'image/png',
+          },
+        ],
       },
       twitter: {
         title: `${clearTitle} | ${poet_name} | قافية`,
         description,
+        images: [defaultMetadata.openGraphUrl],
       },
     };
   } catch (error) {
