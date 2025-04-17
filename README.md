@@ -45,22 +45,6 @@ This monorepo contains:
 
 ## 🗄️ Database Schema
 
-### 🕰️ `eras`
-
-| Column | Type    | Nullable | Description    |
-| ------ | ------- | -------- | -------------- |
-| id     | integer | NO       | Primary key    |
-| name   | text    | NO       | Era name       |
-| slug   | text    | NO       | URL identifier |
-
-### 🪶 `meters`
-
-| Column | Type    | Nullable | Description    |
-| ------ | ------- | -------- | -------------- |
-| id     | integer | NO       | Primary key    |
-| name   | text    | NO       | Meter name     |
-| slug   | text    | NO       | URL identifier |
-
 ### 📚 `poems`
 
 | Column     | Type    | Nullable | Description           |
@@ -86,6 +70,22 @@ This monorepo contains:
 | slug   | text    | NO       | URL identifier       |
 | era_id | integer | NO       | FK to `eras(id)`     |
 | bio    | text    | YES      | Biography (optional) |
+
+### 🕰️ `eras`
+
+| Column | Type    | Nullable | Description    |
+| ------ | ------- | -------- | -------------- |
+| id     | integer | NO       | Primary key    |
+| name   | text    | NO       | Era name       |
+| slug   | text    | NO       | URL identifier |
+
+### 🪶 `meters`
+
+| Column | Type    | Nullable | Description    |
+| ------ | ------- | -------- | -------------- |
+| id     | integer | NO       | Primary key    |
+| name   | text    | NO       | Meter name     |
+| slug   | text    | NO       | URL identifier |
 
 ### 🎭 `rhymes`
 
@@ -403,90 +403,90 @@ order by
 ### Materialized Views @ EC2
 
 ```sql
-CREATE MATERIALIZED VIEW public.poem_search_view AS
-SELECT
-    p.id AS poem_id,
-    p.slug AS poem_slug,
-    p.title AS poem_title,
-    p.content AS poem_content,
-    strip_diacritics(p.title) AS title_no_diacritics,
-    strip_diacritics(p.content) AS content_no_diacritics,
-    regexp_replace(regexp_replace(p.content, '[^ء-يؐ-ًْٰٓ-ٕ\s\*]'::text, ''::text, 'g'::text), '\n'::text, '*'::text, 'g'::text) AS poem_content_clean,
-    regexp_replace(regexp_replace(strip_diacritics(p.content), '[^ء-ي\s\*]'::text, ''::text, 'g'::text), '\n'::text, '*'::text, 'g'::text) AS poem_content_clean_no_diacritics,
-    m.name AS poem_meter,
-    pt.name AS poet_name,
-    e.name AS poet_era,
-    to_tsvector('simple'::regconfig, ((p.title || ' '::text) || p.content)) AS content_search_vector,
-    to_tsvector('simple'::regconfig, ((strip_diacritics(p.title) || ' '::text) || strip_diacritics(p.content))) AS content_search_vector_no_diacritics
-FROM
+create materialized view public.poem_search_view as
+select
+    p.id as poem_id,
+    p.slug as poem_slug,
+    p.title as poem_title,
+    p.content as poem_content,
+    strip_diacritics(p.title) as title_no_diacritics,
+    strip_diacritics(p.content) as content_no_diacritics,
+    regexp_replace(regexp_replace(p.content, '[^ء-يؐ-ًْٰٓ-ٕ\s\*]'::text, ''::text, 'g'::text), '\n'::text, '*'::text, 'g'::text) as poem_content_clean,
+    regexp_replace(regexp_replace(strip_diacritics(p.content), '[^ء-ي\s\*]'::text, ''::text, 'g'::text), '\n'::text, '*'::text, 'g'::text) as poem_content_clean_no_diacritics,
+    m.name as poem_meter,
+    pt.name as poet_name,
+    e.name as poet_era,
+    to_tsvector('simple'::regconfig, ((p.title || ' '::text) || p.content)) as content_search_vector,
+    to_tsvector('simple'::regconfig, ((strip_diacritics(p.title) || ' '::text) || strip_diacritics(p.content))) as content_search_vector_no_diacritics
+from
     poems p
-JOIN
-    poets pt ON pt.id = p.poet_id
-JOIN
-    meters m ON m.id = p.meter_id
-JOIN
-    eras e ON pt.era_id = e.id;
+join
+    poets pt on pt.id = p.poet_id
+join
+    meters m on m.id = p.meter_id
+join
+    eras e on pt.era_id = e.id;
 ```
 
 ### Functions @ Supabase
 
 ```sql
-CREATE OR REPLACE FUNCTION public.get_a_random_poem()
-RETURNS json
-LANGUAGE plpgsql
-AS $function$
-DECLARE
+create or replace function public.get_a_random_poem()
+returns json
+language plpgsql
+as $function$
+declare
     excluded_era_ids int[];
     poem_count int;
     poem_row record;
-BEGIN
-    -- Get era IDs to exclude based on slugs
-    SELECT array_agg(id) INTO excluded_era_ids
-    FROM public.eras
-    WHERE slug IN ('late', 'ottoman');
+begin
+    -- get era ids to exclude based on slugs
+    select array_agg(id) into excluded_era_ids
+    from public.eras
+    where slug in ('late', 'ottoman');
 
-    IF excluded_era_ids IS NULL OR array_length(excluded_era_ids, 1) < 2 THEN
-        RAISE EXCEPTION 'One or more excluded eras not found.';
-    END IF;
+    if excluded_era_ids is null or array_length(excluded_era_ids, 1) < 2 then
+        raise exception 'one or more excluded eras not found.';
+    end if;
 
-    -- Count eligible poems (whose poets are not from the excluded eras)
-    SELECT count(*) INTO poem_count
-    FROM public.poems p
-    JOIN public.poets pt ON pt.id = p.poet_id
-    WHERE pt.era_id != ALL (excluded_era_ids);
+    -- count eligible poems (whose poets are not from the excluded eras)
+    select count(*) into poem_count
+    from public.poems p
+    join public.poets pt on pt.id = p.poet_id
+    where pt.era_id != all (excluded_era_ids);
 
-    IF poem_count = 0 THEN
-        RETURN json_build_object('error', 'No eligible poems found');
-    END IF;
+    if poem_count = 0 then
+        return json_build_object('error', 'no eligible poems found');
+    end if;
 
-    -- Select one random eligible poem
-    SELECT p.*, pt.name AS poet_name
-    INTO poem_row
-    FROM public.poems p
-    JOIN public.poets pt ON pt.id = p.poet_id
-    WHERE pt.era_id != ALL (excluded_era_ids)
-    ORDER BY random()
-    LIMIT 1;
+    -- select one random eligible poem
+    select p.*, pt.name as poet_name
+    into poem_row
+    from public.poems p
+    join public.poets pt on pt.id = p.poet_id
+    where pt.era_id != all (excluded_era_ids)
+    order by random()
+    limit 1;
 
-    -- Return poem info as JSON
-    RETURN json_build_object(
+    -- return poem info as json
+    return json_build_object(
         'poem_id', poem_row.id,
         'poet_name', poem_row.poet_name,
         'content', poem_row.content
     );
-END;
+end;
 $function$;
 ```
 
 ### Functions @ EC2
 
 ```sql
-CREATE OR REPLACE FUNCTION public.search_poems(
+create or replace function public.search_poems(
     search_query text,
-    page_number integer DEFAULT 1,
-    exact_match boolean DEFAULT false
+    page_number integer default 1,
+    exact_match boolean default false
 )
-RETURNS TABLE(
+returns table(
     poet_name text,
     poet_era text,
     poem_title text,
@@ -496,35 +496,35 @@ RETURNS TABLE(
     relevance_score real,
     total_result_count bigint
 )
-LANGUAGE plpgsql
-AS $function$
-DECLARE
-    results_per_page CONSTANT INTEGER := 5;
-    offset_value INTEGER;
-    search_tokens TEXT;
-    stripped_query TEXT;
-    total_count BIGINT;
-BEGIN
+language plpgsql
+as $function$
+declare
+    results_per_page constant integer := 5;
+    offset_value integer;
+    search_tokens text;
+    stripped_query text;
+    total_count bigint;
+begin
     offset_value := (page_number - 1) * results_per_page;
     stripped_query := strip_diacritics(search_query);
 
-    IF exact_match THEN
+    if exact_match then
         search_tokens := '''' || stripped_query || '''';
-    ELSE
+    else
         search_tokens := regexp_replace(stripped_query, '\s+', '&', 'g');
-    END IF;
+    end if;
 
-    BEGIN
-        SELECT COUNT(*) INTO total_count
-        FROM poem_search_view
-        WHERE content_search_vector_no_diacritics @@ to_tsquery('simple', search_tokens);
-    EXCEPTION WHEN OTHERS THEN
+    begin
+        select count(*) into total_count
+        from poem_search_view
+        where content_search_vector_no_diacritics @@ to_tsquery('simple', search_tokens);
+    exception when others then
         total_count := 0;
-    END;
+    end;
 
-    RETURN QUERY
-    WITH matched_poems AS (
-        SELECT
+    return query
+    with matched_poems as (
+        select
             p.poem_id,
             p.poet_name,
             p.poet_era,
@@ -533,42 +533,42 @@ BEGIN
             p.poem_meter,
             p.poem_content,
             p.content_no_diacritics,
-            ts_rank(p.content_search_vector_no_diacritics, to_tsquery('simple', search_tokens)) AS relevance_score
-        FROM poem_search_view p
-        WHERE p.content_search_vector_no_diacritics @@ to_tsquery('simple', search_tokens)
-        ORDER BY relevance_score DESC
-        LIMIT results_per_page OFFSET offset_value
+            ts_rank(p.content_search_vector_no_diacritics, to_tsquery('simple', search_tokens)) as relevance_score
+        from poem_search_view p
+        where p.content_search_vector_no_diacritics @@ to_tsquery('simple', search_tokens)
+        order by relevance_score desc
+        limit results_per_page offset offset_value
     ),
-    line_extraction AS (
-        SELECT
+    line_extraction as (
+        select
             mp.*,
-            position(lower(stripped_query) in lower(mp.content_no_diacritics)) AS match_pos,
-            string_to_array(mp.poem_content, '*') AS content_lines,
-            string_to_array(mp.content_no_diacritics, '*') AS content_lines_no_diacritics
-        FROM matched_poems mp
+            position(lower(stripped_query) in lower(mp.content_no_diacritics)) as match_pos,
+            string_to_array(mp.poem_content, '*') as content_lines,
+            string_to_array(mp.content_no_diacritics, '*') as content_lines_no_diacritics
+        from matched_poems mp
     ),
-    line_identification AS (
-        SELECT
+    line_identification as (
+        select
             le.*,
             (
-                SELECT idx
-                FROM unnest(le.content_lines_no_diacritics) WITH ORDINALITY AS t(line, idx)
-                WHERE position(lower(stripped_query) in lower(t.line)) > 0
-                ORDER BY idx
-                LIMIT 1
-            ) AS matching_line_idx
-        FROM line_extraction le
+                select idx
+                from unnest(le.content_lines_no_diacritics) with ordinality as t(line, idx)
+                where position(lower(stripped_query) in lower(t.line)) > 0
+                order by idx
+                limit 1
+            ) as matching_line_idx
+        from line_extraction le
     )
-    SELECT
+    select
         li.poet_name,
         li.poet_era,
         li.poem_title,
-        CASE
-            WHEN li.matching_line_idx IS NOT NULL THEN
-                COALESCE(
-                    CASE WHEN li.matching_line_idx > 1
-                         THEN li.content_lines[li.matching_line_idx - 1] || '*'
-                         ELSE '' END,
+        case
+            when li.matching_line_idx is not null then
+                coalesce(
+                    case when li.matching_line_idx > 1
+                         then li.content_lines[li.matching_line_idx - 1] || '*'
+                         else '' end,
                     ''
                 ) ||
                 regexp_replace(
@@ -577,171 +577,171 @@ BEGIN
                     '<b>\1</b>',
                     'i'
                 ) ||
-                COALESCE(
-                    CASE WHEN li.matching_line_idx < array_length(li.content_lines, 1)
-                         THEN '*' || li.content_lines[li.matching_line_idx + 1]
-                         ELSE '' END,
+                coalesce(
+                    case when li.matching_line_idx < array_length(li.content_lines, 1)
+                         then '*' || li.content_lines[li.matching_line_idx + 1]
+                         else '' end,
                     ''
                 )
-            ELSE
+            else
                 ts_headline(
                     'simple',
                     li.poem_content,
                     to_tsquery('simple', search_tokens),
-                    'MaxWords=50, MinWords=10, MaxFragments=1, StartSel=<b>, StopSel=</b>'
+                    'maxwords=50, minwords=10, maxfragments=1, startsel=<b>, stopsel=</b>'
                 )
-        END AS poem_snippet,
+        end as poem_snippet,
         li.poem_meter,
         li.poem_slug,
         li.relevance_score,
         total_count
-    FROM line_identification li;
+    from line_identification li;
 
-EXCEPTION WHEN OTHERS THEN
-    RETURN;
-END;
+exception when others then
+    return;
+end;
 $function$;
 -----------------------------------------------
 -----------------------------------------------
 -----------------------------------------------
-CREATE OR REPLACE FUNCTION public.strip_diacritics(text_with_diacritics text)
-RETURNS text
-LANGUAGE plpgsql
-IMMUTABLE
-AS $function$
-BEGIN
-    RETURN regexp_replace(
+create or replace function public.strip_diacritics(text_with_diacritics text)
+returns text
+language plpgsql
+immutable
+as $function$
+begin
+    return regexp_replace(
         text_with_diacritics,
         '[ًٌٍَُِّْٰٓٔـٕۖۗۘۙۚۛۜۤۥۦۧۨ]',
         '',
         'g'
     );
-END;
+end;
 $function$;
 ```
 
 ### Indexes @ Supabase
 
 ```sql
--- Indexes on poems table
-CREATE INDEX idx_poems_content_tsv
-    ON public.poems
-    USING gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
+-- indexes on poems table
+create index idx_poems_content_tsv
+    on public.poems
+    using gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
 
-CREATE INDEX idx_poems_content_tsvector
-    ON public.poems
-    USING gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
+create index idx_poems_content_tsvector
+    on public.poems
+    using gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
 
-CREATE INDEX idx_poems_meter_id
-    ON public.poems
-    USING btree (meter_id);
+create index idx_poems_meter_id
+    on public.poems
+    using btree (meter_id);
 
-CREATE INDEX idx_poems_poet_id
-    ON public.poems
-    USING btree (poet_id);
+create index idx_poems_poet_id
+    on public.poems
+    using btree (poet_id);
 
-CREATE INDEX idx_poems_poet_meter
-    ON public.poems
-    USING btree (poet_id, meter_id);
+create index idx_poems_poet_meter
+    on public.poems
+    using btree (poet_id, meter_id);
 
-CREATE INDEX idx_poems_rhyme_id
-    ON public.poems
-    USING btree (rhyme_id);
+create index idx_poems_rhyme_id
+    on public.poems
+    using btree (rhyme_id);
 
-CREATE INDEX idx_poems_theme_id
-    ON public.poems
-    USING btree (theme_id);
+create index idx_poems_theme_id
+    on public.poems
+    using btree (theme_id);
 
-CREATE INDEX idx_poems_theme_meter
-    ON public.poems
-    USING btree (theme_id, meter_id);
+create index idx_poems_theme_meter
+    on public.poems
+    using btree (theme_id, meter_id);
 
-CREATE INDEX idx_poems_title_tsv
-    ON public.poems
-    USING gin (to_tsvector('arabic'::regconfig, title));
+create index idx_poems_title_tsv
+    on public.poems
+    using gin (to_tsvector('arabic'::regconfig, title));
 
-CREATE INDEX idx_poems_title_tsvector
-    ON public.poems
-    USING gin (to_tsvector('arabic'::regconfig, title));
+create index idx_poems_title_tsvector
+    on public.poems
+    using gin (to_tsvector('arabic'::regconfig, title));
 
-CREATE INDEX idx_poems_type_id
-    ON public.poems
-    USING btree (type_id);
+create index idx_poems_type_id
+    on public.poems
+    using btree (type_id);
 
--- Indexes on poets table
-CREATE INDEX idx_poets_era_id
-    ON public.poets
-    USING btree (era_id);
+-- indexes on poets table
+create index idx_poets_era_id
+    on public.poets
+    using btree (era_id);
 
-CREATE INDEX idx_poets_name_tsv
-    ON public.poets
-    USING gin (to_tsvector('arabic'::regconfig, name));
+create index idx_poets_name_tsv
+    on public.poets
+    using gin (to_tsvector('arabic'::regconfig, name));
 
-CREATE INDEX idx_poets_name_tsvector
-    ON public.poets
-    USING gin (to_tsvector('arabic'::regconfig, name));
+create index idx_poets_name_tsvector
+    on public.poets
+    using gin (to_tsvector('arabic'::regconfig, name));
 ```
 
 ### Indexes @ EC2
 
 ```sql
--- Indexes on poems table
-CREATE INDEX idx_poems_content_tsv
-    ON public.poems
-    USING gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
+-- indexes on poems table
+create index idx_poems_content_tsv
+    on public.poems
+    using gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
 
-CREATE INDEX idx_poems_content_tsvector
-    ON public.poems
-    USING gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
+create index idx_poems_content_tsvector
+    on public.poems
+    using gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
 
-CREATE INDEX idx_poems_meter_id
-    ON public.poems
-    USING btree (meter_id);
+create index idx_poems_meter_id
+    on public.poems
+    using btree (meter_id);
 
-CREATE INDEX idx_poems_poet_id
-    ON public.poems
-    USING btree (poet_id);
+create index idx_poems_poet_id
+    on public.poems
+    using btree (poet_id);
 
-CREATE INDEX idx_poems_poet_meter
-    ON public.poems
-    USING btree (poet_id, meter_id);
+create index idx_poems_poet_meter
+    on public.poems
+    using btree (poet_id, meter_id);
 
-CREATE INDEX idx_poems_rhyme_id
-    ON public.poems
-    USING btree (rhyme_id);
+create index idx_poems_rhyme_id
+    on public.poems
+    using btree (rhyme_id);
 
-CREATE INDEX idx_poems_theme_id
-    ON public.poems
-    USING btree (theme_id);
+create index idx_poems_theme_id
+    on public.poems
+    using btree (theme_id);
 
-CREATE INDEX idx_poems_theme_meter
-    ON public.poems
-    USING btree (theme_id, meter_id);
+create index idx_poems_theme_meter
+    on public.poems
+    using btree (theme_id, meter_id);
 
-CREATE INDEX idx_poems_title_tsv
-    ON public.poems
-    USING gin (to_tsvector('arabic'::regconfig, title));
+create index idx_poems_title_tsv
+    on public.poems
+    using gin (to_tsvector('arabic'::regconfig, title));
 
-CREATE INDEX idx_poems_title_tsvector
-    ON public.poems
-    USING gin (to_tsvector('arabic'::regconfig, title));
+create index idx_poems_title_tsvector
+    on public.poems
+    using gin (to_tsvector('arabic'::regconfig, title));
 
-CREATE INDEX idx_poems_type_id
-    ON public.poems
-    USING btree (type_id);
+create index idx_poems_type_id
+    on public.poems
+    using btree (type_id);
 
--- Indexes on poets table
-CREATE INDEX idx_poets_era_id
-    ON public.poets
-    USING btree (era_id);
+-- indexes on poets table
+create index idx_poets_era_id
+    on public.poets
+    using btree (era_id);
 
-CREATE INDEX idx_poets_name_tsv
-    ON public.poets
-    USING gin (to_tsvector('arabic'::regconfig, name));
+create index idx_poets_name_tsv
+    on public.poets
+    using gin (to_tsvector('arabic'::regconfig, name));
 
-CREATE INDEX idx_poets_name_tsvector
-    ON public.poets
-    USING gin (to_tsvector('arabic'::regconfig, name));
+create index idx_poets_name_tsvector
+    on public.poets
+    using gin (to_tsvector('arabic'::regconfig, name));
 ```
 
 ## 🚧 Limitations
