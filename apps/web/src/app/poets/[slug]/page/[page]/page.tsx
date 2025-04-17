@@ -1,3 +1,4 @@
+import { SITE_URL } from '@/constants/site';
 import { API_URL, NOT_FOUND_TITLE } from '@/lib/constants';
 import { toArabicDigits } from '@/lib/utils';
 import type { Metadata } from 'next';
@@ -24,7 +25,7 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, page } = await params;
 
   try {
     const response = await fetch(`${API_URL}/poets/slug/${slug}`);
@@ -65,6 +66,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       robots: {
         index: true,
         follow: true,
+      },
+      openGraph: {
+        url: `${SITE_URL}/poets/slug/${slug}/page/${page || 1}`,
+        title: `قافية | ديوان ${poetName}`,
+        description: `قصائد الشاعر ${poetName} من العصر ال${eraName}، عدد القصائد: ${toArabicDigits(poemsCount)}`,
+      },
+      twitter: {
+        title: `قافية | ديوان ${poetName}`,
+        description: `قصائد الشاعر ${poetName} من العصر ال${eraName}، عدد القصائد: ${toArabicDigits(poemsCount)}`,
       },
     };
   } catch (error) {

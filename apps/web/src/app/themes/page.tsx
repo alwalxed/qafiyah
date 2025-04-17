@@ -7,7 +7,6 @@ export const runtime = 'edge';
 export const metadata: Metadata = {
   title: 'قافية | تصفح حسب المواضيع',
   openGraph: {
-    type: 'website',
     url: `${SITE_URL}/themes`,
     title: 'قافية | تصفح حسب المواضيع',
   },

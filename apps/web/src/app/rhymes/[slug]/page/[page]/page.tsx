@@ -1,3 +1,4 @@
+import { SITE_URL } from '@/constants/site';
 import { NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import RhymePoemsSlugClientPage from './client';
@@ -54,16 +55,23 @@ export const RHYMES = new Map([
 ]);
 
 type Props = {
-  params: { slug: string; page?: string };
+  params: Promise<{ slug: string; page?: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = params;
+  const { slug, page } = await params;
 
   if (RHYMES.has(slug)) {
     const rhymePattern = RHYMES.get(slug);
     return {
       title: `قافية | قصائد على قافية ${rhymePattern}`,
+      openGraph: {
+        url: `${SITE_URL}/rhymes/${slug}/page/${page || 1}`,
+        title: `قافية | قصائد على قافية ${rhymePattern}`,
+      },
+      twitter: {
+        title: `قافية | قصائد على قافية ${rhymePattern}`,
+      },
     };
   }
   return {

@@ -1,3 +1,4 @@
+import { SITE_URL } from '@/constants/site';
 import { NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import ThemePoemsSlugClientPage from './client';
@@ -39,12 +40,19 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, page } = await params;
 
   if (THEMES.has(slug)) {
     const themeName = THEMES.get(slug);
     return {
       title: `قافية | قصائد ${themeName}`,
+      openGraph: {
+        url: `${SITE_URL}/themes/${slug}/page/${page || 1}`,
+        title: `قافية | قصائد ${themeName}`,
+      },
+      twitter: {
+        title: `قافية | قصائد ${themeName}`,
+      },
     };
   }
   return {

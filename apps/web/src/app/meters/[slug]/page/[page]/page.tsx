@@ -1,3 +1,4 @@
+import { SITE_URL } from '@/constants/site';
 import { NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
 import MeterSlugClientPage from './client';
@@ -55,12 +56,19 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, page } = await params;
 
   if (METERS.has(slug)) {
     const meterName = METERS.get(slug);
     return {
       title: `قافية | قصائد بحر ${meterName}`,
+      openGraph: {
+        url: `${SITE_URL}/meters/page/${page || 1}`,
+        title: `قافية | قصائد بحر ${meterName}`,
+      },
+      twitter: {
+        title: `قافية | قصائد بحر ${meterName}`,
+      },
     };
   }
   return {

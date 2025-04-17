@@ -1,3 +1,4 @@
+import { SITE_URL } from '@/constants/site';
 import type { ProcessedPoem } from '@/lib/api/types';
 import { API_URL, NOT_FOUND_TITLE } from '@/lib/constants';
 import type { Metadata } from 'next';
@@ -76,6 +77,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       keywords: keywords,
       authors: [{ name: poet_name }],
       robots: { index: true, follow: true },
+      openGraph: {
+        url: `${SITE_URL}/poems/${slug}`,
+        title: `${clearTitle} | ${poet_name} | قافية`,
+        description,
+      },
+      twitter: {
+        title: `${clearTitle} | ${poet_name} | قافية`,
+        description,
+      },
     };
   } catch (error) {
     console.error('Error fetching poem metadata:', error);
