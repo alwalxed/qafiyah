@@ -36,3 +36,4 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+packages/zod-schemas/tsup.config.bundled_jjm3lh3p4d.mjs
