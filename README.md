@@ -2,15 +2,15 @@
 
 Open-source. Non-profit. Accessible. Arabic poetry, beautifully archived.
 
-## 📑 Navigation
+## 📑 Table of Contents
 
 - [📋 Project Overview](#-project-overview)
 - [🏗️ Architecture](#️-architecture)
 - [💻 Tech Stack](#-tech-stack)
-- [📊 Database Statistics](#-database-statistics)
-- [🗄️ Database Schema](#️-database-schema)
-- [⚡ Database Optimizations](#-database-optimizations)
-- [🚀 Development](#-development)
+- [📊 Data Statistics](#-data-statistics)
+- [🗄️ Data Schema](#️-data-schema)
+- [⚡ Performance Optimizations](#-performance-optimizations)
+- [🚀 Development Setup](#-development-setup)
 - [📚 Terminology](#-terminology)
 - [❓ FAQ](#-faq)
 - [🤝 Contributing](#-contributing)
@@ -23,8 +23,8 @@ Our main channels:
 - **Website**: [qafiyah.com](https://qafiyah.com)
 - **API**: [api.qafiyah.com](https://api.qafiyah.com)
 - **Random Poem Endpoint**: [api.qafiyah.com/poems/random](https://api.qafiyah.com/poems/random)
-- **Twitter/X**: [x.com/qafiyahdotcom](https://twitter.com/qafiyahdotcom)
-- **DB Dumps**: [github.com/alwalxed/qafiyah/tree/main/.db_dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps)
+- **Twitter**: [@qafiyahdotcom](https://twitter.com/qafiyahdotcom)
+- **DB Dumps**: [database_dump.sql](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps)
 
 > **Important**: No need to scrape the website or API. All data is freely available in the [database dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps).
 
@@ -46,7 +46,7 @@ This monorepo contains:
 | **Database** | Supabase PostgreSQL with Drizzle ORM                                         |
 | **Search**   | AWS EC2 instance with materialized views ([Why is search separated?](#-faq)) |
 
-## 📊 Database Statistics
+## 📊 Data Statistics
 
 - 📝 **Total Verses:** 944,844
 - 📚 **Total Poems:** 85,342
@@ -57,7 +57,7 @@ This monorepo contains:
 - 🎨 **Themes Covered:** 27
 - 🧾 **Poem Types:** 3
 
-## 🗄️ Database Schema
+## 🗄️ Data Schema
 
 ### 📚 `poems`
 
@@ -145,7 +145,7 @@ Stores verses to prevent reposting
 | content    | character varying        | NO       |         | Tweet content                |
 | poem_id    | integer                  | YES      |         | FK to `poems(id)` (optional) |
 
-## ⚡ Database Optimizations
+## ⚡ Performance Optimizations
 
 We rely on materialized views for performance and security. Here are the commands to recreate them:
 
@@ -758,7 +758,7 @@ create index idx_poets_name_tsvector
     using gin (to_tsvector('arabic'::regconfig, name));
 ```
 
-## 🚀 Development
+## 🚀 Development Setup
 
 ```bash
 # 1. Create environment variables file for Cloudflare Worker
@@ -771,7 +771,7 @@ Add DATABASE_URL and SEARCH_DATABASE_URL to your .dev.vars file
 Download and restore from https://github.com/alwalxed/qafiyah/tree/main/.db_dumps
 
 # 4. Recreate views and functions
-Run the materialized views and functions SQL from the Database Optimizations section
+Run the materialized views and functions SQL from the Performance Optimizations section
 
 # 5. Install dependencies
 pnpm install
@@ -793,14 +793,12 @@ pnpm build
 
 ### Why is the search endpoint separated from the main API?
 
-The search endpoint was moved to AWS EC2 because Supabase's free tier limits were exceeded when creating optimized search views and indexes. While Supabase provides free and fast unlimited API calls, the search functionality required setting up a VPS with PostgreSQL that connects to Supabase and synchronizes data.
+We moved search to AWS EC2 because Supabase's free tier couldn't handle our specialized Arabic text search requirements. This separation lets us:
 
-This separation allows us to:
-
-- Keep the main API on Supabase's free tier
-- Optimize the search experience with dedicated resources for Arabic text search
-- Scale each component independently based on usage patterns
-- Maintain the benefits of Supabase for the rest of the API (free unlimited API calls, easy management)
+- Keep the main API within Supabase's free tier limits
+- Optimize Arabic text search with dedicated resources
+- Scale search independently from other API functions
+- Maintain Supabase's benefits (free unlimited API calls) for non-search operations
 
 ## 🤝 Contributing
 
