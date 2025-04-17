@@ -5,7 +5,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "pages_build_output_dir": ".vercel/output/static",
   "observability": {
-    "enabled": false,
+    "enabled": true,
   },
   "vars": {
     "NODE_VERSION": "18.18.0",
