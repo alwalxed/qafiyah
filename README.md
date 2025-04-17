@@ -796,4 +796,4 @@ Contributions are welcomed via PRs. Feel free to help improve the project.
 
 ## 📄 License
 
-This project is open source.
+This project is open source under the [MIT License](https://github.com/alwalxed/qafiyah/blob/main/LICENSE).
