@@ -620,6 +620,130 @@ END;
 $function$;
 ```
 
+### Indexes @ Supabase
+
+```sql
+-- Indexes on poems table
+CREATE INDEX idx_poems_content_tsv
+    ON public.poems
+    USING gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
+
+CREATE INDEX idx_poems_content_tsvector
+    ON public.poems
+    USING gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
+
+CREATE INDEX idx_poems_meter_id
+    ON public.poems
+    USING btree (meter_id);
+
+CREATE INDEX idx_poems_poet_id
+    ON public.poems
+    USING btree (poet_id);
+
+CREATE INDEX idx_poems_poet_meter
+    ON public.poems
+    USING btree (poet_id, meter_id);
+
+CREATE INDEX idx_poems_rhyme_id
+    ON public.poems
+    USING btree (rhyme_id);
+
+CREATE INDEX idx_poems_theme_id
+    ON public.poems
+    USING btree (theme_id);
+
+CREATE INDEX idx_poems_theme_meter
+    ON public.poems
+    USING btree (theme_id, meter_id);
+
+CREATE INDEX idx_poems_title_tsv
+    ON public.poems
+    USING gin (to_tsvector('arabic'::regconfig, title));
+
+CREATE INDEX idx_poems_title_tsvector
+    ON public.poems
+    USING gin (to_tsvector('arabic'::regconfig, title));
+
+CREATE INDEX idx_poems_type_id
+    ON public.poems
+    USING btree (type_id);
+
+-- Indexes on poets table
+CREATE INDEX idx_poets_era_id
+    ON public.poets
+    USING btree (era_id);
+
+CREATE INDEX idx_poets_name_tsv
+    ON public.poets
+    USING gin (to_tsvector('arabic'::regconfig, name));
+
+CREATE INDEX idx_poets_name_tsvector
+    ON public.poets
+    USING gin (to_tsvector('arabic'::regconfig, name));
+```
+
+### Indexes @ EC2
+
+```sql
+-- Indexes on poems table
+CREATE INDEX idx_poems_content_tsv
+    ON public.poems
+    USING gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
+
+CREATE INDEX idx_poems_content_tsvector
+    ON public.poems
+    USING gin (to_tsvector('arabic'::regconfig, substring(content, 1, 1000)));
+
+CREATE INDEX idx_poems_meter_id
+    ON public.poems
+    USING btree (meter_id);
+
+CREATE INDEX idx_poems_poet_id
+    ON public.poems
+    USING btree (poet_id);
+
+CREATE INDEX idx_poems_poet_meter
+    ON public.poems
+    USING btree (poet_id, meter_id);
+
+CREATE INDEX idx_poems_rhyme_id
+    ON public.poems
+    USING btree (rhyme_id);
+
+CREATE INDEX idx_poems_theme_id
+    ON public.poems
+    USING btree (theme_id);
+
+CREATE INDEX idx_poems_theme_meter
+    ON public.poems
+    USING btree (theme_id, meter_id);
+
+CREATE INDEX idx_poems_title_tsv
+    ON public.poems
+    USING gin (to_tsvector('arabic'::regconfig, title));
+
+CREATE INDEX idx_poems_title_tsvector
+    ON public.poems
+    USING gin (to_tsvector('arabic'::regconfig, title));
+
+CREATE INDEX idx_poems_type_id
+    ON public.poems
+    USING btree (type_id);
+
+-- Indexes on poets table
+CREATE INDEX idx_poets_era_id
+    ON public.poets
+    USING btree (era_id);
+
+CREATE INDEX idx_poets_name_tsv
+    ON public.poets
+    USING gin (to_tsvector('arabic'::regconfig, name));
+
+CREATE INDEX idx_poets_name_tsvector
+    ON public.poets
+    USING gin (to_tsvector('arabic'::regconfig, name));
+```
+
 ## 🚧 Limitations
 
 The search endpoint was moved to AWS EC2 because Supabase's free tier limits were exceeded when creating optimized search views and indexes. While Supabase provides free and fast unlimited API calls, the search functionality required setting up a VPS with PostgreSQL that connects to Supabase and synchronizes data.
