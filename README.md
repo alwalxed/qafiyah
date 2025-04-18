@@ -279,6 +279,7 @@ select
   p.id as poem_id,
   p.title as poem_title,
   p.slug as poem_slug,
+  p.num_verses as num_verses,
   pt.id as poet_id,
   pt.name as poet_name,
   pt.slug as poet_slug,

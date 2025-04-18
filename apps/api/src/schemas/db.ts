@@ -78,6 +78,7 @@ export const poetPoemsMaterialized = pgMaterializedView("poet_poems_mv", {
   poemSlug: uuid("poem_slug").notNull(),
   poetId: integer("poet_id").notNull(),
   poetName: text("poet_name").notNull(),
+  numVerses: integer("num_verses").notNull(),
   poetSlug: text("poet_slug").notNull(),
   meterName: text("meter_name").notNull(),
   totalPoemsByPoet: integer("total_poems_by_poet").notNull(),

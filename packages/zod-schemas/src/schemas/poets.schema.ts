@@ -27,6 +27,7 @@ export const poetPoemSchema = z.object({
   title: z.string(),
   slug: z.string(),
   meter: z.string(),
+  numVerses: z.number(),
 });
 
 // Schema for poet details

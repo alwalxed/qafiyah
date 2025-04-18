@@ -6,6 +6,7 @@ import { SectionPaginationControllers, SectionWrapper } from '@/components/ui/se
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getPoetPoems } from '@/lib/api/queries';
 import { toArabicDigits } from '@/utils/numbers/to-arabic-digits';
+import { getFormattedVersesCount } from '@/utils/texts/get-verse-count';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import type { Key } from 'react';
@@ -77,14 +78,21 @@ export default function PoetPoemsSlugPaginatedClientPage() {
       }}
     >
       {poems.length > 0 ? (
-        poems.map((poem: { slug: Key | null | undefined; title: string; meter: string }) => (
-          <ListCard
-            key={poem.slug}
-            href={`/poems/${poem.slug}`}
-            name={poem.title}
-            title={poem.meter}
-          />
-        ))
+        poems.map(
+          (poem: {
+            slug: Key | null | undefined;
+            title: string;
+            meter: string;
+            numVerses: number;
+          }) => (
+            <ListCard
+              key={poem.slug}
+              href={`/poems/${poem.slug}`}
+              name={poem.title}
+              title={`${getFormattedVersesCount(poem.numVerses)} / ${poem.meter}`}
+            />
+          )
+        )
       ) : (
         <p className="text-center text-zinc-500">{content.noMore}</p>
       )}

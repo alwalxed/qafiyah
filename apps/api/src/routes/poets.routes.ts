@@ -127,6 +127,7 @@ const app = new Hono<AppContext>()
           title: poetPoemsMaterialized.poemTitle,
           slug: poetPoemsMaterialized.poemSlug,
           meter: poetPoemsMaterialized.meterName,
+          numVerses: poetPoemsMaterialized.numVerses,
         })
         .from(poetPoemsMaterialized)
         .where(eq(poetPoemsMaterialized.poetSlug, slug))
