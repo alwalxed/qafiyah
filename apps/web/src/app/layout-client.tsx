@@ -26,7 +26,7 @@ export function RootLayoutClient({
       <Providers>
         <Nav ref={navRef} />
         <MobileMenu />
-        <main className="w-full flex justify-center items-center" style={{ minHeight }}>
+        <main className="w-full flex justify-center items-start" style={{ minHeight }}>
           {children}
         </main>
         <Footer ref={footerRef} />

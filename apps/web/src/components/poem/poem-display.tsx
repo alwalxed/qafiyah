@@ -1,6 +1,5 @@
 'use client';
 
-import { useLayoutStore } from '@/stores/layout-store';
 import { getFormattedVersesCount } from '@/utils/texts/get-verse-count';
 import { Minus, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -56,18 +55,11 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
 
   const verseCountNum = parseInt(String(verseCount), 10) || 0;
 
-  const { remainingHeight } = useLayoutStore();
-
-  const minHeight = remainingHeight === 0 ? '85svh' : `${remainingHeight}px`;
-
   useEffect(() => {
     setCurrentUrl(window.location.href);
   }, []);
   return (
-    <article
-      style={{ minHeight }}
-      className="w-full flex justify-center items-center my-14 xs:my-20 lg:my-28"
-    >
+    <article className="w-full flex justify-center items-start my-14 xs:my-20 lg:my-28">
       <div className="w-full flex flex-col gap-8 justify-center items-center">
         {/* Header */}
         <header className="flex justify-center items-center flex-col gap-4 xxs:gap-6 text-center w-full">
