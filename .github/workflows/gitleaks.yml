@@ -1,13 +1,36 @@
-name: gitleaks
-on: [pull_request, push, workflow_dispatch]
+name: Gitleaks Security Scan
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
 jobs:
   scan:
-    name: gitleaks
+    name: 🕵️ Gitleaks Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
     steps:
-      - uses: actions/checkout@v3
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
+          fetch-depth: 0 # Need full history for proper scanning
+
+      - name: 🔍 Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          report-format: sarif
+          report-path: gitleaks-report.sarif
+
+      - name: 📊 Upload SARIF report
+        uses: github/codeql-action/upload-sarif@v2
+        if: always() # Run even if Gitleaks finds issues
+        with:
+          sarif_file: gitleaks-report.sarif
