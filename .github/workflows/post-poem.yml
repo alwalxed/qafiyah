@@ -1,4 +1,4 @@
-name: Post Poem
+name: 🐦 Post Poem to Twitter
 
 on:
   schedule:
@@ -9,19 +9,16 @@ jobs:
   tweet:
     name: 🐦 Post Poem to Twitter
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 4
 
     steps:
       - name: ⬇️ Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
+        uses: actions/checkout@v3
 
       - name: 🔧 Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: "18"
-          cache: "pnpm"
 
       - name: 🔧 Setup pnpm
         uses: pnpm/action-setup@v2
@@ -30,9 +27,14 @@ jobs:
           run_install: false
 
       - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile --prod
+        run: pnpm install
 
-      - name: 🏗️ Build and run bot
+      - name: 🏗️ Build bot directly
+        run: |
+          cd apps/bot
+          pnpm build
+
+      - name: 🚀 Run bot
         env:
           TWITTER_APP_KEY: ${{ secrets.TWITTER_APP_KEY }}
           TWITTER_APP_SECRET: ${{ secrets.TWITTER_APP_SECRET }}
@@ -40,5 +42,4 @@ jobs:
           TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
         run: |
           cd apps/bot
-          pnpm build
           pnpm start
