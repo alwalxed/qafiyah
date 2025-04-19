@@ -5,7 +5,7 @@ import { eq, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { MAX_EXCERPT_LENGTH } from "../constants";
-import { poemsMaterialized } from "../schemas/db";
+import { poemsView } from "../schemas/db";
 import type { AppContext, Poem, PoemData } from "../types";
 import { extractPoemExcerpt, processPoemContent } from "../utils/poem";
 
@@ -52,8 +52,8 @@ const app = new Hono<AppContext>()
 
       const result = await db
         .select()
-        .from(poemsMaterialized)
-        .where(eq(poemsMaterialized.slug, slug));
+        .from(poemsView)
+        .where(eq(poemsView.slug, slug));
 
       if (!result || result.length === 0) {
         throw new HTTPException(404, { message: "Poem not found" });

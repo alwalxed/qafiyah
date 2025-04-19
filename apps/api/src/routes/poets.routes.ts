@@ -10,7 +10,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { FETCH_PER_PAGE } from "../constants";
 import {
-  poemsMaterialized,
+  poemsView,
   poetPoemsMaterialized,
   poetStatsMaterialized,
 } from "../schemas/db";
@@ -75,11 +75,11 @@ const app = new Hono<AppContext>()
 
     const eraInfo = await db
       .select({
-        eraName: poemsMaterialized.era_name,
-        eraSlug: poemsMaterialized.era_slug,
+        eraName: poemsView.era_name,
+        eraSlug: poemsView.era_slug,
       })
-      .from(poemsMaterialized)
-      .where(eq(poemsMaterialized.poet_slug, slug))
+      .from(poemsView)
+      .where(eq(poemsView.poet_slug, slug))
       .limit(1);
 
     const responseData = {

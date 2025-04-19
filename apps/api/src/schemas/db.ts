@@ -2,6 +2,7 @@ import {
   integer,
   pgMaterializedView,
   pgTable,
+  pgView,
   text,
   uuid,
 } from "drizzle-orm/pg-core";
@@ -11,19 +12,6 @@ import {
 -------- MATERIALIZED VIEWS:
 -------------------------------------
 */
-
-export const poemsMaterialized = pgMaterializedView("poem_full_data_mv", {
-  slug: text("slug").notNull(),
-  title: text("title"),
-  content: text("content"),
-  poet_name: text("poet_name"),
-  poet_slug: text("poet_slug"),
-  meter_name: text("meter_name"),
-  theme_name: text("theme_name"),
-  type_name: text("type_name"),
-  era_name: text("era_name"),
-  era_slug: text("era_slug"),
-}).existing();
 
 export const eraStatsMaterialized = pgMaterializedView("era_stats_mv", {
   id: integer("id").notNull(),
@@ -130,16 +118,21 @@ export const topPoetsMaterialized = pgMaterializedView("top_poets_mv", {
   poemsCount: integer("poems_count").notNull(),
 }).existing();
 
-export const poemsSearchMaterialized = pgMaterializedView("poems_search_mv", {
-  id: integer("id").notNull(),
-  title: text("title").notNull(),
-  slug: uuid("slug").notNull(),
-  content: text("content").notNull(),
-  content_tsv: text("content_tsv"), // tsvector column for full-text search
-  poet_id: integer("poet_id").notNull(),
-  poet_name: text("poet_name").notNull(),
-  poet_slug: text("poet_slug").notNull(),
+/*
+-------------------------------------
+-------- MATERIALIZED VIEWS:
+-------------------------------------
+*/
+
+export const poemsView = pgView("poem_full_data_v", {
+  slug: text("slug").notNull(),
+  title: text("title"),
+  content: text("content"),
+  poet_name: text("poet_name"),
+  poet_slug: text("poet_slug"),
   meter_name: text("meter_name"),
+  theme_name: text("theme_name"),
+  type_name: text("type_name"),
   era_name: text("era_name"),
   era_slug: text("era_slug"),
 }).existing();

@@ -12,7 +12,7 @@ import {
 import {
   eraStatsMaterialized,
   meterStatsMaterialized,
-  poemsMaterialized,
+  poemsView,
   poetStatsMaterialized,
   rhymeStatsMaterialized,
   themeStatsMaterialized,
@@ -28,7 +28,7 @@ const app = new Hono<AppContext>()
 
     const poemsCountResult = await db
       .select({ count: sql`count(*)` })
-      .from(poemsMaterialized);
+      .from(poemsView);
 
     if (!poemsCountResult[0]) {
       throw new Error();
@@ -387,7 +387,7 @@ const app = new Hono<AppContext>()
     // Count total poems
     const poemsCountResult = await db
       .select({ count: sql`count(*)` })
-      .from(poemsMaterialized);
+      .from(poemsView);
 
     if (!poemsCountResult[0]) {
       throw new Error();
@@ -431,7 +431,7 @@ const app = new Hono<AppContext>()
     // Get poems for this page
     const poems = await db
       .select()
-      .from(poemsMaterialized)
+      .from(poemsView)
       .limit(MAX_URLS_PER_SITEMAP)
       .offset(offset);
 
