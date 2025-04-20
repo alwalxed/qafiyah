@@ -17,9 +17,7 @@ Poems are stored with full diacritics, and verses are separated by asterisks (`*
 ## Arabic Text Considerations
 
 1. **Diacritics handling**: Poems are stored with diacritics, but searches are typically performed without them.
-2. **Character normalization**: Arabic letters with different forms (e.g., أ/إ/آ, ه/ة, و/ؤ, ي/ئ/ى) must be normalized to their base forms (ا, ه, و, ي).
-3. **Line separation**: Poems are made of verses, and verses are made of lines. Each line is separated by an asterisk (`*`). This is how we store them in the table.
-4. **Text processing**: Both the client and the server must process text consistently before querying.
+2. **Line separation**: Poems are made of verses, and verses are made of lines. Each line is separated by an asterisk (`*`). This is how we store them in the table.
 
 ## Sample
 
@@ -50,26 +48,6 @@ SELECT * from poets LIMIT 1;
 
 ### 1. Create Text Processing Functions
 
-First, normalize the letters. We also normalize user input to ensure consistency, even when users make minor spelling errors.
-
-```sql
--- Normalize Arabic letters to their base forms.
--- For example: أ/إ/آ → ا, ة → ه, ي/ئ/ى → ي, ؤ → و
-CREATE OR REPLACE FUNCTION normalize_letters(input_text TEXT)
-RETURNS TEXT AS $$
-BEGIN
- RETURN regexp_replace(
-   regexp_replace(
-     regexp_replace(
-       regexp_replace(input_text, '[أإآ]', 'ا', 'g'),
-     '[يئى]', 'ي', 'g'),
-   'ة', 'ه', 'g'),
- 'ؤ', 'و', 'g');
-END;
-$$
-LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER;
-```
-
 Strip diacritics — this is applied to user input as well, since we don't expect users to include them.
 
 ```sql
@@ -78,7 +56,8 @@ Strip diacritics — this is applied to user input as well, since we don't expec
 CREATE OR REPLACE FUNCTION strip_diacritics(input_text TEXT)
 RETURNS TEXT AS $$
 BEGIN
- RETURN regexp_replace(input_text, '[ًٌٍَُِّْٰٓٔـ]', '', 'g');
+ -- Use Unicode range for Arabic diacritics (tashkeel) and tatweel
+ RETURN regexp_replace(input_text, '[\u064B-\u0652\u0670\u06D6\u06DC\u06DF\u06E0\u06E1\u06E2\u06E3\u06E4\u06E5\u06E6\u06E7\u06E8\u06E9\u06EA\u06EB\u06EC\u06ED\u06EE\u06EF\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9\u06FA\u06FB\u06FC\u06FD\u06FE\u06FF]', '', 'g');
 END;
 $$
 LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER;
@@ -96,9 +75,9 @@ DECLARE
  pattern TEXT;
 BEGIN
  IF keep_asterisk THEN
-   pattern := '[^ابتثجحخدذرزسشصضطظعغفقكلمنهويء *]'; -- keep spaces AND '*'
+   pattern := '[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FFء *]';  -- Arabic letters and asterisk
  ELSE
-   pattern := '[^ابتثجحخدذرزسشصضطظعغفقكلمنهويء ]';  -- keep spaces ONLY
+   pattern := '[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FFء ]';  -- Arabic letter no asterisk
  END IF;
 
  RETURN regexp_replace(input_text, pattern, '', 'g');
@@ -110,19 +89,13 @@ LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER;
 Wrapper function to apply all text processing steps:
 
 ```sql
--- Apply all Arabic text normalization steps:
--- 1. Normalize variant letters to base forms
--- 2. Strip diacritics
--- 3. Filter to Arabic letters, spaces, and optionally the verse separator '*'
-CREATE OR REPLACE FUNCTION process_arabic_text(input_text TEXT, keep_asterisk BOOLEAN)
+-- Normalize Arabic text:
+-- 1. strip diacritics and 2. filter letters. 3. spaces
+-- 4. and optionally verse separator '*'
+CREATE OR REPLACE FUNCTION normalize_arabic_text(input_text TEXT, keep_asterisk BOOLEAN)
 RETURNS TEXT AS $$
-DECLARE
- result TEXT;
 BEGIN
- result := normalize_letters(input_text);
- result := strip_diacritics(result);
- result := filter_arabic_text(result, keep_asterisk);
- RETURN result;
+ RETURN filter_arabic_text(strip_diacritics(input_text), keep_asterisk);
 END;
 $$
 LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER;
@@ -146,11 +119,11 @@ ALTER TABLE poems
 ADD COLUMN search_vector tsvector
 GENERATED ALWAYS AS (
   setweight(
-    to_tsvector('simple', replace(process_arabic_text(title, TRUE), '*', ' ')),
+    to_tsvector('simple', replace(normalize_arabic_text(title, TRUE), '*', ' ')),
     'A'
   ) ||
   setweight(
-    to_tsvector('simple', replace(process_arabic_text(content, TRUE), '*', ' ')),
+    to_tsvector('simple', replace(normalize_arabic_text(content, TRUE), '*', ' ')),
     'B'
   )
 ) STORED;
@@ -165,8 +138,7 @@ DROP COLUMN IF EXISTS search_vector;
 ALTER TABLE poets
 ADD COLUMN search_vector tsvector
 GENERATED ALWAYS AS (
-setweight(to_tsvector('simple', process_arabic_text(name, FALSE)), 'A') ||
-setweight(to_tsvector('simple', process_arabic_text(bio, FALSE)), 'B')
+  setweight(to_tsvector('simple', normalize_arabic_text(name, FALSE)), 'A')
 ) STORED;
 ```
 
@@ -212,7 +184,7 @@ DECLARE
  results_per_page INTEGER := 5;
  total_results BIGINT;
 BEGIN
- processed_query := process_arabic_text(query_text, FALSE);
+ processed_query := normalize_arabic_text(query_text, FALSE);
 
 IF match_type = 'exact' THEN
  tsquery_obj := phraseto_tsquery('simple', processed_query);
@@ -240,7 +212,7 @@ RETURN QUERY
  e.name,
  pt.slug,
  p.title,
- ts_headline('simple', process_arabic_text(p.content, TRUE), tsquery_obj,
+ ts_headline('simple', normalize_arabic_text(p.content, TRUE), tsquery_obj,
  'StartSel=<mark>, StopSel=</mark>, MaxFragments=1, MaxWords=30'),
  m.name,
  p.slug,
@@ -269,75 +241,75 @@ LANGUAGE plpgsql SECURITY DEFINER;
 
 ```sql
 CREATE OR REPLACE FUNCTION search_poets(
-query_text TEXT,
-page_number INTEGER,
-match_type TEXT, -- 'exact', 'all', or 'any'
-era_ids INTEGER[] DEFAULT NULL
+  query_text TEXT,
+  page_number INTEGER,
+  match_type TEXT, -- 'exact', 'all', or 'any'
+  era_ids INTEGER[] DEFAULT NULL
 ) RETURNS TABLE (
-poet_name TEXT,
-poet_era TEXT,
-poet_slug TEXT,
-poet_bio TEXT,
-relevance DOUBLE PRECISION,
-total_count BIGINT
+  poet_name TEXT,
+  poet_era TEXT,
+  poet_slug TEXT,
+  poet_bio TEXT,
+  relevance DOUBLE PRECISION,
+  total_count BIGINT
 ) AS
-
 $$
-
 DECLARE
- processed_query TEXT;
- tsquery_obj tsquery;
- results_per_page INTEGER := 10;
- total_results BIGINT;
- weight_config REAL[] := ARRAY[0.1, 0.2, 0.4, 1.0];
+  processed_query TEXT;
+  tsquery_obj tsquery;
+  results_per_page INTEGER := 10;
+  total_results BIGINT;
+  weight_config REAL[] := ARRAY[0.1, 0.2, 0.4, 1.0];
 BEGIN
- processed_query := process_arabic_text(query_text, FALSE);
+  -- Process the query text (normalize Arabic text)
+  processed_query := normalize_arabic_text(query_text, FALSE);
 
-IF match_type = 'exact' THEN
- tsquery_obj := phraseto_tsquery('simple', processed_query);
- ELSIF match_type = 'all' THEN
- tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' & ', 'g'));
- ELSIF match_type = 'any' THEN
- tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' | ', 'g'));
- ELSE
- tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' & ', 'g'));
- END IF;
+  -- Determine the tsquery based on the match type
+  IF match_type = 'exact' THEN
+    tsquery_obj := phraseto_tsquery('simple', processed_query);
+  ELSIF match_type = 'all' THEN
+    tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' & ', 'g'));
+  ELSIF match_type = 'any' THEN
+    tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' | ', 'g'));
+  ELSE
+    tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' & ', 'g'));
+  END IF;
 
-SELECT COUNT(*) INTO total_results
- FROM poets p
- JOIN eras e ON p.era_id = e.id
- WHERE p.search_vector @@ tsquery_obj
- AND (era_ids IS NULL OR p.era_id = ANY(era_ids));
+  -- Count the total number of results
+  SELECT COUNT(*) INTO total_results
+  FROM poets p
+  JOIN eras e ON p.era_id = e.id
+  WHERE p.search_vector @@ tsquery_obj
+    AND (era_ids IS NULL OR p.era_id = ANY(era_ids));
 
-RETURN QUERY
- SELECT
- p.name,
- e.name,
- p.slug,
- ts_headline('simple', process_arabic_text(p.bio, FALSE), tsquery_obj,
- 'StartSel=<mark>, StopSel=</mark>, MaxFragments=1, MaxWords=50'),
- CASE
- WHEN process_arabic_text(p.name, FALSE) = processed_query THEN 10.0
- WHEN process_arabic_text(p.name, FALSE) ILIKE '%' || processed_query || '%' THEN
- 5.0 + ts_rank_cd(weight_config, p.search_vector, tsquery_obj)
- ELSE
- ts_rank_cd(weight_config, p.search_vector, tsquery_obj)
- END,
- total_results
- FROM poets p
- JOIN eras e ON p.era_id = e.id
- WHERE p.search_vector @@ tsquery_obj
- AND (era_ids IS NULL OR p.era_id = ANY(era_ids))
- ORDER BY
- process_arabic_text(p.name, FALSE) = processed_query DESC,
- process_arabic_text(p.name, FALSE) ILIKE '%' || processed_query || '%' DESC,
- relevance DESC
- LIMIT results_per_page
- OFFSET (page_number - 1) * results_per_page;
+  -- Return the query results, ordering by relevance and poet name
+  RETURN QUERY
+  SELECT
+    p.name,
+    e.name,
+    p.slug,
+    ts_headline('simple', normalize_arabic_text(p.bio, FALSE), tsquery_obj,
+                'StartSel=<mark>, StopSel=</mark>, MaxFragments=1, MaxWords=50'),
+    CASE
+      WHEN normalize_arabic_text(p.name, FALSE) = processed_query THEN 10.0
+      WHEN normalize_arabic_text(p.name, FALSE) ILIKE '%' || processed_query || '%' THEN
+        5.0 + ts_rank_cd(weight_config, p.search_vector, tsquery_obj)
+      ELSE
+        ts_rank_cd(weight_config, p.search_vector, tsquery_obj)
+    END,
+    total_results
+  FROM poets p
+  JOIN eras e ON p.era_id = e.id
+  WHERE p.search_vector @@ tsquery_obj
+    AND (era_ids IS NULL OR p.era_id = ANY(era_ids))
+  ORDER BY
+    normalize_arabic_text(p.name, FALSE) = processed_query DESC,
+    normalize_arabic_text(p.name, FALSE) ILIKE '%' || processed_query || '%' DESC,
+    relevance DESC
+  LIMIT results_per_page
+  OFFSET (page_number - 1) * results_per_page;
+
 END;
-
-
 $$
-
 LANGUAGE plpgsql SECURITY DEFINER;
 ```
