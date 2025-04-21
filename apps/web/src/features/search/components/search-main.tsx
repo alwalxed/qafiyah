@@ -1,6 +1,5 @@
 'use client';
 
-import { useLayoutStore } from '@/stores/layout-store';
 import { usePoemSearch } from '../hooks/use-poem-search';
 import { SearchForm } from './search-form';
 import { SearchHeader } from './search-header';
@@ -33,14 +32,8 @@ export function SearchClientPage() {
     loadMoreRef,
   } = usePoemSearch();
 
-  const { remainingHeight } = useLayoutStore();
-
-  const minHeight = remainingHeight === 0 ? '85svh' : `${remainingHeight}px`;
   return (
-    <div
-      className="w-full flex justify-center items-center py-14 xs:py-20 lg:py-28"
-      style={{ minHeight }}
-    >
+    <div className="w-full flex h-full justify-center items-center py-14 xs:py-20 lg:py-28">
       <div className="w-full md:max-w-2xl">
         {/* Header */}
         <SearchHeader />

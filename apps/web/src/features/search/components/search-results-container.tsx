@@ -1,6 +1,6 @@
 'use client';
 
-import type { PaginationMeta, SearchResponseData } from '@/lib/api/types';
+import type { PaginationMeta, PoemsSearchResponseData } from '@/lib/api/types';
 import { isArabicText } from '@/utils/texts/is-arabic-text';
 import type { InfiniteData } from '@tanstack/react-query';
 import type { SearchResult } from '../hooks/use-poem-search';
@@ -13,7 +13,7 @@ type SearchResultsContainerProps = {
   data:
     | InfiniteData<
         {
-          data: SearchResponseData;
+          data: PoemsSearchResponseData;
           pagination?: PaginationMeta;
         },
         unknown

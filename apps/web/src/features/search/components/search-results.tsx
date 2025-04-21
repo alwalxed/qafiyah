@@ -33,32 +33,32 @@ export function SearchResultItem({ result, searchQuery }: SearchResultItemProps)
 
   return (
     <a
-      href={`/poems/${result.slug}`}
-      key={`page-${result._pageIndex}-item-${result._resultIndex}-id-${result.id}`}
+      href={`/poems/${result.poem_slug}`}
+      key={`page-${result._pageIndex}-item-${result._resultIndex}-id-${result.relevance}`}
       className="block bg-white p-5 hover:bg-zinc-50 transition-colors rounded-xl border border-zinc-100 shadow-sm hover:shadow-md hover:border-zinc-200 duration-200"
     >
       <div className="text-right">
         <h2 className="font-bold text-xl text-zinc-900 mb-2">
-          {highlightMatches(result.title.replace(/"/g, ''), searchQuery)}
+          {highlightMatches(result.poem_title.replace(/"/g, ''), searchQuery)}
         </h2>
         <div className="flex justify-end items-center gap-2 text-sm mb-3">
           <span className="bg-zinc-100 px-2 py-0.5 rounded-md text-zinc-700">
             {highlightMatches(result.poet_name, searchQuery)}
           </span>
-          {result.meter_name && (
+          {result.poem_meter && (
             <span className="bg-zinc-100 px-2 py-0.5 rounded-md text-zinc-700">
-              {result.meter_name}
+              {result.poem_meter}
             </span>
           )}
-          {result.era_name && (
+          {result.poet_era && (
             <span className="bg-zinc-100 px-2 py-0.5 rounded-md text-zinc-700">
-              {result.era_name}
+              {result.poet_era}
             </span>
           )}
         </div>
         <p className="text-zinc-700 line-clamp-3 text-right leading-relaxed" dir="rtl">
           {highlightMatches(
-            removeTashkeel(cleanSearchResponseText(result.content_snippet.split('*').join(' — '))),
+            removeTashkeel(cleanSearchResponseText(result.poem_snippet.split('*').join(' — '))),
             searchQuery
           )}
         </p>

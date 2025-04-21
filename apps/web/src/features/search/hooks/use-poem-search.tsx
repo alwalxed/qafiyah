@@ -1,46 +1,82 @@
 'use client';
 
-import type React from 'react';
-
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { searchPoems } from '@/lib/api/queries';
+import type { PoemsSearchResult } from '@/lib/api/types';
 import { isArabicText } from '@/utils/texts/is-arabic-text';
 import { sanitizeArabicText } from '@/utils/texts/sanitize-arabic-text';
 
-export interface SearchResult {
+export type SearchResult = PoemsSearchResult & {
   _pageIndex: number;
   _resultIndex: number;
-  id: number | null;
-  title: string;
-  slug: string;
-  content_snippet: string;
-  poet_name: string;
-  poet_slug: string | null;
-  meter_name: string | null;
-  era_name: string | null;
-}
+};
 
 export function usePoemSearch() {
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  // Use URL search params instead of state
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Get values from URL
+  const queryFromUrl = searchParams.get('q') || '';
+  const exactFromUrl = searchParams.get('match_type') === 'exact';
+
+  // Local state for form input and validation
+  const [inputValue, setInputValue] = useState<string>(queryFromUrl);
   const [searchError, setSearchError] = useState<string | null>(null);
-  const [searchTrigger, setSearchTrigger] = useState<string>('');
   const [isTypingNewQuery, setIsTypingNewQuery] = useState<boolean>(false);
-  const [exactSearch, setExactSearch] = useState<boolean>(false);
-  const lastSubmittedQueryRef = useRef<string>('');
+  const lastSubmittedQueryRef = useRef<string>(queryFromUrl);
   const { ref: loadMoreRef, inView } = useInView();
 
+  // Create a function to update URL params
+  const updateSearchParams = useCallback(
+    (params: {
+      q?: string;
+      match_type?: string;
+      page?: string;
+      meter_ids?: string;
+      era_ids?: string;
+      theme_ids?: string;
+    }) => {
+      const newParams = new URLSearchParams(searchParams.toString());
+
+      // Update or remove parameters
+      Object.entries(params).forEach(([key, value]) => {
+        if (value === undefined || value === '') {
+          newParams.delete(key);
+        } else {
+          newParams.set(key, value);
+        }
+      });
+
+      // Update the URL without refreshing the page
+      router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
+    },
+    [pathname, router, searchParams]
+  );
+
+  // Use React Query with URL parameters
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
-    queryKey: ['search-poems', searchTrigger, exactSearch],
+    queryKey: ['search-poems', queryFromUrl, exactFromUrl],
     queryFn: ({ pageParam = 1 }: { pageParam?: number }) =>
-      searchPoems(searchTrigger, pageParam.toString(), exactSearch ? 'true' : 'false'),
+      searchPoems(
+        queryFromUrl,
+        pageParam.toString(),
+        exactFromUrl ? 'exact' : 'all',
+        searchParams.get('meter_ids') || undefined,
+        searchParams.get('era_ids') || undefined,
+        searchParams.get('theme_ids') || undefined
+      ),
     getNextPageParam: (lastPage) =>
       lastPage.data.pagination?.hasNextPage
         ? Number(lastPage.data.pagination.currentPage) + 1
         : undefined,
-    enabled: searchTrigger.length > 1 && isArabicText(searchTrigger),
+    enabled: queryFromUrl.length > 1 && isArabicText(queryFromUrl),
     staleTime: 1000 * 60 * 60,
     initialPageParam: 1,
   });
@@ -52,14 +88,14 @@ export function usePoemSearch() {
     }
   }, [inView, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  // Check if user is typing a new query different from the last submitted one
+  // Check if user is typing a new query different from the URL
   useEffect(() => {
-    if (searchTrigger && searchQuery !== searchTrigger) {
+    if (queryFromUrl && inputValue !== queryFromUrl) {
       setIsTypingNewQuery(true);
     } else {
       setIsTypingNewQuery(false);
     }
-  }, [searchQuery, searchTrigger]);
+  }, [inputValue, queryFromUrl]);
 
   // Process search results
   const allResults: SearchResult[] =
@@ -77,80 +113,103 @@ export function usePoemSearch() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!searchQuery.trim()) {
+    if (!inputValue.trim()) {
       setSearchError('الرجاء إدخال نص للبحث');
       return;
     }
 
-    if (searchQuery.trim().length === 1) {
+    if (inputValue.trim().length === 1) {
       setSearchError('الرجاء إدخال كلمتين أو أكثر للبحث');
       return;
     }
 
-    if (!isArabicText(searchQuery)) {
+    if (!isArabicText(inputValue)) {
       setSearchError('الرجاء إدخال نص باللغة العربية فقط');
       return;
     }
 
     // If validation passes
     setSearchError(null);
-    const sanitizedQuery = sanitizeArabicText(searchQuery.trim().slice(0, 50));
-    setSearchQuery(sanitizedQuery); // Sanitize when submitting
-    setSearchTrigger(sanitizedQuery); // Only trigger search on submit
+    const sanitizedQuery = sanitizeArabicText(inputValue.trim().slice(0, 50));
+    setInputValue(sanitizedQuery); // Sanitize when submitting
+
+    // Update URL with new query
+    updateSearchParams({
+      q: sanitizedQuery,
+      page: '1', // Reset to first page on new search
+    });
+
     setIsTypingNewQuery(false);
     lastSubmittedQueryRef.current = sanitizedQuery;
   };
 
   // Clear search
   const handleSearchClearClick = () => {
-    setSearchQuery('');
-    setSearchTrigger('');
+    setInputValue('');
     setSearchError(null);
     setIsTypingNewQuery(false);
-    setExactSearch(false); // Reset exact search when clearing
     lastSubmittedQueryRef.current = '';
+
+    // Clear URL parameters
+    updateSearchParams({
+      q: '',
+      match_type: '',
+      page: '',
+      meter_ids: '',
+      era_ids: '',
+      theme_ids: '',
+    });
+  };
+
+  // Toggle exact search
+  const toggleExactSearch = (value: boolean) => {
+    updateSearchParams({
+      match_type: value ? 'exact' : 'all',
+    });
   };
 
   // Reset search results when typing a new query
   const resetSearchResults = useCallback(() => {
-    if (searchTrigger && searchQuery !== searchTrigger) {
+    if (queryFromUrl && inputValue !== queryFromUrl) {
       setIsTypingNewQuery(true);
     }
-  }, [searchTrigger, searchQuery]);
+  }, [queryFromUrl, inputValue]);
 
   // Validate search input
   useEffect(() => {
-    if (searchQuery && !isArabicText(searchQuery)) {
+    if (inputValue && !isArabicText(inputValue)) {
       setSearchError('الرجاء إدخال نص باللغة العربية فقط');
-    } else if (searchQuery && searchQuery.trim().length === 1) {
+    } else if (inputValue && inputValue.trim().length === 1) {
       setSearchError('الرجاء إدخال حرفين فأكثر');
-    } else if (searchQuery && searchQuery.trim().length > 50) {
+    } else if (inputValue && inputValue.trim().length > 50) {
       setSearchError('الرجاء إدخال نص لا يتجاوز ٥٠ حرفاً');
     } else {
       setSearchError(null);
     }
 
     // If user is typing a new query (different from previous), reset results
-    if (searchQuery !== lastSubmittedQueryRef.current) {
+    if (inputValue !== lastSubmittedQueryRef.current) {
       resetSearchResults();
     }
+  }, [resetSearchResults, inputValue]);
 
-    // Reset exactSearch when text is cleared
-    if (!searchQuery) {
-      setExactSearch(false);
+  // Initialize input value from URL when component mounts or URL changes
+  useEffect(() => {
+    if (queryFromUrl && inputValue !== queryFromUrl) {
+      setInputValue(queryFromUrl);
     }
-  }, [resetSearchResults, searchQuery]);
+  }, [queryFromUrl]);
 
   return {
     // Search state
-    searchQuery,
-    setSearchQuery,
+    searchQuery: inputValue,
+    setSearchQuery: setInputValue,
     searchError,
     setSearchError,
-    searchTrigger,
+    searchTrigger: queryFromUrl, // For compatibility with existing code
     isTypingNewQuery,
-    exactSearch,
-    setExactSearch,
+    exactSearch: exactFromUrl,
+    setExactSearch: toggleExactSearch,
 
     // Search results
     status,

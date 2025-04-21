@@ -5,12 +5,13 @@ import type {
   Meter,
   MeterPoems,
   PaginationMeta,
+  PoemsSearchResponseData,
   PoetPoems,
   PoetsData,
+  PoetsSearchResponseData,
   ProcessedPoem,
   Rhyme,
   RhymePoems,
-  SearchResponseData,
   Theme,
   ThemePoems,
 } from './types';
@@ -23,10 +24,22 @@ export const queries = {
   // Search
   async searchPoems(
     query: string,
-    page: string = '1',
-    exact: string = 'false'
-  ): Promise<{ data: SearchResponseData; pagination?: PaginationMeta }> {
-    return client.searchPoems(query, page, exact);
+    page = '1',
+    matchType = 'all',
+    meterIds?: string,
+    eraIds?: string,
+    themeIds?: string
+  ): Promise<{ data: PoemsSearchResponseData; pagination?: PaginationMeta }> {
+    return client.searchPoems(query, page, matchType, meterIds, eraIds, themeIds);
+  },
+
+  async searchPoets(
+    query: string,
+    page = '1',
+    matchType = 'all',
+    eraIds?: string
+  ): Promise<{ data: PoetsSearchResponseData; pagination?: PaginationMeta }> {
+    return client.searchPoets(query, page, matchType, eraIds);
   },
 
   // Eras
@@ -111,6 +124,7 @@ export const queries = {
 // For convenience, also export individual functions
 export const {
   searchPoems,
+  searchPoets,
   getEras,
   getEraPoems,
   getMeters,

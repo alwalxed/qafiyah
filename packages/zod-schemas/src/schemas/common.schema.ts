@@ -1,21 +1,19 @@
 import { z } from "zod";
 
-// Common pagination schema used across multiple routes
+export const pageStringNumberSchema = z.preprocess((val) => {
+  if (typeof val !== "string") return 1;
+  const num = parseInt(val, 10);
+  return isNaN(num) || num <= 0 ? 1 : num;
+}, z.number().positive());
+
 export const paginationSchema = z.object({
-  page: z
-    .string()
-    .regex(/^\d+$/, { message: "Page must be a positive number" })
-    .transform((val) => parseInt(val, 10))
-    .refine((val) => val > 0, { message: "Page must be a positive number" })
-    .default("1"),
+  page: pageStringNumberSchema,
 });
 
-// Common slug parameter schema
 export const slugSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
 });
 
-// Common paginated slug parameter schema (combines both)
 export const paginatedSlugSchema = slugSchema.extend({
   page: z
     .string()
@@ -25,7 +23,6 @@ export const paginatedSlugSchema = slugSchema.extend({
     .default("1"),
 });
 
-// Common pagination metadata in responses
 export const paginationMetaSchema = z.object({
   pagination: z.object({
     currentPage: z.number().int().positive(),
@@ -36,7 +33,6 @@ export const paginationMetaSchema = z.object({
   }),
 });
 
-// Base success response wrapper
 export const successResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
     success: z.literal(true),
@@ -44,7 +40,6 @@ export const successResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
     meta: z.record(z.string(), z.unknown()).optional(),
   });
 
-// Base error response wrapper
 export const errorResponseSchema = z.object({
   success: z.literal(false),
   error: z.string(),
@@ -52,11 +47,9 @@ export const errorResponseSchema = z.object({
   status: z.number().int(),
 });
 
-// Generic API response (either success or error)
 export const apiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.union([successResponseSchema(dataSchema), errorResponseSchema]);
 
-// Paginated response wrapper
 export const paginatedResponseSchema = <T extends z.ZodTypeAny>(
   dataSchema: T
 ) =>

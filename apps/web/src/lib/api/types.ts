@@ -10,6 +10,7 @@ import type {
   meterSchema,
   paginationMetaSchema,
   poemMetadataSchema,
+  poemsSearchResultSchema,
   poetDetailsSchema,
   poetPoemSchema,
   poetPoemsResponseSchema,
@@ -26,6 +27,7 @@ import type {
   themeSchema,
   z,
 } from '@qaf/zod-schemas';
+import { poetsSearchResultSchema } from './../../../node_modules/@qaf/zod-schemas/src/schemas/search.schema';
 
 // Common types used across the application
 
@@ -107,16 +109,9 @@ export type ThemePoems = ThemeResponseData;
 
 export type Poets = Poet[];
 
-export type SearchResult = {
-  id: number | null;
-  title: string;
-  slug: string;
-  content_snippet: string;
-  poet_name: string;
-  poet_slug: string | null;
-  meter_name: string | null;
-  era_name: string | null;
-};
+export type PoemsSearchResult = z.infer<typeof poemsSearchResultSchema>;
+
+export type PoetsSearchResult = z.infer<typeof poetsSearchResultSchema>;
 
 // Search pagination type
 export type SearchPagination = {
@@ -128,10 +123,16 @@ export type SearchPagination = {
 };
 
 // Search response data type
-export type SearchResponseData = {
-  results: SearchResult[];
+export type PoemsSearchResponseData = {
+  results: PoemsSearchResult[];
+  pagination: SearchPagination;
+};
+
+export type PoetsSearchResponseData = {
+  results: PoetsSearchResult[];
   pagination: SearchPagination;
 };
 
 // Full search response type
-export type SearchResponse = ApiResponse<SearchResponseData>;
+export type PomesSearchResponse = ApiResponse<PoemsSearchResponseData>;
+export type PoetsSearchResponse = ApiResponse<PoetsSearchResponseData>;

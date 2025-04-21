@@ -1,108 +1,182 @@
 import { zValidator } from "@hono/zod-validator";
-import { searchRequestSchema } from "@qaf/zod-schemas";
+import {
+  poemsSearchRequestSchema,
+  poetsSearchRequestSchema,
+} from "@qaf/zod-schemas";
 import { createValidatedResponse } from "@qaf/zod-schemas/server";
+import { sql } from "drizzle-orm";
 import { Hono } from "hono";
-import postgres from "postgres";
 import type { AppContext } from "../types";
+import { parseIds } from "../utils/number";
+import { cleanArabicQuery } from "../utils/text";
 
-const app = new Hono<AppContext>().get(
-  "/",
-  zValidator("query", searchRequestSchema),
-  async (c) => {
-    try {
-      const { q, page, exact } = c.req.valid("query");
-      const exactMatch = exact === "true";
+const app = new Hono<AppContext>()
+  .get("/poems", zValidator("query", poemsSearchRequestSchema), async (c) => {
+    const { q, page, match_type, meter_ids, era_ids, theme_ids } =
+      c.req.valid("query");
 
-      const sqlClient = postgres(c.env.SEARCH_DATABASE_URL, {
-        prepare: false,
-        max: 3,
-        idle_timeout: 20,
-        connect_timeout: 10,
-        fetch_types: false,
-      });
+    const db = c.get("db");
+    const sanitizedQuery = cleanArabicQuery(q);
 
-      const sanitizedQuery = q
-        .trim()
-        .replace(
-          /[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\u0621-\u064A\s]/g,
-          ""
-        )
-        .replace(/\s+/g, " ")
-        .trim();
-
-      if (!sanitizedQuery) {
-        return c.json({
-          success: true,
-          data: {
-            results: [],
-            pagination: {
-              currentPage: page,
-              totalPages: 0,
-              totalResults: 0,
-              hasNextPage: false,
-              hasPrevPage: page > 1,
-            },
+    if (!sanitizedQuery) {
+      return c.json({
+        success: true,
+        data: {
+          results: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalResults: 0,
+            hasNextPage: false,
+            hasPrevPage: page > 1,
           },
-        });
-      }
+        },
+      });
+    }
 
-      const searchResults = await sqlClient`
-  SELECT * FROM search_poems(${sanitizedQuery}, ${page}, ${exactMatch})
-`;
+    const meterIds = parseIds(meter_ids);
+    const eraIds = parseIds(era_ids);
+    const themeIds = parseIds(theme_ids);
 
-      // Get the total count from the first result (all rows have the same total_result_count)
-      const totalResults =
-        searchResults.length > 0
-          ? Number(searchResults[0]?.total_result_count)
-          : 0;
-      const resultsPerPage = 5; // This should match the value in your search_poems function
-      const totalPages = Math.ceil(totalResults / resultsPerPage);
+    const dbResult = await db.execute(
+      sql`SELECT * FROM search_poems(
+        ${sanitizedQuery}::TEXT,
+        ${page}::INTEGER,
+        ${match_type}::TEXT,
+        ${meterIds}::INTEGER[],
+        ${eraIds}::INTEGER[],
+        ${themeIds}::INTEGER[])`
+    );
 
-      const formattedResults = searchResults.map((result: any) => ({
-        id: result.id ?? null,
-        title: result.poem_title ?? null,
-        slug: result.poem_slug ?? null,
-        content_snippet: result.poem_snippet ?? null,
-        poet_name: result.poet_name ?? null,
-        poet_slug: result.poet_slug ?? null,
-        meter_name: result.poem_meter ?? null,
-        era_name: result.poet_era ?? null,
-      }));
+    const results = dbResult.rows || [];
 
-      const pagination = {
+    if (results.length === 0 && results !== undefined) {
+      return c.json({
+        success: true,
+        data: {
+          results: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalResults: 0,
+            hasNextPage: false,
+            hasPrevPage: page > 1,
+          },
+        },
+      });
+    }
+
+    const totalResults =
+      results.length > 0 && results[0]?.total_count
+        ? Number(results[0].total_count)
+        : 0;
+    const resultsPerPage = 5; // Matches the value in the SQL function see https://github.com/alwalxed/qafiyah/blob/main/notes/features/SEARCH.md for postgres implementation
+    const totalPages = Math.ceil(totalResults / resultsPerPage);
+
+    const formattedResults = results.map((r) => ({
+      poet_name: r.poet_name,
+      poet_era: r.poet_era,
+      poet_slug: r.poet_slug,
+      poem_title: r.poem_title,
+      poem_snippet: r.poem_snippet,
+      poem_meter: r.poem_meter,
+      poem_slug: r.poem_slug,
+      relevance: r.relevance,
+      total_count: r.total_count,
+    }));
+
+    const responseData = {
+      results: formattedResults,
+      pagination: {
         currentPage: page,
-        totalPages: totalPages,
-        totalResults: totalResults,
+        totalPages,
+        totalResults,
         hasNextPage: page < totalPages,
         hasPrevPage: page > 1,
-      };
+      },
+    };
 
-      const data = {
-        results: formattedResults,
-        pagination,
-      };
+    return c.json(createValidatedResponse("poemsSearch", responseData));
+  })
+  .get("/poets", zValidator("query", poetsSearchRequestSchema), async (c) => {
+    const { q, page, match_type, era_ids } = c.req.valid("query");
 
-      const response = createValidatedResponse("search", data);
+    const db = c.get("db");
 
-      return c.json(response);
-    } catch (error) {
-      console.error("Search error:", error);
+    const sanitizedQuery = cleanArabicQuery(q);
 
-      if (error instanceof Error) {
-        console.error("Error name:", error.name);
-        console.error("Error message:", error.message);
-        console.error("Error stack:", error.stack);
-      }
-
-      return c.json(
-        {
-          success: false,
-          error: error instanceof Error ? error.message : "Unknown error",
-          status: 500,
+    if (!sanitizedQuery) {
+      return c.json({
+        success: true,
+        data: {
+          results: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalResults: 0,
+            hasNextPage: false,
+            hasPrevPage: page > 1,
+          },
         },
-        500
-      );
+      });
     }
-  }
-);
+
+    const eraIds = parseIds(era_ids);
+
+    const dbResult = await db.execute(
+      sql`SELECT * FROM search_poets(
+      ${sanitizedQuery}::TEXT,
+      ${page}::INTEGER,
+      ${match_type}::TEXT,
+      ${eraIds}::INTEGER[])`
+    );
+
+    const results = dbResult.rows || [];
+
+    if (results.length === 0 && results !== undefined) {
+      return c.json({
+        success: true,
+        data: {
+          results: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalResults: 0,
+            hasNextPage: false,
+            hasPrevPage: page > 1,
+          },
+        },
+      });
+    }
+
+    const totalResults =
+      results.length > 0 && results[0]?.total_count
+        ? Number(results[0].total_count)
+        : 0;
+    const resultsPerPage = 10; // Matches the value in the SQL function see https://github.com/alwalxed/qafiyah/blob/main/notes/features/SEARCH.md for postgres implementation
+    const totalPages = Math.ceil(totalResults / resultsPerPage);
+
+    // Fixed the type annotation by removing the inline type
+    const formattedResults = results.map((r) => ({
+      poet_name: r.poet_name,
+      poet_era: r.poet_era,
+      poet_slug: r.poet_slug,
+      poet_bio: r.poet_bio,
+      relevance: r.relevance,
+      total_count: r.total_count,
+    }));
+
+    const responseData = {
+      results: formattedResults,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalResults,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    };
+    return c.json(createValidatedResponse("poetsSearch", responseData));
+  });
+
 export default app;

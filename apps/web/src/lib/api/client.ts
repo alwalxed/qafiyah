@@ -5,12 +5,13 @@ import type {
   Meter,
   MeterPoems,
   PaginationMeta,
+  PoemsSearchResponseData,
   PoetPoems,
   PoetsData,
+  PoetsSearchResponseData,
   ProcessedPoem,
   Rhyme,
   RhymePoems,
-  SearchResponseData,
   Theme,
   ThemePoems,
 } from './types';
@@ -21,17 +22,79 @@ import type {
  */
 const apiClient = (baseUrl: string) => {
   return {
-    // Search
+    // Poems Search
     async searchPoems(
       query: string,
-      page: string = '1',
-      exact: string = 'false'
-    ): Promise<{ data: SearchResponseData; pagination?: PaginationMeta }> {
-      const validParams = validateParams('search', { q: query, page, exact });
+      page = '1',
+      matchType = 'all',
+      meterIds?: string,
+      eraIds?: string,
+      themeIds?: string
+    ): Promise<{ data: PoemsSearchResponseData; pagination?: PaginationMeta }> {
+      const validParams = validateParams('poemsSearch', {
+        q: query,
+        page,
+        match_type: matchType,
+        meter_ids: meterIds,
+        era_ids: eraIds,
+        theme_ids: themeIds,
+      });
+
+      // Build URL with all parameters
+      const searchParams = new URLSearchParams();
+      searchParams.append('q', encodeURIComponent(validParams.q));
+      searchParams.append('page', validParams.page);
+      searchParams.append('match_type', validParams.match_type);
+
+      if (validParams.meter_ids) {
+        searchParams.append('meter_ids', validParams.meter_ids);
+      }
+
+      if (validParams.era_ids) {
+        searchParams.append('era_ids', validParams.era_ids);
+      }
+
+      if (validParams.theme_ids) {
+        searchParams.append('theme_ids', validParams.theme_ids);
+      }
 
       const response = await fetchWithValidation(
-        'search',
-        `${baseUrl}/search?q=${encodeURIComponent(validParams.q)}&page=${validParams.page}&exact=${validParams.exact}`
+        'poemsSearch',
+        `${baseUrl}/search/poems?${searchParams.toString()}`
+      );
+
+      return {
+        data: response.data,
+        pagination: response.data.pagination,
+      };
+    },
+
+    async searchPoets(
+      query: string,
+      page = '1',
+      matchType = 'all',
+      eraIds?: string
+    ): Promise<{ data: PoetsSearchResponseData; pagination?: PaginationMeta }> {
+      const validParams = validateParams('poetsSearch', {
+        q: query,
+        page,
+        match_type: matchType,
+        era_ids: eraIds,
+      });
+
+      // Build URL with all parameters
+      const searchParams = new URLSearchParams();
+      searchParams.append('q', encodeURIComponent(validParams.q));
+      searchParams.append('page', validParams.page);
+      searchParams.append('match_type', validParams.match_type);
+
+      if (validParams.era_ids) {
+        searchParams.append('era_ids', validParams.era_ids);
+      }
+
+      const response = await fetchWithValidation(
+        'poetsSearch', // Use the correct schema for poets search
+        `${baseUrl}/search/poets?${searchParams.toString()}`
       );
 
       return {
