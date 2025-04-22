@@ -125,7 +125,6 @@ const app = new Hono<AppContext>().get(
             ${rhymeIds ? sql`${rhymeIds}::INTEGER[]` : sql`NULL::INTEGER[]`}
           )`
         );
-        console.log(dbResult);
         break;
       }
       case "poets": {
