@@ -45,39 +45,24 @@ export function toArabicDigits(input: number | string): string {
 }
 
 /**
- * Parses a comma-separated string of IDs into an array of positive integers.
- *
- * This function is used to safely extract a list of numeric IDs from a string like `"1,2,3"`.
- * It ensures that all values are:
- * - trimmed of extra whitespace,
- * - valid integers,
- * - greater than 0.
- *
- * If the input is `undefined`, an empty string, or contains no valid IDs,
- * the function returns `null`.
- *
- * @param ids - A comma-separated string of IDs (e.g. "1, 2, 3") or `undefined`.
- * @returns An array of positive integers, or `null` if the input is invalid or empty.
- *
- * @example
- * parseIds("1, 2, 3") // => [1, 2, 3]
- * parseIds(" 4 , -1, abc ") // => [4]
- * parseIds(undefined) // => null
- * parseIds("") // => null
+ * Parse a comma-separated string of IDs into a properly formatted PostgreSQL array
  */
-export const parseIds = (ids: string | undefined): number[] | null => {
-  if (!ids) return null;
-  try {
-    const parsedIds = ids
-      .split(",")
-      .map((id) => {
-        const num = Number.parseInt(id.trim(), 10);
-        return Number.isInteger(num) && num > 0 ? num : null;
-      })
-      .filter((id): id is number => id !== null);
-
-    return parsedIds.length > 0 ? parsedIds : null;
-  } catch (e) {
+export function parseIds(idString?: string): string | null {
+  if (!idString || idString.trim() === "") {
     return null;
   }
-};
+
+  // Parse the IDs into a JavaScript array
+  const ids = idString
+    .split(",")
+    .map((id) => Number.parseInt(id.trim(), 10))
+    .filter((id) => !isNaN(id));
+
+  // If the array is empty, return null
+  if (ids.length === 0) {
+    return null;
+  }
+
+  // Format the array for PostgreSQL - this is the key change
+  return `{${ids.join(",")}}`;
+}

@@ -57,8 +57,9 @@ export const searchRequestSchema = z.object({
   search_type: z.enum(["poems", "poets"]),
   match_type: z.enum(["exact", "all", "any"]),
   // optional
-  era_ids: parseIdList,
   meter_ids: parseIdList,
+  era_ids: parseIdList,
+  rhyme_ids: parseIdList,
   theme_ids: parseIdList,
 });
 

@@ -23,19 +23,29 @@ import type {
 
 export const queries = {
   // Search
-  async search(
-    q: string,
-    searchType: 'poems' | 'poets',
+  async search({
+    q,
+    searchType,
     page = '1',
     matchType = 'all',
-    meterIds?: string,
-    eraIds?: string,
-    themeIds?: string
-  ): Promise<{
+    meterIds,
+    eraIds,
+    rhymeIds,
+    themeIds,
+  }: {
+    q: string;
+    searchType: 'poems' | 'poets';
+    page: string;
+    matchType: string;
+    meterIds?: string;
+    eraIds?: string;
+    rhymeIds?: string;
+    themeIds?: string;
+  }): Promise<{
     data: PoemsSearchResponseData | PoetsSearchResponseData;
     pagination?: PaginationMeta;
   }> {
-    return client.search(q, searchType, page, matchType, meterIds, eraIds, themeIds);
+    return client.search({ q, searchType, page, matchType, meterIds, eraIds, rhymeIds, themeIds });
   },
 
   // Eras

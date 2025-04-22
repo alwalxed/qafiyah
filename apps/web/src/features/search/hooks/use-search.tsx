@@ -9,7 +9,7 @@ export function useSearch() {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const {
-    search,
+    performSearch,
     data,
     isLoading,
     isError,
@@ -57,7 +57,7 @@ export function useSearch() {
 
   const handleSearch = () => {
     if (inputValue.trim()) {
-      search({
+      performSearch({
         q: inputValue,
       });
     }
@@ -77,21 +77,21 @@ export function useSearch() {
 
       // Reset filters that don't apply to the new search type
       if (newSearchType === 'poets') {
-        search({
+        performSearch({
           q: '',
           search_type: newSearchType,
           meter_ids: '',
           theme_ids: '',
         });
       } else {
-        search({
+        performSearch({
           q: '',
           search_type: newSearchType,
         });
       }
     } else if (inputValue.trim()) {
       // Just update the search type if we have a query
-      search({
+      performSearch({
         search_type: newSearchType,
       });
     }
@@ -99,7 +99,7 @@ export function useSearch() {
 
   const handleMatchTypeChange = (value: string) => {
     if (['all', 'any', 'exact'].includes(value)) {
-      search({
+      performSearch({
         match_type: value as 'all' | 'any' | 'exact',
       });
     }
@@ -107,21 +107,28 @@ export function useSearch() {
 
   const handleErasChange = (value: string | string[]) => {
     const newSelectedEras = value as string[];
-    search({
+    performSearch({
       era_ids: joinCommaSeparated(newSelectedEras),
+    });
+  };
+
+  const handleRhymesChange = (value: string | string[]) => {
+    const newSelectedRhymes = value as string[];
+    performSearch({
+      rhyme_ids: joinCommaSeparated(newSelectedRhymes),
     });
   };
 
   const handleMetersChange = (value: string | string[]) => {
     const newSelectedMeters = value as string[];
-    search({
+    performSearch({
       meter_ids: joinCommaSeparated(newSelectedMeters),
     });
   };
 
   const handleThemesChange = (value: string | string[]) => {
     const newSelectedThemes = value as string[];
-    search({
+    performSearch({
       theme_ids: joinCommaSeparated(newSelectedThemes),
     });
   };
@@ -133,6 +140,7 @@ export function useSearch() {
   };
 
   const selectedEras = splitCommaSeparated(searchParams.era_ids);
+  const selectedRhymes = splitCommaSeparated(searchParams.rhyme_ids);
   const selectedMeters = splitCommaSeparated(searchParams.meter_ids);
   const selectedThemes = splitCommaSeparated(searchParams.theme_ids);
 
@@ -145,8 +153,9 @@ export function useSearch() {
     observer,
     loadMoreRef,
 
+    performSearch,
+
     // react-query
-    search,
     data,
     isLoading,
     isError,
@@ -162,12 +171,19 @@ export function useSearch() {
     // submit handlers
     handleSearch,
 
-    // change handlers
+    // change handlers:
+
+    // input
     handleInputChange,
+
+    // required always (when search-type === poems OR poets)
     handleSearchTypeChange,
     handleMatchTypeChange,
     handleErasChange,
+
+    // optionals (when search-type === poems ONLY)
     handleMetersChange,
+    handleRhymesChange,
     handleThemesChange,
 
     // keys handlers
@@ -175,6 +191,7 @@ export function useSearch() {
 
     // vals
     selectedEras,
+    selectedRhymes,
     selectedMeters,
     selectedThemes,
   };

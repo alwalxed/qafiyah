@@ -158,82 +158,80 @@ CREATE INDEX poets_search_idx ON poets USING GIN (search_vector);
 
 ```sql
 CREATE OR REPLACE FUNCTION search_poems(
-query_text TEXT,
-page_number INTEGER,
-match_type TEXT, -- 'exact', 'all', or 'any'
-meter_ids INTEGER[] DEFAULT NULL,
-era_ids INTEGER[] DEFAULT NULL,
-theme_ids INTEGER[] DEFAULT NULL
+  query_text TEXT,
+  page_number INTEGER,
+  match_type TEXT, -- 'exact', 'all', or 'any'
+  meter_ids INTEGER[] DEFAULT NULL,
+  era_ids INTEGER[] DEFAULT NULL,
+  theme_ids INTEGER[] DEFAULT NULL,
+  rhyme_ids INTEGER[] DEFAULT NULL
 ) RETURNS TABLE (
-poet_name TEXT,
-poet_era TEXT,
-poet_slug TEXT,
-poem_title TEXT,
-poem_snippet TEXT,
-poem_meter TEXT,
-poem_slug UUID,
-relevance REAL,
-total_count BIGINT
+  poet_name TEXT,
+  poet_era TEXT,
+  poet_slug TEXT,
+  poem_title TEXT,
+  poem_snippet TEXT,
+  poem_meter TEXT,
+  poem_slug UUID,
+  relevance REAL,
+  total_count BIGINT
 ) AS
-
 $$
-
 DECLARE
- processed_query TEXT;
- tsquery_obj tsquery;
- results_per_page INTEGER := 5;
- total_results BIGINT;
+  processed_query TEXT;
+  tsquery_obj tsquery;
+  results_per_page INTEGER := 5;
+  total_results BIGINT;
 BEGIN
- processed_query := normalize_arabic_text(query_text, FALSE);
+  processed_query := normalize_arabic_text(query_text, FALSE);
 
-IF match_type = 'exact' THEN
- tsquery_obj := phraseto_tsquery('simple', processed_query);
- ELSIF match_type = 'all' THEN
- tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' & ', 'g'));
- ELSIF match_type = 'any' THEN
- tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' | ', 'g'));
- ELSE
- tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' & ', 'g'));
- END IF;
+  IF match_type = 'exact' THEN
+    tsquery_obj := phraseto_tsquery('simple', processed_query);
+  ELSIF match_type = 'all' THEN
+    tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' & ', 'g'));
+  ELSIF match_type = 'any' THEN
+    tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' | ', 'g'));
+  ELSE
+    tsquery_obj := to_tsquery('simple', regexp_replace(processed_query, '\s+', ' & ', 'g'));
+  END IF;
 
-SELECT COUNT(*) INTO total_results
- FROM poems p
- JOIN poets pt ON p.poet_id = pt.id
- JOIN meters m ON p.meter_id = m.id
- JOIN eras e ON pt.era_id = e.id
- WHERE p.search_vector @@ tsquery_obj
- AND (meter_ids IS NULL OR p.meter_id = ANY(meter_ids))
- AND (era_ids IS NULL OR pt.era_id = ANY(era_ids))
- AND (theme_ids IS NULL OR p.theme_id = ANY(theme_ids));
+  SELECT COUNT(*) INTO total_results
+  FROM poems p
+  JOIN poets pt ON p.poet_id = pt.id
+  JOIN meters m ON p.meter_id = m.id
+  JOIN eras e ON pt.era_id = e.id
+  WHERE p.search_vector @@ tsquery_obj
+  AND (meter_ids IS NULL OR p.meter_id = ANY(meter_ids))
+  AND (era_ids IS NULL OR pt.era_id = ANY(era_ids))
+  AND (theme_ids IS NULL OR p.theme_id = ANY(theme_ids))
+  AND (rhyme_ids IS NULL OR p.rhyme_id = ANY(rhyme_ids));
 
-RETURN QUERY
- SELECT
- pt.name,
- e.name,
- pt.slug,
- p.title,
- ts_headline('simple', normalize_arabic_text(p.content, TRUE), tsquery_obj,
- 'StartSel=<mark>, StopSel=</mark>, MaxFragments=1, MaxWords=30'),
- m.name,
- p.slug,
- ts_rank(p.search_vector, tsquery_obj),
- total_results
- FROM poems p
- JOIN poets pt ON p.poet_id = pt.id
- JOIN meters m ON p.meter_id = m.id
- JOIN eras e ON pt.era_id = e.id
- WHERE p.search_vector @@ tsquery_obj
- AND (meter_ids IS NULL OR p.meter_id = ANY(meter_ids))
- AND (era_ids IS NULL OR pt.era_id = ANY(era_ids))
- AND (theme_ids IS NULL OR p.theme_id = ANY(theme_ids))
- ORDER BY relevance DESC
- LIMIT results_per_page
- OFFSET (page_number - 1) * results_per_page;
+  RETURN QUERY
+  SELECT
+    pt.name,
+    e.name,
+    pt.slug,
+    p.title,
+    ts_headline('simple', normalize_arabic_text(p.content, TRUE), tsquery_obj,
+      'StartSel=<mark>, StopSel=</mark>, MaxFragments=1, MaxWords=30'),
+    m.name,
+    p.slug,
+    ts_rank(p.search_vector, tsquery_obj),
+    total_results
+  FROM poems p
+  JOIN poets pt ON p.poet_id = pt.id
+  JOIN meters m ON p.meter_id = m.id
+  JOIN eras e ON pt.era_id = e.id
+  WHERE p.search_vector @@ tsquery_obj
+  AND (meter_ids IS NULL OR p.meter_id = ANY(meter_ids))
+  AND (era_ids IS NULL OR pt.era_id = ANY(era_ids))
+  AND (theme_ids IS NULL OR p.theme_id = ANY(theme_ids))
+  AND (rhyme_ids IS NULL OR p.rhyme_id = ANY(rhyme_ids))
+  ORDER BY relevance DESC
+  LIMIT results_per_page
+  OFFSET (page_number - 1) * results_per_page;
 END;
-
-
 $$
-
 LANGUAGE plpgsql SECURITY DEFINER;
 ```
 

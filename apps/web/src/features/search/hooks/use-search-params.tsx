@@ -25,6 +25,12 @@ export function useMatchType(defaultValue: MatchType = 'all') {
   );
 }
 
+export function useRhymeIds() {
+  return useQueryState('rhyme_ids', {
+    defaultValue: '',
+  });
+}
+
 export function useEraIds() {
   return useQueryState('era_ids', {
     defaultValue: '',

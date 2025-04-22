@@ -1,5 +1,7 @@
 'use client';
 
+import type React from 'react';
+
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
@@ -13,13 +15,17 @@ import {
   erasOptions,
   matchTypeOptions,
   metersOptions,
+  rhymesOptions,
   searchTypeOptions,
   themesOptions,
 } from '../constants';
 import { useSearch } from '../hooks/use-search';
 
 export function Search() {
+  // Add a new state variable for validation errors after the filtersVisible state
   const [filtersVisible, setFiltersVisible] = useState(true);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const {
     // states
@@ -38,7 +44,8 @@ export function Search() {
     searchType,
 
     // submit handler
-    handleSearch,
+    performSearch,
+    handleRhymesChange,
 
     // change handlers
     handleInputChange,
@@ -49,7 +56,7 @@ export function Search() {
     handleThemesChange,
 
     // keys handlers
-    handleKeyDown,
+    handleKeyDown: originalHandleKeyDown,
 
     // vals
     selectedEras,
@@ -58,6 +65,94 @@ export function Search() {
   } = useSearch();
 
   const toggleFilters = () => setFiltersVisible(!filtersVisible);
+
+  // Add a validation function after handleSearch
+  const validateInput = (input: string, type: 'poems' | 'poets'): string | null => {
+    // Check for Arabic characters only
+    const arabicRegex = /^[\u0600-\u06FF\s]+$/;
+    if (!arabicRegex.test(input)) {
+      return 'يرجى إدخال كلمات باللغة العربية فقط';
+    }
+
+    // Split input into words (trim and filter empty strings)
+    const words = input
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0);
+
+    if (type === 'poems') {
+      // For poems: minimum two words, each at least two letters
+      if (words.length < 2) {
+        return 'يجب إدخال كلمتين على الأقل للبحث في القصائد';
+      }
+
+      const shortWords = words.filter((word) => word.length < 2);
+      if (shortWords.length > 0) {
+        return 'يجب أن تكون كل كلمة مكونة من حرفين على الأقل';
+      }
+    } else {
+      // For poets: minimum one word, at least two letters
+      if (words.length < 1) {
+        return 'يجب إدخال كلمة واحدة على الأقل للبحث عن شاعر';
+      }
+
+      if (words[0].length < 2) {
+        return 'يجب أن تكون الكلمة مكونة من حرفين على الأقل';
+      }
+    }
+
+    return null;
+  };
+
+  // Custom handlers that wrap the original handlers
+  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleInputChange(e);
+    // Clear validation error when input changes after submission
+    if (hasSubmitted) {
+      setValidationError(null);
+    }
+  };
+
+  const handleCustomSearchTypeChange = (value: string) => {
+    handleSearchTypeChange(value);
+    // Clear validation errors when search type changes
+    setValidationError(null);
+    setHasSubmitted(false);
+  };
+
+  const handleCustomKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // Validate before allowing the original handler to proceed
+      const error = validateInput(inputValue, searchType);
+      if (error) {
+        e.preventDefault();
+        setHasSubmitted(true);
+        setValidationError(error);
+        return;
+      }
+    }
+    originalHandleKeyDown(e);
+  };
+
+  // Custom search handler with validation
+  const handleCustomSearch = () => {
+    if (inputValue.trim()) {
+      setHasSubmitted(true);
+
+      // Validate input
+      const error = validateInput(inputValue, searchType);
+      if (error) {
+        setValidationError(error);
+        return;
+      }
+
+      // Clear any previous errors and proceed with search
+      setValidationError(null);
+      performSearch({
+        q: inputValue,
+      });
+    }
+  };
 
   return (
     <div className="w-full max-w-5xl mx-auto p-4 space-y-6 font-sans" dir="rtl">
@@ -71,17 +166,22 @@ export function Search() {
         <CardContent>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row gap-2">
+              {/* Add error display after the input field in the UI */}
+              {/* Find the div with className="relative flex-1" and add the error message after it */}
               <div className="relative flex-1">
                 <Input
                   value={inputValue}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
+                  onChange={handleCustomInputChange}
+                  onKeyDown={handleCustomKeyDown}
                   placeholder={searchType === 'poems' ? 'إن الذي سمك السماء بنى لنا' : 'المتنبي'}
-                  className="pr-4 text-right"
+                  className={`pr-4 text-right ${validationError && hasSubmitted ? 'border-red-500' : ''}`}
                 />
+                {validationError && hasSubmitted && (
+                  <p className="text-red-500 text-sm mt-1">{validationError}</p>
+                )}
               </div>
               <Button
-                onClick={handleSearch}
+                onClick={handleCustomSearch}
                 disabled={isLoading || !inputValue.trim()}
                 className="bg-emerald-600 hover:bg-emerald-700"
               >
@@ -135,7 +235,7 @@ export function Search() {
                   <Select
                     options={searchTypeOptions}
                     value={searchParams.search_type}
-                    onChange={handleSearchTypeChange}
+                    onChange={handleCustomSearchTypeChange}
                     placeholder="اختر نوع البحث"
                   />
                 </div>
@@ -175,12 +275,23 @@ export function Search() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">الأغراض</label>
+                      <label className="block text-sm font-medium mb-1">المواضيع</label>
                       <CheckboxSelect
                         options={themesOptions}
                         value={selectedThemes}
                         onChange={handleThemesChange}
-                        placeholder="اختر الأغراض"
+                        placeholder="اختر المواضيع"
+                        multiple={true}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-1">القوافي</label>
+                      <CheckboxSelect
+                        options={rhymesOptions}
+                        value={selectedThemes}
+                        onChange={handleRhymesChange}
+                        placeholder="اختر القافية"
                         multiple={true}
                       />
                     </div>

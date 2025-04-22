@@ -23,15 +23,25 @@ import type {
 const apiClient = (baseUrl: string) => {
   return {
     // Search
-    async search(
-      q: string,
-      searchType: 'poems' | 'poets',
+    async search({
+      q,
+      searchType,
       page = '1',
       matchType = 'all',
-      meterIds?: string,
-      eraIds?: string,
-      themeIds?: string
-    ): Promise<{
+      meterIds,
+      eraIds,
+      rhymeIds,
+      themeIds,
+    }: {
+      q: string;
+      searchType: 'poems' | 'poets';
+      page: string;
+      matchType: string;
+      meterIds?: string;
+      eraIds?: string;
+      rhymeIds?: string;
+      themeIds?: string;
+    }): Promise<{
       data: PoemsSearchResponseData | PoetsSearchResponseData;
       pagination?: PaginationMeta;
     }> {
@@ -41,11 +51,12 @@ const apiClient = (baseUrl: string) => {
         case 'poems': {
           validParams = validateParams('search', {
             q,
-            page,
             search_type: searchType,
+            page,
             match_type: matchType,
             meter_ids: meterIds,
             era_ids: eraIds,
+            rhyme_ids: rhymeIds,
             theme_ids: themeIds,
           });
           break;
@@ -53,8 +64,8 @@ const apiClient = (baseUrl: string) => {
         case 'poets': {
           validParams = validateParams('search', {
             q,
-            page,
             search_type: searchType,
+            page,
             match_type: matchType,
             era_ids: eraIds,
           });
@@ -71,12 +82,17 @@ const apiClient = (baseUrl: string) => {
           searchParams.append('search_type', validParams.search_type);
           searchParams.append('match_type', validParams.match_type);
 
-          if (validParams.era_ids) {
-            searchParams.append('era_ids', validParams.era_ids);
-          }
           if (validParams.meter_ids) {
             searchParams.append('meter_ids', validParams.meter_ids);
           }
+
+          if (validParams.era_ids) {
+            searchParams.append('era_ids', validParams.era_ids);
+          }
+          if (validParams.rhyme_ids) {
+            searchParams.append('rhyme_ids', validParams.rhyme_ids);
+          }
+
           if (validParams.theme_ids) {
             searchParams.append('theme_ids', validParams.theme_ids);
           }

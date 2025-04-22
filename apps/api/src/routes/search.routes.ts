@@ -13,13 +13,14 @@ const app = new Hono<AppContext>().get(
   async (c) => {
     const {
       // required
-      search_type,
       q,
+      search_type,
       page,
       match_type,
       // optional
       meter_ids,
       era_ids,
+      rhyme_ids,
       theme_ids,
     } = c.req.valid("query");
 
@@ -106,6 +107,7 @@ const app = new Hono<AppContext>().get(
 
     const meterIds = parseIds(meter_ids);
     const eraIds = parseIds(era_ids);
+    const rhymeIds = parseIds(rhyme_ids);
     const themeIds = parseIds(theme_ids);
 
     let dbResult;
@@ -117,11 +119,13 @@ const app = new Hono<AppContext>().get(
             ${parsedQuery}::TEXT,
             ${page}::INTEGER,
             ${match_type}::TEXT,
-            ${meterIds}::INTEGER[],
-            ${eraIds}::INTEGER[],
-            ${themeIds}::INTEGER[])
-          `
+            ${meterIds ? sql`${meterIds}::INTEGER[]` : sql`NULL::INTEGER[]`},
+            ${eraIds ? sql`${eraIds}::INTEGER[]` : sql`NULL::INTEGER[]`},
+            ${themeIds ? sql`${themeIds}::INTEGER[]` : sql`NULL::INTEGER[]`},
+            ${rhymeIds ? sql`${rhymeIds}::INTEGER[]` : sql`NULL::INTEGER[]`}
+          )`
         );
+        console.log(dbResult);
         break;
       }
       case "poets": {
@@ -130,8 +134,8 @@ const app = new Hono<AppContext>().get(
             ${sanitizedQuery}::TEXT,
             ${page}::INTEGER,
             ${match_type}::TEXT,
-            ${eraIds}::INTEGER[])
-          `
+            ${eraIds ? sql`${eraIds}::INTEGER[]` : sql`NULL::INTEGER[]`}
+          )`
         );
         break;
       }

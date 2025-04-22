@@ -8,6 +8,7 @@ import {
   useEraIds,
   useMatchType,
   useMeterIds,
+  useRhymeIds,
   useSearchQuery,
   useSearchType,
   useThemeIds,
@@ -30,6 +31,7 @@ export function useInfiniteSearch({
   const [searchType, setSearchType] = useSearchType(initialSearchType);
   const [matchType, setMatchType] = useMatchType(initialMatchType);
   const [eraIds, setEraIds] = useEraIds();
+  const [rhymeIds, setRhymeIds] = useRhymeIds();
   const [meterIds, setMeterIds] = useMeterIds();
   const [themeIds, setThemeIds] = useThemeIds();
 
@@ -43,9 +45,10 @@ export function useInfiniteSearch({
       match_type: matchType,
       meter_ids: meterIds,
       era_ids: eraIds,
+      rhyme_ids: rhymeIds,
       theme_ids: themeIds,
     }),
-    [query, searchType, matchType, meterIds, eraIds, themeIds]
+    [query, searchType, matchType, meterIds, eraIds, rhymeIds, themeIds]
   );
 
   // Set up the infinite query
@@ -60,15 +63,16 @@ export function useInfiniteSearch({
         };
       }
 
-      return search(
-        query,
+      return search({
+        q: query,
         searchType,
-        String(pageParam),
+        page: String(pageParam),
         matchType,
-        meterIds || undefined,
-        eraIds || undefined,
-        themeIds || undefined
-      );
+        meterIds: meterIds && meterIds.length > 0 ? meterIds : undefined,
+        eraIds: eraIds && eraIds.length > 0 ? eraIds : undefined,
+        rhymeIds: rhymeIds && rhymeIds.length > 0 ? rhymeIds : undefined,
+        themeIds: themeIds && themeIds.length > 0 ? themeIds : undefined,
+      });
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
@@ -90,6 +94,7 @@ export function useInfiniteSearch({
     search_type?: SearchType;
     match_type?: MatchType;
     era_ids?: string;
+    rhyme_ids?: string;
     meter_ids?: string;
     theme_ids?: string;
   }) => {
@@ -109,6 +114,10 @@ export function useInfiniteSearch({
 
     if (params.era_ids !== undefined) {
       setEraIds(params.era_ids || null);
+    }
+
+    if (params.rhyme_ids !== undefined) {
+      setRhymeIds(params.rhyme_ids || null);
     }
 
     if (params.meter_ids !== undefined) {
@@ -136,7 +145,7 @@ export function useInfiniteSearch({
   }, [infiniteQuery.data?.pages]);
 
   return {
-    search: performSearch,
+    performSearch,
     data: flatData,
     pagination: paginationInfo,
     isLoading: infiniteQuery.isLoading,
