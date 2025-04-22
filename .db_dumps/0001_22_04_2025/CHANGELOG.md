@@ -1,0 +1,3 @@
+- Fixed poem titles
+- Implemented search functions
+- Fixed poem misassigned to "الرزدق"

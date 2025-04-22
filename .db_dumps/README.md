@@ -1,26 +1,39 @@
-# Qafiyah Database Restore
+# Database Restore Guide
 
 ## Prerequisites
 
-- 7zip installed
+- 7-Zip installed
 
-## Restore Steps
+## Compression Command
 
-1. **Merge split files:**
+```bash
+7z a -t7z -m0=lzma2 -mx=9 -mfb=273 -md=64m -ms=on -v30m dump.7z dump.sql
+```
 
-   ```
-   cat qafiyah-db-dump.7z.part*\* > qafiyah-db-dump.7z
-   ```
+## Restore Process
 
-   Windows: `copy /b qafiyah-db-dump.7z.part*\* qafiyah-db-dump.7z`
+### 1. Merge Split Files
 
-2. **Extract SQL dump:**
+#### Linux/macOS:
 
-   ```
-   7z x qafiyah-db-dump.7z
-   ```
+```bash
+cat dump.7z.00\* > dump.7z
+```
 
-3. **Restore to database:**
-   ```
-   psql -h hostname -U username -d database_name < qafiyah-db-dump.sql
-   ```
+#### Windows:
+
+```bash
+copy /b dump.7z.00\* dump.7z
+```
+
+### 2. Extract SQL Dump
+
+```bash
+7z x dump.7z
+```
+
+### 3. Restore to Database
+
+```bash
+psql -h hostname -U username -d database_name < dump.sql
+```
