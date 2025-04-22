@@ -5,11 +5,11 @@ import { ListCard } from '@/components/ui/list-card';
 import { SectionPaginationControllers, SectionWrapper } from '@/components/ui/section-wrapper';
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getPoetPoems } from '@/lib/api/queries';
-import { toArabicDigits } from '@/utils/numbers/to-arabic-digits';
 import { getFormattedVersesCount } from '@/utils/texts/get-verse-count';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import type { Key } from 'react';
+import { toArabicDigits } from 'to-arabic-digits';
 
 export const runtime = 'edge';
 

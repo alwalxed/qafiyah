@@ -1,5 +1,4 @@
-import { toArabicDigits } from "./number";
-
+import { toArabicDigits } from "to-arabic-digits";
 /**
  * Calculates approximate reading time in minutes based on verse count
  * @param verseCount Number of verses

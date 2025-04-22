@@ -44,6 +44,9 @@ importers:
       postgres:
         specifier: ^3.4.5
         version: 3.4.5
+      to-arabic-digits:
+        specifier: ^1.0.1
+        version: 1.0.1(typescript@5.8.3)
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -163,6 +166,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.17.30)(typescript@5.8.2)))
+      to-arabic-digits:
+        specifier: ^1.0.1
+        version: 1.0.1(typescript@5.8.2)
       zustand:
         specifier: ^5.0.3
         version: 5.0.3(@types/react@19.1.0)(react@19.1.0)
@@ -4678,6 +4684,12 @@ packages:
   tinyglobby@0.2.12:
     resolution: {integrity: sha512-qkf4trmKSIiMTs/E63cxH+ojC2unam7rJ0WrauAzpT3ECNTxGRMlaXxVbfxMUC/w0LaYk6jQ4y/nGR9uBO3tww==}
     engines: {node: '>=12.0.0'}
+
+  to-arabic-digits@1.0.1:
+    resolution: {integrity: sha512-AlqHWf1gBWFJUmjosRllvsMMbUIqK/VJuaopLVsIUhF5zillcWYmwRecZ34+snyJX35lWmAW0Au1e+VaXPNDOA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      typescript: ^5.0.0
 
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
@@ -9288,6 +9300,14 @@ snapshots:
     dependencies:
       fdir: 6.4.3(picomatch@4.0.2)
       picomatch: 4.0.2
+
+  to-arabic-digits@1.0.1(typescript@5.8.2):
+    dependencies:
+      typescript: 5.8.2
+
+  to-arabic-digits@1.0.1(typescript@5.8.3):
+    dependencies:
+      typescript: 5.8.3
 
   to-regex-range@5.0.1:
     dependencies:

@@ -6,9 +6,9 @@ import { PaginationLink } from '@/components/ui/pagination-link';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getPoets } from '@/lib/api/queries';
-import { toArabicDigits } from '@/utils/numbers/to-arabic-digits';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
+import { toArabicDigits } from 'to-arabic-digits';
 
 export const runtime = 'edge';
 

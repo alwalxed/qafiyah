@@ -1,4 +1,4 @@
-import { toArabicDigits } from '../numbers/to-arabic-digits';
+import { toArabicDigits } from 'to-arabic-digits';
 
 /**
  * Converts Gregorian year to Hijri year

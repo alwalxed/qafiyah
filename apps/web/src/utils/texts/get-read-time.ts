@@ -1,4 +1,4 @@
-import { toArabicDigits } from '../numbers/to-arabic-digits';
+import { toArabicDigits } from 'to-arabic-digits';
 
 const getApproximateReadTimeInMinutes = (verseCount: number): number => {
   return Math.min(Math.ceil(verseCount / 15), 17);

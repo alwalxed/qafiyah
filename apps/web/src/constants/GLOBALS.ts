@@ -1,6 +1,4 @@
-// ------------------------------------->
-import { toArabicDigits } from '../utils/numbers/to-arabic-digits';
-// ------------------------------------->
+import { toArabicDigits } from 'to-arabic-digits';
 
 // ------------------------------------->
 export const FETCH_PER_PAGE = 10;

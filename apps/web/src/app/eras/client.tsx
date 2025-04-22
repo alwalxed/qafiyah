@@ -5,8 +5,8 @@ import { ListCard } from '@/components/ui/list-card';
 import { SectionList } from '@/components/ui/section-list';
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { getEras } from '@/lib/api/queries';
-import { toArabicDigits } from '@/utils/numbers/to-arabic-digits';
 import { useQuery } from '@tanstack/react-query';
+import { toArabicDigits } from 'to-arabic-digits';
 
 export const runtime = 'edge';
 

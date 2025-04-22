@@ -1,7 +1,7 @@
 import { API_URL, NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
-import { toArabicDigits } from '@/utils/numbers/to-arabic-digits';
 import type { Metadata } from 'next';
+import { toArabicDigits } from 'to-arabic-digits';
 import PoetPoemsSlugPaginatedClientPage from './client';
 export const runtime = 'edge';
 
