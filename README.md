@@ -1,6 +1,6 @@
 # Qafiyah (قافية)
 
-Open-source, non-profit Arabic poetry website
+A free open-source Arabic poetry platform with 944K+ verses from 932 poets across 10 eras. Built with Nextjs, Hono, and Supabase. Provides full data dumps with no need for scraping. Supports advanced Arabic search. A Twitter bot posts a verse every 30 minutes.
 
 ## 📑 Table of Contents
 
@@ -32,7 +32,7 @@ Our main channels:
 
 This monorepo contains:
 
-- **Web**: Next.js app running on Cloudflare Pages (Edge)
+- **Web**: Nextjs app running on Cloudflare Pages (Edge)
 - **API**: Hono-based Cloudflare Worker
 - **Bot**: Twitter bot posting poems every 30 minutes
 - **Packages**: Shared Zod schemas, ESLint configs, and TypeScript configs
@@ -41,7 +41,7 @@ This monorepo contains:
 
 | Component    | Technologies                                                                 |
 | ------------ | ---------------------------------------------------------------------------- |
-| **Frontend** | Next.js, React Query, Tailwind CSS, Zustand, Zod                             |
+| **Frontend** | Nextjs, React Query, Tailwind CSS, Zustand, Zod                              |
 | **Backend**  | Hono, Cloudflare Workers, Zod                                                |
 | **Database** | Supabase PostgreSQL with Drizzle ORM                                         |
 | **Search**   | AWS EC2 instance with materialized views ([Why is search separated?](#-faq)) |
