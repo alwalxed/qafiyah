@@ -1,3 +1,7 @@
+# Qafiyah (قافية)
+
+Open-source, non-profit Arabic poetry website
+
 ## 📑 Table of Contents
 
 - [📋 Project Overview](#-project-overview)
