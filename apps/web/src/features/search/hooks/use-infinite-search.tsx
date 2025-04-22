@@ -145,17 +145,21 @@ export function useInfiniteSearch({
   }, [infiniteQuery.data?.pages]);
 
   return {
-    performSearch,
-    data: flatData,
-    pagination: paginationInfo,
     isLoading: infiniteQuery.isLoading,
     isFetching: infiniteQuery.isFetching,
     isError: infiniteQuery.isError,
-    error: infiniteQuery.error,
-    hasNextPage: infiniteQuery.hasNextPage,
-    fetchNextPage: infiniteQuery.fetchNextPage,
+    isSuccess: infiniteQuery.isSuccess,
     isFetchingNextPage: infiniteQuery.isFetchingNextPage,
-    searchParams: currentSearchParams,
+    hasNextPage: infiniteQuery.hasNextPage,
+
     searchType,
+    searchParams: currentSearchParams,
+
+    data: flatData,
+    pagination: paginationInfo,
+    error: infiniteQuery.error,
+
+    performSearch,
+    fetchNextPage: infiniteQuery.fetchNextPage,
   };
 }

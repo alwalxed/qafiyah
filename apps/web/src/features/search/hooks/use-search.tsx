@@ -3,24 +3,29 @@ import { joinCommaSeparated, splitCommaSeparated } from '../utils/helpers';
 import { useInfiniteSearch } from './use-infinite-search';
 
 export function useSearch() {
+  const [filtersVisible, setFiltersVisible] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
   const observer = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const {
-    performSearch,
-    data,
-    isLoading,
     isError,
-    error,
-    hasNextPage,
-    fetchNextPage,
+    isLoading,
     isFetchingNextPage,
+    isSuccess,
+    hasNextPage,
+
     searchParams,
     searchType,
-    isFetching,
-    pagination,
+
+    data,
+    error,
+
+    fetchNextPage,
+    performSearch,
   } = useInfiniteSearch({
     initialMatchType: 'all',
     initialSearchType: 'poems',
@@ -144,55 +149,126 @@ export function useSearch() {
   const selectedMeters = splitCommaSeparated(searchParams.meter_ids);
   const selectedThemes = splitCommaSeparated(searchParams.theme_ids);
 
+  const toggleFilters = () => setFiltersVisible(!filtersVisible);
+
+  // Add a validation function after handleSearch
+  const validateInput = (input: string, type: 'poems' | 'poets'): string | null => {
+    // Check for Arabic characters only
+    const arabicRegex = /^[\u0600-\u06FF\s]+$/;
+    if (!arabicRegex.test(input)) {
+      return 'يرجى إدخال كلمات باللغة العربية فقط';
+    }
+
+    // Split input into words (trim and filter empty strings)
+    const words = input
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0);
+
+    if (type === 'poems') {
+      // For poems: minimum two words, each at least two letters
+      if (words.length < 2) {
+        return 'يجب إدخال كلمتين على الأقل للبحث في القصائد';
+      }
+
+      const shortWords = words.filter((word) => word.length < 2);
+      if (shortWords.length > 0) {
+        return 'يجب أن تكون كل كلمة مكونة من حرفين على الأقل';
+      }
+    } else {
+      // For poets: minimum one word, at least two letters
+      if (words.length < 1) {
+        return 'يجب إدخال كلمة واحدة على الأقل للبحث عن شاعر';
+      }
+
+      if (words[0].length < 2) {
+        return 'يجب أن تكون الكلمة مكونة من حرفين على الأقل';
+      }
+    }
+
+    return null;
+  };
+
+  // Custom handlers that wrap the original handlers
+  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleInputChange(e);
+    // Clear validation error when input changes after submission
+    if (hasSubmitted) {
+      setValidationError(null);
+    }
+  };
+
+  const handleCustomSearchTypeChange = (value: string) => {
+    handleSearchTypeChange(value);
+    // Clear validation errors when search type changes
+    setValidationError(null);
+    setHasSubmitted(false);
+  };
+
+  const handleCustomKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // Validate before allowing the original handler to proceed
+      const error = validateInput(inputValue, searchType);
+      if (error) {
+        e.preventDefault();
+        setHasSubmitted(true);
+        setValidationError(error);
+        return;
+      }
+    }
+    handleKeyDown(e);
+  };
+
+  // Custom search handler with validation
+  const handleCustomSearch = () => {
+    if (inputValue.trim()) {
+      setHasSubmitted(true);
+
+      // Validate input
+      const error = validateInput(inputValue, searchType);
+      if (error) {
+        setValidationError(error);
+        return;
+      }
+
+      // Clear any previous errors and proceed with search
+      setValidationError(null);
+      performSearch({
+        q: inputValue,
+      });
+    }
+  };
+
   return {
-    // states
-    inputValue,
-    setInputValue,
-
-    // obs
-    observer,
-    loadMoreRef,
-
-    performSearch,
-
-    // react-query
-    data,
     isLoading,
     isError,
-    error,
-    hasNextPage,
-    fetchNextPage,
+    isSuccess,
     isFetchingNextPage,
+    hasSubmitted,
+    filtersVisible,
+
+    loadMoreRef,
+
+    data,
+    error,
+    validationError,
+    inputValue,
     searchParams,
     searchType,
-    isFetching,
-    pagination,
-
-    // submit handlers
-    handleSearch,
-
-    // change handlers:
-
-    // input
-    handleInputChange,
-
-    // required always (when search-type === poems OR poets)
-    handleSearchTypeChange,
-    handleMatchTypeChange,
-    handleErasChange,
-
-    // optionals (when search-type === poems ONLY)
-    handleMetersChange,
-    handleRhymesChange,
-    handleThemesChange,
-
-    // keys handlers
-    handleKeyDown,
-
-    // vals
-    selectedEras,
-    selectedRhymes,
     selectedMeters,
     selectedThemes,
+    selectedEras,
+    selectedRhymes,
+
+    handleMatchTypeChange,
+    handleRhymesChange,
+    handleErasChange,
+    handleMetersChange,
+    handleThemesChange,
+    handleCustomInputChange,
+    handleCustomKeyDown,
+    handleCustomSearch,
+    toggleFilters,
+    handleCustomSearchTypeChange,
   };
 }

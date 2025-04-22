@@ -1,7 +1,5 @@
 'use client';
 
-import type React from 'react';
-
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
@@ -10,7 +8,6 @@ import { Select } from '@/components/ui/select';
 import { CheckboxSelect } from '@/components/ui/select-multi';
 import type { PoemsSearchResult, PoetsSearchResult } from '@/lib/api/types';
 import { ChevronDown, ChevronUp, Filter, Loader2, SearchIcon } from 'lucide-react';
-import { useState } from 'react';
 import {
   erasOptions,
   matchTypeOptions,
@@ -22,136 +19,47 @@ import {
 import { useSearch } from '../hooks/use-search';
 
 export function Search() {
-  // Add a new state variable for validation errors after the filtersVisible state
-  const [filtersVisible, setFiltersVisible] = useState(true);
-  const [validationError, setValidationError] = useState<string | null>(null);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
-
   const {
-    // states
-    inputValue,
-
-    // refs
-    loadMoreRef,
-
-    // react-query
-    data,
     isLoading,
     isError,
-    error,
+    isSuccess,
     isFetchingNextPage,
+    hasSubmitted,
+    filtersVisible,
+
+    loadMoreRef,
+
+    data,
+    error,
+    validationError,
+    inputValue,
     searchParams,
     searchType,
+    selectedMeters,
+    selectedThemes,
+    selectedEras,
+    selectedRhymes,
 
-    // submit handler
-    performSearch,
-    handleRhymesChange,
-
-    // change handlers
-    handleInputChange,
-    handleSearchTypeChange,
     handleMatchTypeChange,
+    handleRhymesChange,
     handleErasChange,
     handleMetersChange,
     handleThemesChange,
-
-    // keys handlers
-    handleKeyDown: originalHandleKeyDown,
-
-    // vals
-    selectedEras,
-    selectedMeters,
-    selectedThemes,
+    handleCustomInputChange,
+    handleCustomKeyDown,
+    handleCustomSearch,
+    toggleFilters,
+    handleCustomSearchTypeChange,
   } = useSearch();
 
-  const toggleFilters = () => setFiltersVisible(!filtersVisible);
+  const text = {
+    currentHeaderTitle: searchType === 'poems' ? 'ابحث في مليون بيت' : 'ابحث عن ديوان شاعر',
+    currentInputPlaceholder: searchType === 'poems' ? 'إن الذي سمك السماء بنى لنا' : 'المتنبي',
+    currentFilterButton: filtersVisible ? 'إخفاء الفلاتر' : 'عرض الفلاتر',
+    
+    search: 'ابحث',
 
-  // Add a validation function after handleSearch
-  const validateInput = (input: string, type: 'poems' | 'poets'): string | null => {
-    // Check for Arabic characters only
-    const arabicRegex = /^[\u0600-\u06FF\s]+$/;
-    if (!arabicRegex.test(input)) {
-      return 'يرجى إدخال كلمات باللغة العربية فقط';
-    }
-
-    // Split input into words (trim and filter empty strings)
-    const words = input
-      .trim()
-      .split(/\s+/)
-      .filter((word) => word.length > 0);
-
-    if (type === 'poems') {
-      // For poems: minimum two words, each at least two letters
-      if (words.length < 2) {
-        return 'يجب إدخال كلمتين على الأقل للبحث في القصائد';
-      }
-
-      const shortWords = words.filter((word) => word.length < 2);
-      if (shortWords.length > 0) {
-        return 'يجب أن تكون كل كلمة مكونة من حرفين على الأقل';
-      }
-    } else {
-      // For poets: minimum one word, at least two letters
-      if (words.length < 1) {
-        return 'يجب إدخال كلمة واحدة على الأقل للبحث عن شاعر';
-      }
-
-      if (words[0].length < 2) {
-        return 'يجب أن تكون الكلمة مكونة من حرفين على الأقل';
-      }
-    }
-
-    return null;
-  };
-
-  // Custom handlers that wrap the original handlers
-  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleInputChange(e);
-    // Clear validation error when input changes after submission
-    if (hasSubmitted) {
-      setValidationError(null);
-    }
-  };
-
-  const handleCustomSearchTypeChange = (value: string) => {
-    handleSearchTypeChange(value);
-    // Clear validation errors when search type changes
-    setValidationError(null);
-    setHasSubmitted(false);
-  };
-
-  const handleCustomKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      // Validate before allowing the original handler to proceed
-      const error = validateInput(inputValue, searchType);
-      if (error) {
-        e.preventDefault();
-        setHasSubmitted(true);
-        setValidationError(error);
-        return;
-      }
-    }
-    originalHandleKeyDown(e);
-  };
-
-  // Custom search handler with validation
-  const handleCustomSearch = () => {
-    if (inputValue.trim()) {
-      setHasSubmitted(true);
-
-      // Validate input
-      const error = validateInput(inputValue, searchType);
-      if (error) {
-        setValidationError(error);
-        return;
-      }
-
-      // Clear any previous errors and proceed with search
-      setValidationError(null);
-      performSearch({
-        q: inputValue,
-      });
-    }
+    
   };
 
   return (
@@ -160,7 +68,7 @@ export function Search() {
         <CardHeader className="pb-2">
           <CardTitle className="text-2xl font-bold flex items-center gap-2">
             <SearchIcon className="h-5 w-5" />
-            {searchType === 'poems' ? 'ابحث في مليون بيت' : 'ابحث عن ديوان شاعر'}
+            {text.currentHeaderTitle}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -173,7 +81,7 @@ export function Search() {
                   value={inputValue}
                   onChange={handleCustomInputChange}
                   onKeyDown={handleCustomKeyDown}
-                  placeholder={searchType === 'poems' ? 'إن الذي سمك السماء بنى لنا' : 'المتنبي'}
+                  placeholder={text.currentInputPlaceholder}
                   className={`pr-4 text-right ${validationError && hasSubmitted ? 'border-red-500' : ''}`}
                 />
                 {validationError && hasSubmitted && (
@@ -190,7 +98,7 @@ export function Search() {
                 ) : (
                   <SearchIcon className="h-4 w-4 mr-2" />
                 )}
-                ابحث
+                {text.search}
               </Button>
             </div>
 
@@ -201,7 +109,7 @@ export function Search() {
                 className="text-sm flex items-center gap-1 px-2 py-1"
               >
                 <Filter className="h-4 w-4" />
-                {filtersVisible ? 'إخفاء الفلاتر' : 'عرض الفلاتر'}
+                {text.currentFilterButton}
                 {filtersVisible ? (
                   <ChevronUp className="h-4 w-4" />
                 ) : (
@@ -289,7 +197,7 @@ export function Search() {
                       <label className="block text-sm font-medium mb-1">القوافي</label>
                       <CheckboxSelect
                         options={rhymesOptions}
-                        value={selectedThemes}
+                        value={selectedRhymes}
                         onChange={handleRhymesChange}
                         placeholder="اختر القافية"
                         multiple={true}
@@ -311,7 +219,7 @@ export function Search() {
         </Card>
       )}
 
-      {inputValue && !isLoading && data.length === 0 && (
+      {inputValue && !isLoading && data.length === 0 && isSuccess && (
         <Card className="border-0 shadow-sm">
           <CardContent className="flex flex-col items-center justify-center p-8 text-slate-500">
             <SearchIcon className="h-12 w-12 mb-4 text-slate-300" />
