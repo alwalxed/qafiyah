@@ -2,7 +2,7 @@
 
 import { search } from '@/lib/api/queries';
 import type { PoemsSearchResult, PoetsSearchResult } from '@/lib/api/types';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery as useTanstackInfiniteQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import {
   useEraIds,
@@ -16,17 +16,17 @@ import {
   type SearchType,
 } from './use-search-params';
 
-interface UseInfiniteSearchOptions {
+interface UseInfiniteQueryOptions {
   initialSearchType: SearchType;
   initialMatchType: MatchType;
   queryKey: string;
 }
 
-export function useInfiniteSearch({
+export function useInfiniteQuery({
   initialSearchType,
   initialMatchType,
   queryKey,
-}: UseInfiniteSearchOptions) {
+}: UseInfiniteQueryOptions) {
   const [query, setQuery] = useSearchQuery();
   const [searchType, setSearchType] = useSearchType(initialSearchType);
   const [matchType, setMatchType] = useMatchType(initialMatchType);
@@ -34,8 +34,6 @@ export function useInfiniteSearch({
   const [rhymeIds, setRhymeIds] = useRhymeIds();
   const [meterIds, setMeterIds] = useMeterIds();
   const [themeIds, setThemeIds] = useThemeIds();
-
-  const queryClient = useQueryClient();
 
   // Create a memoized search params object for dependency tracking
   const currentSearchParams = useMemo(
@@ -52,7 +50,7 @@ export function useInfiniteSearch({
   );
 
   // Set up the infinite query
-  const infiniteQuery = useInfiniteQuery({
+  const infiniteQuery = useTanstackInfiniteQuery({
     queryKey: [queryKey, currentSearchParams],
     queryFn: async ({ pageParam = 1 }) => {
       // Don't perform search if query is empty
@@ -88,47 +86,6 @@ export function useInfiniteSearch({
     refetchOnWindowFocus: false,
   });
 
-  // Function to perform a new search
-  const performSearch = (params: {
-    q?: string;
-    search_type?: SearchType;
-    match_type?: MatchType;
-    era_ids?: string;
-    rhyme_ids?: string;
-    meter_ids?: string;
-    theme_ids?: string;
-  }) => {
-    queryClient.resetQueries({ queryKey: [queryKey] });
-
-    if (params.q !== undefined) {
-      setQuery(params.q === '' ? null : params.q);
-    }
-
-    if (params.search_type !== undefined) {
-      setSearchType(params.search_type);
-    }
-
-    if (params.match_type !== undefined) {
-      setMatchType(params.match_type);
-    }
-
-    if (params.era_ids !== undefined) {
-      setEraIds(params.era_ids || null);
-    }
-
-    if (params.rhyme_ids !== undefined) {
-      setRhymeIds(params.rhyme_ids || null);
-    }
-
-    if (params.meter_ids !== undefined) {
-      setMeterIds(params.meter_ids || null);
-    }
-
-    if (params.theme_ids !== undefined) {
-      setThemeIds(params.theme_ids || null);
-    }
-  };
-
   const flatData = useMemo(() => {
     return (
       (infiniteQuery.data?.pages.flatMap((page) =>
@@ -159,7 +116,14 @@ export function useInfiniteSearch({
     pagination: paginationInfo,
     error: infiniteQuery.error,
 
-    performSearch,
+    setQuery,
+    setSearchType,
+    setMatchType,
+    setEraIds,
+    setRhymeIds,
+    setMeterIds,
+    setThemeIds,
+
     fetchNextPage: infiniteQuery.fetchNextPage,
   };
 }
