@@ -1,9 +1,3 @@
-# Qafiyah (قافية)
-
-Open-source. Non-profit. Accessible. Arabic poetry, beautifully archived.
-
-![Qafiyah - Arabic Poetry Archive](https://qafiyah.com/opengraph.png)
-
 ## 📑 Table of Contents
 
 - [📋 Project Overview](#-project-overview)
