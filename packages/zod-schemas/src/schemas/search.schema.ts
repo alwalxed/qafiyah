@@ -7,7 +7,33 @@ import { pageStringNumberSchema } from "./common.schema";
 ------------------------------------------>
 */
 
-const matchType = z.enum(["exact", "all", "any"]).default("all");
+const arabicRegex = /^[\u0600-\u06FF\s]+$/;
+
+export const searchQueriesSchema = {
+  poets: z
+    .string()
+    .refine((val) => arabicRegex.test(val), "Only Arabic letters are allowed")
+    .refine(
+      (val) => val.trim().length >= 2,
+      "Query must be at least 2 characters long"
+    )
+    .refine(
+      (val) => val.trim().split(/\s+/).length === 1,
+      "Poet name must be one word"
+    ),
+
+  poems: z
+    .string()
+    .refine((val) => arabicRegex.test(val), "Only Arabic letters are allowed")
+    .refine(
+      (val) => val.trim().length >= 2,
+      "Query must be at least 2 characters long"
+    )
+    .refine((val) => {
+      const words = val.trim().split(/\s+/);
+      return words.length >= 2 && words.every((word) => word.length >= 2);
+    }, "Query must contain at least 2 words, each with at least 2 characters"),
+};
 
 const parseIdList = z
   .string()
@@ -24,28 +50,23 @@ const parseIdList = z
     return true;
   });
 
+export const searchRequestSchema = z.object({
+  // always required
+  q: z.string().min(2),
+  page: pageStringNumberSchema,
+  search_type: z.enum(["poems", "poets"]),
+  match_type: z.enum(["exact", "all", "any"]),
+  // optional
+  era_ids: parseIdList,
+  meter_ids: parseIdList,
+  theme_ids: parseIdList,
+});
+
 /*
 ------------------------------------------------->
 ---------------- POEMS ---------------------->
 ------------------------------------------>
 */
-
-const poemsSearchQuery = z
-  .string()
-  .min(2, "Query must be at least 2 characters long")
-  .refine((val) => {
-    const words = val.trim().split(/\s+/); // Split by spaces
-    return words.length >= 2 && words.every((word) => word.length >= 2);
-  }, "Query must contain at least 2 words, each with at least 2 characters");
-
-export const poemsSearchRequestSchema = z.object({
-  q: poemsSearchQuery,
-  page: pageStringNumberSchema,
-  match_type: matchType,
-  meter_ids: parseIdList,
-  era_ids: parseIdList,
-  theme_ids: parseIdList,
-});
 
 export const poemsSearchResultSchema = z.object({
   poet_name: z.string(),
@@ -83,13 +104,6 @@ export const poemsSearchResponseSchema = z.object({
 ---------------- POETS ---------------------->
 ------------------------------------------>
 */
-
-export const poetsSearchRequestSchema = z.object({
-  q: z.string().min(2, "Query must be at least 2 characters long"),
-  page: pageStringNumberSchema,
-  match_type: matchType,
-  era_ids: parseIdList,
-});
 
 export const poetsSearchResultSchema = z.object({
   poet_name: z.string(),

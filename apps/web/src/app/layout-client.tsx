@@ -5,6 +5,7 @@ import { MobileMenu } from '@/components/nav/mobile-menu';
 import { Nav } from '@/components/nav/nav';
 import { useLayoutMeasurements } from '@/hooks/use-layout-measurements';
 import { Providers } from '@/providers/react-query';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { useRef } from 'react';
 
 export function RootLayoutClient({
@@ -20,10 +21,12 @@ export function RootLayoutClient({
   return (
     <>
       <Providers>
-        <Nav ref={navRef} />
-        <MobileMenu />
-        <main className="w-full flex justify-center items-start h-full">{children}</main>
-        <Footer ref={footerRef} />
+        <NuqsAdapter>
+          <Nav ref={navRef} />
+          <MobileMenu />
+          <main className="w-full flex justify-center items-start h-full">{children}</main>
+          <Footer ref={footerRef} />
+        </NuqsAdapter>
       </Providers>
     </>
   );

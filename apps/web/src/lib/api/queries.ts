@@ -20,26 +20,22 @@ import type {
  * API queries for fetching data from the Qafiyah API
  * using the validated client
  */
+
 export const queries = {
   // Search
-  async searchPoems(
-    query: string,
+  async search(
+    q: string,
+    searchType: 'poems' | 'poets',
     page = '1',
     matchType = 'all',
     meterIds?: string,
     eraIds?: string,
     themeIds?: string
-  ): Promise<{ data: PoemsSearchResponseData; pagination?: PaginationMeta }> {
-    return client.searchPoems(query, page, matchType, meterIds, eraIds, themeIds);
-  },
-
-  async searchPoets(
-    query: string,
-    page = '1',
-    matchType = 'all',
-    eraIds?: string
-  ): Promise<{ data: PoetsSearchResponseData; pagination?: PaginationMeta }> {
-    return client.searchPoets(query, page, matchType, eraIds);
+  ): Promise<{
+    data: PoemsSearchResponseData | PoetsSearchResponseData;
+    pagination?: PaginationMeta;
+  }> {
+    return client.search(q, searchType, page, matchType, meterIds, eraIds, themeIds);
   },
 
   // Eras
@@ -123,8 +119,7 @@ export const queries = {
 
 // For convenience, also export individual functions
 export const {
-  searchPoems,
-  searchPoets,
+  search,
   getEras,
   getEraPoems,
   getMeters,

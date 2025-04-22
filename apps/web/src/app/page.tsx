@@ -1,5 +1,5 @@
-import { SearchClientPage } from '@/features/search/components/search-main';
+import {Search} from '@/features/search/components/search';
 
 export default function Page() {
-  return <SearchClientPage />;
+  return <Search />;
 }

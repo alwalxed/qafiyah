@@ -76,8 +76,7 @@ export const requestSchemas = {
   getPoetInfo: poetsSchemas.getPoetRequestSchema,
   getRhymesPoems: rhymesSchemas.getRhymesPoemsRequestSchema,
   getThemesPoems: themesSchemas.getThemesPoemsRequestSchema,
-  poemsSearch: searchSchemas.poemsSearchRequestSchema,
-  poetsSearch: searchSchemas.poetsSearchRequestSchema,
+  search: searchSchemas.searchRequestSchema,
 } as const;
 
 // Map of response validation schemas by endpoint

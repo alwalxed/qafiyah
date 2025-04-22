@@ -22,79 +22,84 @@ import type {
  */
 const apiClient = (baseUrl: string) => {
   return {
-    // Poems Search
-    async searchPoems(
-      query: string,
+    // Search
+    async search(
+      q: string,
+      searchType: 'poems' | 'poets',
       page = '1',
       matchType = 'all',
       meterIds?: string,
       eraIds?: string,
       themeIds?: string
-    ): Promise<{ data: PoemsSearchResponseData; pagination?: PaginationMeta }> {
-      const validParams = validateParams('poemsSearch', {
-        q: query,
-        page,
-        match_type: matchType,
-        meter_ids: meterIds,
-        era_ids: eraIds,
-        theme_ids: themeIds,
-      });
+    ): Promise<{
+      data: PoemsSearchResponseData | PoetsSearchResponseData;
+      pagination?: PaginationMeta;
+    }> {
+      let validParams;
 
-      // Build URL with all parameters
+      switch (searchType) {
+        case 'poems': {
+          validParams = validateParams('search', {
+            q,
+            page,
+            search_type: searchType,
+            match_type: matchType,
+            meter_ids: meterIds,
+            era_ids: eraIds,
+            theme_ids: themeIds,
+          });
+          break;
+        }
+        case 'poets': {
+          validParams = validateParams('search', {
+            q,
+            page,
+            search_type: searchType,
+            match_type: matchType,
+            era_ids: eraIds,
+          });
+          break;
+        }
+      }
+
       const searchParams = new URLSearchParams();
-      searchParams.append('q', encodeURIComponent(validParams.q));
-      searchParams.append('page', validParams.page);
-      searchParams.append('match_type', validParams.match_type);
 
-      if (validParams.meter_ids) {
-        searchParams.append('meter_ids', validParams.meter_ids);
+      switch (searchType) {
+        case 'poems': {
+          searchParams.append('q', validParams.q);
+          searchParams.append('page', validParams.page);
+          searchParams.append('search_type', validParams.search_type);
+          searchParams.append('match_type', validParams.match_type);
+
+          if (validParams.era_ids) {
+            searchParams.append('era_ids', validParams.era_ids);
+          }
+          if (validParams.meter_ids) {
+            searchParams.append('meter_ids', validParams.meter_ids);
+          }
+          if (validParams.theme_ids) {
+            searchParams.append('theme_ids', validParams.theme_ids);
+          }
+          break;
+        }
+        case 'poets': {
+          searchParams.append('q', validParams.q);
+          searchParams.append('page', validParams.page);
+          searchParams.append('search_type', validParams.search_type);
+          searchParams.append('match_type', validParams.match_type);
+
+          if (validParams.era_ids) {
+            searchParams.append('era_ids', validParams.era_ids);
+          }
+          break;
+        }
       }
 
-      if (validParams.era_ids) {
-        searchParams.append('era_ids', validParams.era_ids);
-      }
-
-      if (validParams.theme_ids) {
-        searchParams.append('theme_ids', validParams.theme_ids);
-      }
+      const resSchema = searchType === 'poems' ? 'poemsSearch' : 'poetsSearch';
 
       const response = await fetchWithValidation(
-        'poemsSearch',
-        `${baseUrl}/search/poems?${searchParams.toString()}`
-      );
-
-      return {
-        data: response.data,
-        pagination: response.data.pagination,
-      };
-    },
-
-    async searchPoets(
-      query: string,
-      page = '1',
-      matchType = 'all',
-      eraIds?: string
-    ): Promise<{ data: PoetsSearchResponseData; pagination?: PaginationMeta }> {
-      const validParams = validateParams('poetsSearch', {
-        q: query,
-        page,
-        match_type: matchType,
-        era_ids: eraIds,
-      });
-
-      // Build URL with all parameters
-      const searchParams = new URLSearchParams();
-      searchParams.append('q', encodeURIComponent(validParams.q));
-      searchParams.append('page', validParams.page);
-      searchParams.append('match_type', validParams.match_type);
-
-      if (validParams.era_ids) {
-        searchParams.append('era_ids', validParams.era_ids);
-      }
-
-      const response = await fetchWithValidation(
-        'poetsSearch', // Use the correct schema for poets search
-        `${baseUrl}/search/poets?${searchParams.toString()}`
+        resSchema,
+        `${baseUrl}/search?${searchParams.toString()}`
       );
 
       return {
