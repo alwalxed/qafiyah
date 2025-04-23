@@ -27,15 +27,15 @@ export function useInfiniteQuery({
   initialMatchType,
   queryKey,
 }: UseInfiniteQueryOptions) {
-  const [query, setQuery] = useSearchQuery();
   const [searchType, setSearchType] = useSearchType(initialSearchType);
   const [matchType, setMatchType] = useMatchType(initialMatchType);
+
+  const [query, setQuery] = useSearchQuery();
   const [eraIds, setEraIds] = useEraIds();
   const [rhymeIds, setRhymeIds] = useRhymeIds();
   const [meterIds, setMeterIds] = useMeterIds();
   const [themeIds, setThemeIds] = useThemeIds();
 
-  // Create a memoized search params object for dependency tracking
   const currentSearchParams = useMemo(
     () => ({
       q: query,
@@ -49,11 +49,9 @@ export function useInfiniteQuery({
     [query, searchType, matchType, meterIds, eraIds, rhymeIds, themeIds]
   );
 
-  // Set up the infinite query
   const infiniteQuery = useTanstackInfiniteQuery({
     queryKey: [queryKey, currentSearchParams],
     queryFn: async ({ pageParam = 1 }) => {
-      // Don't perform search if query is empty
       if (!query) {
         return {
           data: { results: [] },
@@ -101,6 +99,17 @@ export function useInfiniteQuery({
     return infiniteQuery.data?.pages[infiniteQuery.data.pages.length - 1]?.pagination;
   }, [infiniteQuery.data?.pages]);
 
+  const resetAllParamStates = () => {
+    setSearchType(initialSearchType);
+    setMatchType(initialMatchType);
+
+    setQuery('');
+    setEraIds('');
+    setMeterIds('');
+    setRhymeIds('');
+    setThemeIds('');
+  };
+
   return {
     isLoading: infiniteQuery.isLoading,
     isFetching: infiniteQuery.isFetching,
@@ -124,6 +133,7 @@ export function useInfiniteQuery({
     setRhymeIds,
     setMeterIds,
     setThemeIds,
+    resetAllParamStates,
 
     fetchNextPage: infiniteQuery.fetchNextPage,
   };

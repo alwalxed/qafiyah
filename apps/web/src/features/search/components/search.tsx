@@ -2,8 +2,7 @@
 
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
-import { Input } from '@/components/shadcn/input';
+import { Card, CardContent } from '@/components/shadcn/card';
 import { Select } from '@/components/ui/select';
 import { CheckboxSelect } from '@/components/ui/select-multi';
 import type { PoemsSearchResult, PoetsSearchResult } from '@/lib/api/types';
@@ -18,6 +17,7 @@ import {
 } from '../constants';
 import { useSearch } from '../hooks/use-search';
 import { PoemCard, PoetCard } from './cards';
+import { SearchInput } from './input';
 
 export function Search() {
   const {
@@ -49,48 +49,29 @@ export function Search() {
     handleCustomSearch,
     toggleFilters,
     handleCustomSearchTypeChange,
+    resetAllStates,
   } = useSearch();
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4 space-y-5 font-sans" dir="rtl">
-      <Card className="border-zinc-100 shadow-sm bg-white">
-        <CardHeader className="pb-2 pt-4 px-4">
-          <CardTitle className="text-xl font-medium text-zinc-800 flex items-center gap-2">
-            <SearchIcon className="h-4 w-4 text-zinc-500" />
-            {text.currentHeaderTitle}
-          </CardTitle>
-        </CardHeader>
+    <div className="w-full max-w-4xl mx-auto p-4 my-48 flex flex-col gap-4" dir="rtl">
+      <h1 className="font-bold text-center justify-center items-center text-5xl text-zinc-800 flex py-2">
+        {text.currentHeaderTitle}
+      </h1>
+      <Card className="border-0 shadow-none">
         <CardContent className="p-4">
           <div className="flex flex-col gap-3">
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="relative flex-1">
-                <Input
-                  value={inputValue}
-                  onChange={handleCustomInputChange}
-                  onKeyDown={handleCustomKeyDown}
-                  placeholder={text.currentInputPlaceholder}
-                  className={`pr-4 text-right border-zinc-200 focus:border-zinc-400 focus:ring-zinc-400 ${
-                    validationError && hasSubmitted ? 'border-red-300' : ''
-                  }`}
-                />
-                {validationError && hasSubmitted && (
-                  <p className="text-red-500 text-xs mt-1">{validationError}</p>
-                )}
-              </div>
-              <Button
-                onClick={handleCustomSearch}
-                disabled={isLoading || !inputValue.trim()}
-                className="bg-zinc-800 hover:bg-zinc-900 text-white"
-              >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <SearchIcon className="h-4 w-4 mr-2" />
-                )}
-                {text.search}
-              </Button>
-            </div>
-
+            <SearchInput
+              hasSubmitted={hasSubmitted}
+              isLoading={isLoading}
+              currentInputPlaceholderText={text.currentInputPlaceholder}
+              searchLabel={text.search}
+              inputValue={inputValue}
+              validationError={validationError}
+              handleCustomKeyDown={handleCustomKeyDown}
+              handleCustomSearch={handleCustomSearch}
+              handleCustomInputChange={handleCustomInputChange}
+              resetAllStates={resetAllStates}
+            />
             <div className="flex items-center justify-between">
               <Button
                 variant="ghost"

@@ -26,6 +26,7 @@ export function useSearch() {
     setRhymeIds,
     setMeterIds,
     setThemeIds,
+    resetAllParamStates,
   } = useInfiniteQuery({
     initialMatchType: 'all',
     initialSearchType: 'poems',
@@ -165,6 +166,12 @@ export function useSearch() {
     setThemeIds(joinedThemes);
   };
 
+  const resetAllStates = () => {
+    resetAllParamStates();
+    resetInput();
+    resetValidation();
+  };
+
   const searchTypeText = searchType === 'poems' ? 'بيت' : 'شاعر';
   const matchTypeText =
     matchType === 'any' ? 'أي كلمة' : matchType === 'all' ? 'جميع الكلمات' : 'مطابقة';
@@ -258,15 +265,19 @@ export function useSearch() {
     selectedEras,
     selectedRhymes,
 
+    toggleFilters,
+    resetAllStates,
+
     handleMatchTypeChange,
+    handleCustomInputChange,
+
+    handleCustomKeyDown,
+    handleCustomSearch,
+    handleCustomSearchTypeChange,
+
     handleRhymesChange: handleRhymesChangeWithState,
     handleErasChange: handleErasChangeWithState,
     handleMetersChange: handleMetersChangeWithState,
     handleThemesChange: handleThemesChangeWithState,
-    handleCustomInputChange,
-    handleCustomKeyDown,
-    handleCustomSearch,
-    toggleFilters,
-    handleCustomSearchTypeChange,
   };
 }

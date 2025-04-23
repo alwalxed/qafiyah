@@ -2,25 +2,24 @@
 
 import type React from 'react';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export function useSearchInput(initialQuery = '') {
   const [inputValue, setInputValue] = useState(initialQuery);
 
-  // Initialize input value when initialQuery changes
   useEffect(() => {
     if (initialQuery) {
       setInputValue(initialQuery);
     }
   }, [initialQuery]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
-  };
+  }, []);
 
-  const resetInput = () => {
+  const resetInput = useCallback(() => {
     setInputValue('');
-  };
+  }, []);
 
   return {
     inputValue,
