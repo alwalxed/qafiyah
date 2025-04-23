@@ -334,10 +334,7 @@ export function PoemCard({
               </div>
             </div>
 
-            <HighlightedText
-              className="text-zinc-600 text-sm leading-relaxed line-clamp-2"
-              text={poem_snippet}
-            />
+            <HighlightedText text={poem_snippet} />
           </div>
         </CardContent>
       </a>
