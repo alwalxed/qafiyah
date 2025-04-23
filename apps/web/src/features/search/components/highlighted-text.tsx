@@ -20,8 +20,12 @@ export function HighlightedText({ text, className = '' }: Props) {
       <Fragment key={index}>
         {segments.map((segment, segIndex) => (
           <Fragment key={`${index}-${segIndex}`}>
-            {segIndex > 0 && <span className="inline-block mx-2">{`—`}</span>}
-            {isHighlighted ? <span className="text-red-400 font-medium">{segment}</span> : segment}
+            {segIndex > 0 && <span className="inline-block mx-2 py-1">{`—`}</span>}
+            {isHighlighted ? (
+              <span className="text-red-400 font-medium py-1">{segment}</span>
+            ) : (
+              <span className="py-1">{segment}</span>
+            )}
           </Fragment>
         ))}
       </Fragment>
@@ -29,7 +33,7 @@ export function HighlightedText({ text, className = '' }: Props) {
   });
 
   return (
-    <div className={cn('highlighted-text', className)} dir="rtl" style={{ userSelect: 'text' }}>
+    <div className={cn(className)} dir="rtl" style={{ userSelect: 'text' }}>
       {processedParts}
     </div>
   );

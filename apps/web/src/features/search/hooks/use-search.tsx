@@ -1,3 +1,4 @@
+import { formatArabicCount } from 'arabic-count-format';
 import { toArabicDigits } from 'to-arabic-digits';
 import { useInfiniteQuery } from './use-infinite-query';
 import { useInfiniteScroll } from './use-infinite-scroll';
@@ -14,6 +15,7 @@ export function useSearch() {
     hasNextPage,
     searchParams,
     searchType,
+    matchType,
     data,
     error,
     fetchNextPage,
@@ -163,6 +165,21 @@ export function useSearch() {
     setThemeIds(joinedThemes);
   };
 
+  const searchTypeText = searchType === 'poems' ? 'بيت' : 'شاعر';
+  const matchTypeText =
+    matchType === 'any' ? 'أي كلمة' : matchType === 'all' ? 'جميع الكلمات' : 'مطابقة';
+  const normalizedCount = data?.[0]?.total_count ?? 0;
+  const shortenedInputText = inputValue.length > 10 ? inputValue.slice(0, 10) + '...' : inputValue;
+  const resultsText = formatArabicCount({
+    count: normalizedCount,
+    nounForms: {
+      singular: 'نتيجة',
+      dual: 'نتيجتان',
+      plural: 'نتائج',
+    },
+  });
+  const resultText = `عثر على ${resultsText} لـ "${shortenedInputText}" بحثًا عن «${searchTypeText}» بحثَ (${matchTypeText})`;
+
   const text = {
     currentHeaderTitle: searchType === 'poems' ? 'ابحث في مليون بيت' : 'ابحث عن ديوان شاعر',
     currentInputPlaceholder: searchType === 'poems' ? 'إن الذي سمك السماء بنى لنا' : 'المتنبي',
@@ -211,9 +228,11 @@ export function useSearch() {
     matchTypePlaceholder: 'اختر طريقة البحث',
 
     errorMessage: `خطأ: ${(error as Error)?.message || 'حدث خطأ ما'}`,
-    noResultsFound: `${`لم يُعثر على نتيجة لـ "${searchParams.q.slice(0, 10)}..."`}`,
+    noResultsFound: `لم يُعثر على نتيجة لـ "${inputValue.length > 20 ? inputValue.slice(0, 20) + '...' : inputValue}"`,
 
-    resultsCount: `عثر على ${toArabicDigits(data?.[0]?.total_count ?? 0)} نتيجة لـ "${inputValue.length > 30 ? inputValue.slice(0, 30) + '...' : inputValue}"`,
+    resultText,
+    searchTypeText,
+    matchTypeText,
   };
 
   return {

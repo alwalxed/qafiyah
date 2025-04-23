@@ -110,6 +110,7 @@ export function useInfiniteQuery({
     hasNextPage: infiniteQuery.hasNextPage,
 
     searchType,
+    matchType,
     searchParams: currentSearchParams,
 
     data: flatData,
