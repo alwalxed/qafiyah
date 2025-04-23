@@ -39,6 +39,7 @@
     "@radix-ui/react-tabs": "^1.1.8",
     "@tanstack/react-query": "^5.73.3",
     "@tanstack/react-query-devtools": "^5.73.3",
+    "arabic-count-format": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.41.0",

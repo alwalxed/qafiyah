@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { formatArabicCount, type ArabicNounForms } from 'arabic-count-format';
 import { Check, ChevronDown, X } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -14,6 +15,7 @@ interface CheckboxSelectProps {
   options: SelectOption[];
   value: string | string[];
   onChange: (value: string | string[]) => void;
+  placeholderNounForms: ArabicNounForms;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
@@ -24,6 +26,7 @@ export function CheckboxSelect({
   options,
   value,
   onChange,
+  placeholderNounForms,
   placeholder = 'Select option(s)',
   disabled = false,
   className,
@@ -69,7 +72,7 @@ export function CheckboxSelect({
       const option = options.find((o) => o.value === selectedValues[0]);
       return option?.label || placeholder;
     }
-    return `${selectedValues.length} selected`;
+    return formatArabicCount({ count: selectedValues.length, nounForms: placeholderNounForms });
   };
 
   // Click outside to close

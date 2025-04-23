@@ -194,6 +194,11 @@ export function Search() {
                     options={erasOptions}
                     value={selectedEras}
                     onChange={handleErasChange}
+                    placeholderNounForms={{
+                      singular: 'عصر',
+                      dual: 'عصران',
+                      plural: 'عصور',
+                    }}
                     placeholder={text.erasPlaceholder}
                     multiple={true}
                   />
@@ -207,6 +212,11 @@ export function Search() {
                         options={metersOptions}
                         value={selectedMeters}
                         onChange={handleMetersChange}
+                        placeholderNounForms={{
+                          singular: 'بحر',
+                          dual: 'بحران',
+                          plural: 'بحور',
+                        }}
                         placeholder={text.metersPlaceholder}
                         multiple={true}
                       />
@@ -218,6 +228,11 @@ export function Search() {
                         options={themesOptions}
                         value={selectedThemes}
                         onChange={handleThemesChange}
+                        placeholderNounForms={{
+                          singular: 'موضوع',
+                          dual: 'موضوعان',
+                          plural: 'مواضيع',
+                        }}
                         placeholder={text.themesPlaceholder}
                         multiple={true}
                       />
@@ -229,6 +244,11 @@ export function Search() {
                         options={rhymesOptions}
                         value={selectedRhymes}
                         onChange={handleRhymesChange}
+                        placeholderNounForms={{
+                          singular: 'قافية',
+                          dual: 'قافيتان',
+                          plural: 'قوافي',
+                        }}
                         placeholder={text.rhymesPlaceholder}
                         multiple={true}
                       />
