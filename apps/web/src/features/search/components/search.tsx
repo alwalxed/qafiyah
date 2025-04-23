@@ -19,20 +19,18 @@ import {
   themesOptions,
 } from '../constants';
 import { useSearch } from '../hooks/use-search';
+import { HighlightedText } from './highlighted-text';
 
 export function Search() {
   const {
     text,
-
     isLoading,
     isError,
     isSuccess,
     isFetchingNextPage,
     hasSubmitted,
     filtersVisible,
-
     loadMoreRef,
-
     data,
     validationError,
     inputValue,
@@ -42,7 +40,6 @@ export function Search() {
     selectedThemes,
     selectedEras,
     selectedRhymes,
-
     handleMatchTypeChange,
     handleRhymesChange,
     handleErasChange,
@@ -56,35 +53,35 @@ export function Search() {
   } = useSearch();
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 space-y-6 font-sans" dir="rtl">
-      <Card className="border-0 shadow-md">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-2xl font-bold flex items-center gap-2">
-            <SearchIcon className="h-5 w-5" />
+    <div className="w-full max-w-4xl mx-auto p-4 space-y-5 font-sans" dir="rtl">
+      <Card className="border-zinc-100 shadow-sm bg-white">
+        <CardHeader className="pb-2 pt-4 px-4">
+          <CardTitle className="text-xl font-medium text-zinc-800 flex items-center gap-2">
+            <SearchIcon className="h-4 w-4 text-zinc-500" />
             {text.currentHeaderTitle}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-4">
+        <CardContent className="p-4">
+          <div className="flex flex-col gap-3">
             <div className="flex flex-col sm:flex-row gap-2">
-              {/* Add error display after the input field in the UI */}
-              {/* Find the div with className="relative flex-1" and add the error message after it */}
               <div className="relative flex-1">
                 <Input
                   value={inputValue}
                   onChange={handleCustomInputChange}
                   onKeyDown={handleCustomKeyDown}
                   placeholder={text.currentInputPlaceholder}
-                  className={`pr-4 text-right ${validationError && hasSubmitted ? 'border-red-500' : ''}`}
+                  className={`pr-4 text-right border-zinc-200 focus:border-zinc-400 focus:ring-zinc-400 ${
+                    validationError && hasSubmitted ? 'border-red-300' : ''
+                  }`}
                 />
                 {validationError && hasSubmitted && (
-                  <p className="text-red-500 text-sm mt-1">{validationError}</p>
+                  <p className="text-red-500 text-xs mt-1">{validationError}</p>
                 )}
               </div>
               <Button
                 onClick={handleCustomSearch}
                 disabled={isLoading || !inputValue.trim()}
-                className="bg-emerald-600 hover:bg-emerald-700"
+                className="bg-zinc-800 hover:bg-zinc-900 text-white"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -99,35 +96,47 @@ export function Search() {
               <Button
                 variant="ghost"
                 onClick={toggleFilters}
-                className="text-sm flex items-center gap-1 px-2 py-1"
+                className="text-xs flex items-center gap-1 px-2 py-1 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100"
               >
-                <Filter className="h-4 w-4" />
+                <Filter className="h-3 w-3" />
                 {text.currentFilterButton}
                 {filtersVisible ? (
-                  <ChevronUp className="h-4 w-4" />
+                  <ChevronUp className="h-3 w-3" />
                 ) : (
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="h-3 w-3" />
                 )}
               </Button>
 
               <div className="flex flex-wrap gap-1 justify-end">
                 {selectedEras.length > 0 && (
-                  <Badge variant="outline" className="text-xs">
+                  <Badge
+                    variant="outline"
+                    className="text-xs text-zinc-600 border-zinc-200 bg-zinc-50"
+                  >
                     {text.badgeErasCount}
                   </Badge>
                 )}
                 {selectedMeters.length > 0 && (
-                  <Badge variant="outline" className="text-xs">
+                  <Badge
+                    variant="outline"
+                    className="text-xs text-zinc-600 border-zinc-200 bg-zinc-50"
+                  >
                     {text.badgeMetersCount}
                   </Badge>
                 )}
                 {selectedThemes.length > 0 && (
-                  <Badge variant="outline" className="text-xs">
+                  <Badge
+                    variant="outline"
+                    className="text-xs text-zinc-600 border-zinc-200 bg-zinc-50"
+                  >
                     {text.badgeThemesCount}
                   </Badge>
                 )}
                 {selectedRhymes.length > 0 && (
-                  <Badge variant="outline" className="text-xs">
+                  <Badge
+                    variant="outline"
+                    className="text-xs text-zinc-600 border-zinc-200 bg-zinc-50"
+                  >
                     {text.badgeRhymesCount}
                   </Badge>
                 )}
@@ -135,9 +144,11 @@ export function Search() {
             </div>
 
             {filtersVisible && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2 p-4 bg-slate-50 rounded-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-2 p-3 bg-zinc-50 rounded-md border border-zinc-100">
                 <div>
-                  <label className="block text-sm font-medium mb-1">{text.searchTypeLabel}</label>
+                  <label className="block text-xs font-medium mb-1 text-zinc-600">
+                    {text.searchTypeLabel}
+                  </label>
                   <Select
                     options={searchTypeOptions}
                     value={searchParams.search_type}
@@ -147,7 +158,9 @@ export function Search() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">{text.matchTypeLabel}</label>
+                  <label className="block text-xs font-medium mb-1 text-zinc-600">
+                    {text.matchTypeLabel}
+                  </label>
                   <Select
                     options={matchTypeOptions}
                     value={searchParams.match_type}
@@ -157,7 +170,9 @@ export function Search() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">{text.erasLabel}</label>
+                  <label className="block text-xs font-medium mb-1 text-zinc-600">
+                    {text.erasLabel}
+                  </label>
                   <CheckboxSelect
                     options={erasOptions}
                     value={selectedEras}
@@ -171,7 +186,9 @@ export function Search() {
                 {searchType === 'poems' && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium mb-1">{text.metersLabel}</label>
+                      <label className="block text-xs font-medium mb-1 text-zinc-600">
+                        {text.metersLabel}
+                      </label>
                       <CheckboxSelect
                         options={metersOptions}
                         value={selectedMeters}
@@ -183,7 +200,9 @@ export function Search() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">{text.themesLabel}</label>
+                      <label className="block text-xs font-medium mb-1 text-zinc-600">
+                        {text.themesLabel}
+                      </label>
                       <CheckboxSelect
                         options={themesOptions}
                         value={selectedThemes}
@@ -195,7 +214,9 @@ export function Search() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">{text.rhymesLabel}</label>
+                      <label className="block text-xs font-medium mb-1 text-zinc-600">
+                        {text.rhymesLabel}
+                      </label>
                       <CheckboxSelect
                         options={rhymesOptions}
                         value={selectedRhymes}
@@ -214,27 +235,28 @@ export function Search() {
       </Card>
 
       {isError && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-4 text-red-700">{text.errorMessage}</CardContent>
+        <Card className="border-red-100 bg-red-50 shadow-none">
+          <CardContent className="p-3 text-red-600 text-sm">{text.errorMessage}</CardContent>
         </Card>
       )}
 
       {inputValue && !isLoading && data.length === 0 && isSuccess && (
-        <Card className="border-0 shadow-sm">
-          <CardContent className="flex flex-col items-center justify-center p-8 text-slate-500">
-            <SearchIcon className="h-12 w-12 mb-4 text-slate-300" />
-            <p className="text-lg">{text.noResultsFound}</p>
+        <Card className="border-zinc-100 shadow-sm bg-white">
+          <CardContent className="flex flex-col items-center justify-center p-8 text-zinc-400">
+            <SearchIcon className="h-10 w-10 mb-3 text-zinc-200" />
+            <p className="text-base">{text.noResultsFound}</p>
           </CardContent>
         </Card>
       )}
 
       {isLoading && !isFetchingNextPage ? (
-        <div className="flex justify-center p-8">
-          <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+        <div className="flex justify-center p-6">
+          <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
         </div>
       ) : (
-        <div className="space-y-4">
-          {text.resultsCount}
+        <div className="space-y-3">
+          {data.length > 0 && <p className="text-sm text-zinc-500 px-1">{text.resultsCount}</p>}
+
           {searchType === 'poems' &&
             (data as PoemsSearchResult[]).map((item, index) => (
               <PoemCard
@@ -253,8 +275,8 @@ export function Search() {
 
           {/* Loading indicator for next page */}
           {data.length > 0 && (
-            <div ref={loadMoreRef} className="h-10 flex justify-center">
-              {isFetchingNextPage && <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />}
+            <div ref={loadMoreRef} className="h-8 flex justify-center">
+              {isFetchingNextPage && <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />}
             </div>
           )}
         </div>
@@ -264,34 +286,24 @@ export function Search() {
 }
 
 export function PoemCard({
-  item: {
-    poem_meter,
-    poem_slug,
-    poem_snippet,
-    poem_title,
-    poet_era,
-    poet_name,
-    poet_slug,
-    relevance,
-  },
+  item: { poem_meter, poem_slug, poem_snippet, poem_title, poet_era, poet_name, poet_slug },
 }: {
   item: PoemsSearchResult;
 }) {
   return (
-    <Card className="group overflow-hidden border border-gray-100 hover:border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
+    <Card className="group overflow-hidden border-zinc-100 hover:border-zinc-200 shadow-sm hover:shadow-md transition-all duration-300 bg-white">
       <a href={`${SITE_URL}/poems/${poem_slug}`} className="block">
-        <CardContent className="p-5">
-          <div className="space-y-3">
-            <div className="flex flex-col gap-2">
-              <h1 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">
+        <CardContent className="p-4">
+          <div className="space-y-2">
+            <div className="flex flex-col gap-1.5">
+              <h1 className="text-lg font-medium text-zinc-800 group-hover:text-zinc-900 transition-colors">
                 {poem_title}
               </h1>
 
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">بواسطة:</span>
+                <div className="flex items-center gap-1.5">
                   <span
-                    className="text-base font-medium text-gray-800 hover:text-primary"
+                    className="text-sm font-medium text-zinc-700 hover:text-zinc-900"
                     onClick={(e) => {
                       e.preventDefault();
                       window.location.href = `${SITE_URL}/poets/${poet_slug}`;
@@ -301,30 +313,31 @@ export function PoemCard({
                   </span>
                 </div>
 
-                {poet_era && (
-                  <Badge variant="outline" className="text-xs font-normal">
-                    {poet_era || 'عصر غير معروف'}
-                  </Badge>
-                )}
+                <div className="flex justify-center items-center gap-2">
+                  {poem_meter && (
+                    <Badge
+                      variant="outline"
+                      className="text-xs bg-zinc-50 border-zinc-200 text-zinc-600 hover:bg-zinc-200"
+                    >
+                      {poem_meter.split(' ')[0]}
+                    </Badge>
+                  )}
+                  {poet_era && (
+                    <Badge
+                      variant="outline"
+                      className="text-xs bg-zinc-50 border-zinc-200 text-zinc-600 hover:bg-zinc-200"
+                    >
+                      {poet_era.split(' ')[0] || 'عصر غير معروف'}
+                    </Badge>
+                  )}
+                </div>
               </div>
             </div>
 
-            <p className="text-gray-700 text-base leading-relaxed line-clamp-3">{poem_snippet}</p>
-
-            <div className="flex justify-between items-center pt-2">
-              {poem_meter && (
-                <Badge variant="secondary" className="text-xs">
-                  بحر: {poem_meter}
-                </Badge>
-              )}
-
-              <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-0">
-                {toArabicDigits(relevance || 0, {
-                  handleScientificNotation: true,
-                  fallbackToOriginal: true,
-                })}
-              </Badge>
-            </div>
+            <HighlightedText
+              className="text-zinc-600 text-sm leading-relaxed line-clamp-2"
+              text={poem_snippet}
+            />
           </div>
         </CardContent>
       </a>
@@ -338,28 +351,31 @@ export function PoetCard({
   item: PoetsSearchResult;
 }) {
   return (
-    <Card className="group overflow-hidden border border-gray-100 hover:border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
+    <Card className="group overflow-hidden border-zinc-100 hover:border-zinc-200 shadow-sm hover:shadow-md transition-all duration-300 bg-white">
       <a href={`${SITE_URL}/poets/${poet_slug}/page/1`} className="block">
-        <CardContent className="p-5">
-          <div className="space-y-3">
+        <CardContent className="p-4">
+          <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">
+              <h2 className="text-lg font-medium text-zinc-800 group-hover:text-zinc-900 transition-colors">
                 {poet_name || 'شاعر'}
               </h2>
 
               {poet_era && (
-                <Badge variant="outline" className="text-xs font-normal">
+                <Badge
+                  variant="outline"
+                  className="text-xs font-normal text-zinc-600 border-zinc-200 bg-zinc-50"
+                >
                   {poet_era || 'عصر غير معروف'}
                 </Badge>
               )}
             </div>
 
             {poet_bio && (
-              <p className="text-gray-700 text-base leading-relaxed line-clamp-3">{poet_bio}</p>
+              <p className="text-zinc-600 text-sm leading-relaxed line-clamp-2">{poet_bio}</p>
             )}
 
             <div className="flex justify-end pt-1">
-              <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-0">
+              <Badge className="bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border-0">
                 {toArabicDigits(relevance || 0)}
               </Badge>
             </div>

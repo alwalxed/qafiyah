@@ -213,7 +213,7 @@ export function useSearch() {
     errorMessage: `خطأ: ${(error as Error)?.message || 'حدث خطأ ما'}`,
     noResultsFound: `${`لم يُعثر على نتيجة لـ "${searchParams.q.slice(0, 10)}..."`}`,
 
-    resultsCount: `عثر على ${toArabicDigits(data ? (data[0] ? (data[0].total_count ? data[0].total_count : 0) : 0) : 0 || 0)}`,
+    resultsCount: `عثر على ${toArabicDigits(data?.[0]?.total_count ?? 0)} نتيجة لـ "${inputValue.length > 30 ? inputValue.slice(0, 30) + '...' : inputValue}"`,
   };
 
   return {
