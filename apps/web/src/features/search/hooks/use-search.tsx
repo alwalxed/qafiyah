@@ -1,3 +1,4 @@
+import { toArabicDigits } from 'to-arabic-digits';
 import { useInfiniteQuery } from './use-infinite-query';
 import { useInfiniteScroll } from './use-infinite-scroll';
 import { useInputValidation } from './use-input-validation';
@@ -162,7 +163,62 @@ export function useSearch() {
     setThemeIds(joinedThemes);
   };
 
+  const text = {
+    currentHeaderTitle: searchType === 'poems' ? 'ابحث في مليون بيت' : 'ابحث عن ديوان شاعر',
+    currentInputPlaceholder: searchType === 'poems' ? 'إن الذي سمك السماء بنى لنا' : 'المتنبي',
+    currentFilterButton: filtersVisible ? 'إخفاء الفلاتر' : 'عرض الفلاتر',
+
+    search: 'ابحث',
+
+    erasLabel: 'العصور',
+    erasPlaceholder: 'اختر عصر أو عدة عصور',
+    erasPlaceholderNounForms: {
+      singular: 'عصر',
+      dual: 'عصران',
+      plural: 'عصور',
+    },
+    metersLabel: 'البحور',
+    metersPlaceholder: 'اختر بحر أو عدة بحور',
+    metersPlaceholderNounForms: {
+      singular: 'بحر',
+      dual: 'بحران',
+      plural: 'بحور',
+    },
+    themesLabel: 'الموضوعات',
+    themesPlaceholder: 'اختر موضوع أو عدة مواضيع',
+    themesPlaceholderNounForms: {
+      singular: 'موضوع',
+      dual: 'موضوعان',
+      plural: 'مواضيع',
+    },
+    rhymesLabel: 'القوافي',
+    rhymesPlaceholder: 'اختر قافية أو عدة قوافي',
+    rhymesPlaceholderNounForms: {
+      singular: 'قافية',
+      dual: 'قافيتان',
+      plural: 'قوافي',
+    },
+
+    badgeErasCount: `العصور: ${toArabicDigits(selectedEras.length || 0)}`,
+    badgeMetersCount: `البحور: ${toArabicDigits(selectedMeters.length || 0)}`,
+    badgeThemesCount: `الموضوعات: ${toArabicDigits(selectedThemes.length || 0)}`,
+    badgeRhymesCount: `القوافي: ${toArabicDigits(selectedRhymes.length || 0)}`,
+
+    searchTypeLabel: 'نوع البحث',
+    searchTypePlaceholder: 'اختر نوع البحث',
+
+    matchTypeLabel: 'طريقة البحث',
+    matchTypePlaceholder: 'اختر طريقة البحث',
+
+    errorMessage: `خطأ: ${(error as Error)?.message || 'حدث خطأ ما'}`,
+    noResultsFound: `${`لم يُعثر على نتيجة لـ "${searchParams.q.slice(0, 10)}..."`}`,
+
+    resultsCount: `عثر على ${toArabicDigits(data ? (data[0] ? (data[0].total_count ? data[0].total_count : 0) : 0) : 0 || 0)}`,
+  };
+
   return {
+    text,
+
     isLoading,
     isError,
     isSuccess,

@@ -22,6 +22,8 @@ import { useSearch } from '../hooks/use-search';
 
 export function Search() {
   const {
+    text,
+
     isLoading,
     isError,
     isSuccess,
@@ -32,7 +34,6 @@ export function Search() {
     loadMoreRef,
 
     data,
-    error,
     validationError,
     inputValue,
     searchParams,
@@ -53,39 +54,6 @@ export function Search() {
     toggleFilters,
     handleCustomSearchTypeChange,
   } = useSearch();
-
-  const text = {
-    currentHeaderTitle: searchType === 'poems' ? 'ابحث في مليون بيت' : 'ابحث عن ديوان شاعر',
-    currentInputPlaceholder: searchType === 'poems' ? 'إن الذي سمك السماء بنى لنا' : 'المتنبي',
-    currentFilterButton: filtersVisible ? 'إخفاء الفلاتر' : 'عرض الفلاتر',
-
-    search: 'ابحث',
-
-    erasLabel: 'العصور',
-    erasPlaceholder: 'اختر عصر أو عدة عصور',
-    metersLabel: 'البحور',
-    metersPlaceholder: 'اختر بحر أو عدة بحور',
-    themesLabel: 'الموضوعات',
-    themesPlaceholder: 'اختر موضوع أو عدة مواضيع',
-    rhymesLabel: 'القوافي',
-    rhymesPlaceholder: 'اختر قافية أو عدة قوافي',
-
-    badgeErasCount: `العصور: ${toArabicDigits(selectedEras.length || 0)}`,
-    badgeMetersCount: `البحور: ${toArabicDigits(selectedMeters.length || 0)}`,
-    badgeThemesCount: `الموضوعات: ${toArabicDigits(selectedThemes.length || 0)}`,
-    badgeRhymesCount: `القوافي: ${toArabicDigits(selectedRhymes.length || 0)}`,
-
-    searchTypeLabel: 'نوع البحث',
-    searchTypePlaceholder: 'اختر نوع البحث',
-
-    matchTypeLabel: 'طريقة البحث',
-    matchTypePlaceholder: 'اختر طريقة البحث',
-
-    errorMessage: `خطأ: ${(error as Error)?.message || 'حدث خطأ ما'}`,
-    noResultsFound: `${`لم يُعثر على نتيجة لـ "${searchParams.q.slice(0, 10)}..."`}`,
-
-    resultsCount: `عثر على ${toArabicDigits(data ? (data[0] ? (data[0].total_count ? data[0].total_count : 0) : 0) : 0 || 0)}`,
-  };
 
   return (
     <div className="w-full max-w-5xl mx-auto p-4 space-y-6 font-sans" dir="rtl">
@@ -193,12 +161,8 @@ export function Search() {
                   <CheckboxSelect
                     options={erasOptions}
                     value={selectedEras}
+                    placeholderNounForms={text.erasPlaceholderNounForms}
                     onChange={handleErasChange}
-                    placeholderNounForms={{
-                      singular: 'عصر',
-                      dual: 'عصران',
-                      plural: 'عصور',
-                    }}
                     placeholder={text.erasPlaceholder}
                     multiple={true}
                   />
@@ -211,12 +175,8 @@ export function Search() {
                       <CheckboxSelect
                         options={metersOptions}
                         value={selectedMeters}
+                        placeholderNounForms={text.metersPlaceholderNounForms}
                         onChange={handleMetersChange}
-                        placeholderNounForms={{
-                          singular: 'بحر',
-                          dual: 'بحران',
-                          plural: 'بحور',
-                        }}
                         placeholder={text.metersPlaceholder}
                         multiple={true}
                       />
@@ -227,12 +187,8 @@ export function Search() {
                       <CheckboxSelect
                         options={themesOptions}
                         value={selectedThemes}
+                        placeholderNounForms={text.themesPlaceholderNounForms}
                         onChange={handleThemesChange}
-                        placeholderNounForms={{
-                          singular: 'موضوع',
-                          dual: 'موضوعان',
-                          plural: 'مواضيع',
-                        }}
                         placeholder={text.themesPlaceholder}
                         multiple={true}
                       />
@@ -243,12 +199,8 @@ export function Search() {
                       <CheckboxSelect
                         options={rhymesOptions}
                         value={selectedRhymes}
+                        placeholderNounForms={text.rhymesPlaceholderNounForms}
                         onChange={handleRhymesChange}
-                        placeholderNounForms={{
-                          singular: 'قافية',
-                          dual: 'قافيتان',
-                          plural: 'قوافي',
-                        }}
                         placeholder={text.rhymesPlaceholder}
                         multiple={true}
                       />
