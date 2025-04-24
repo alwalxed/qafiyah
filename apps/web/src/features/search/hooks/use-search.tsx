@@ -188,6 +188,8 @@ export function useSearch() {
   const resultText = `عثر على ${resultsText} لـ "${shortenedInputText}" بحثًا عن «${searchTypeText}» بحثَ (${matchTypeText})`;
 
   const text = {
+    refreshThePage: 'حدث الصفحة',
+
     currentHeaderTitle: searchType === 'poems' ? 'ابحث في مليون بيت' : 'ابحث عن ديوان شاعر',
     currentInputPlaceholder: searchType === 'poems' ? 'إن الذي سمك السماء بنى لنا' : 'المتنبي',
     currentFiltersButton: filtersVisible ? 'إخفاء الفلاتر' : 'عرض الفلاتر',
@@ -234,8 +236,12 @@ export function useSearch() {
     matchTypeLabel: 'طريقة البحث',
     matchTypePlaceholder: 'اختر طريقة البحث',
 
-    errorMessage: `خطأ: ${(error as Error)?.message || 'حدث خطأ ما'}`,
-    noResultsFound: `لم يُعثر على نتيجة لـ "${inputValue.length > 20 ? inputValue.slice(0, 20) + '...' : inputValue}"`,
+    errorMessage: 'عذرًا، وقع خلل غير متوقّع. إن استمر، فتواصل معنا تويتر',
+    noResultsFound: `لم يُعثر على نتيجة لـ "${
+      searchParams.q
+        .replace(/[^\u0600-\u06FF\s]/g, '') // Keep only Arabic letters and spaces
+        .slice(0, 20) + (searchParams.q.length > 20 ? '...' : '')
+    }"`,
 
     resultText,
     searchTypeText,

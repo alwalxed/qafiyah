@@ -1,8 +1,6 @@
 'use client';
 
-import { Card, CardContent } from '@/components/shadcn/card';
-import type { PoemsSearchResult, PoetsSearchResult } from '@/lib/api/types';
-import { Loader2, SearchIcon } from 'lucide-react';
+import { Card } from '@/components/shadcn/card';
 import {
   erasOptions,
   matchTypeOptions,
@@ -15,8 +13,8 @@ import { useSearch } from '../hooks/use-search';
 import { Filters } from './filters';
 import { FilterBadges } from './filters-badges';
 import { FiltersButton } from './filters-button';
-import { PoemCard, PoetCard } from './result-cards';
 import { SearchInput } from './search-input';
+import { SearchResults } from './search-results';
 
 export function Search() {
   const {
@@ -128,53 +126,20 @@ export function Search() {
         </div>
       </Card>
 
-      {isError && (
-        <Card className="border-red-100 bg-red-50 shadow-none">
-          <CardContent className="p-3 text-red-600 text-sm">{text.errorMessage}</CardContent>
-        </Card>
-      )}
-
-      {inputValue && !isLoading && data.length === 0 && isSuccess && (
-        <Card className="border-zinc-100 shadow-sm bg-white">
-          <CardContent className="flex flex-col items-center justify-center p-8 text-zinc-400">
-            <SearchIcon className="h-10 w-10 mb-3 text-zinc-200" />
-            <p className="text-base text-center">{text.noResultsFound}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {isLoading && !isFetchingNextPage ? (
-        <div className="flex justify-center p-6">
-          <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {data.length > 0 && <p className="text-sm text-zinc-500 px-1">{text.resultText}</p>}
-
-          {searchType === 'poems' &&
-            (data as PoemsSearchResult[]).map((item, index) => (
-              <PoemCard
-                key={`slug-${item.poem_slug}-relevance-${item.relevance}-index-${index}`}
-                item={item}
-              />
-            ))}
-
-          {searchType === 'poets' &&
-            (data as PoetsSearchResult[]).map((item, index) => (
-              <PoetCard
-                key={`slug-${item.poet_slug}-relevance-${item.relevance}-index-${index}`}
-                item={item}
-              />
-            ))}
-
-          {/* Loading indicator for next page */}
-          {data.length > 0 && (
-            <div ref={loadMoreRef} className="h-8 flex justify-center">
-              {isFetchingNextPage && <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />}
-            </div>
-          )}
-        </div>
-      )}
+      <SearchResults
+        data={data}
+        loadMoreRef={loadMoreRef}
+        isError={isError}
+        isFetchingNextPage={isFetchingNextPage}
+        isLoading={isLoading}
+        isSuccess={isSuccess}
+        inputValue={inputValue}
+        searchType={searchType}
+        errorMessageText={text.errorMessage}
+        refreshThePageText={text.refreshThePage}
+        noResultsFoundText={text.noResultsFound}
+        resultTextText={text.resultText}
+      />
     </div>
   );
 }

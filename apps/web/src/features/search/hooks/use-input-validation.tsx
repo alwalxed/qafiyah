@@ -7,13 +7,15 @@ export function useInputValidation() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const validateInput = (input: string, type: 'poems' | 'poets'): string | null => {
-    // Check for Arabic characters only
     const arabicRegex = /^[\u0600-\u06FF\s]+$/;
     if (!arabicRegex.test(input)) {
       return 'يرجى إدخال كلمات باللغة العربية فقط';
     }
 
-    // Split input into words (trim and filter empty strings)
+    if (input.length > 50) {
+      return 'يجب ألا يتجاوز النص 50 حرفًا';
+    }
+
     const words = input
       .trim()
       .split(/\s+/)

@@ -38,6 +38,7 @@ export function SearchInput({
     <div className="w-full">
       <div className="relative">
         <Input
+          maxLength={50}
           value={inputValue}
           onChange={handleCustomInputChange}
           onKeyDown={handleCustomKeyDown}
@@ -50,7 +51,7 @@ export function SearchInput({
           )}
           dir="rtl"
         />
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+        <div className="bg-white pr-2 absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 h-full">
           {inputValue.trim() && !isLoading && (
             <button
               onClick={resetAllStates}

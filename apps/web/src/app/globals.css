@@ -66,3 +66,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+html {
+  /*
+  Prevent layout shift when content changes cause scrollbars to appear.
+  When filters load and become visible, they can cause overflow which
+  triggers scrollbar appearance and creates an unwanted layout shift.
+
+  overflow-y: scroll - Forces scrollbar to always be visible
+  scrollbar-gutter: stable - Reserved space for scrollbar (kept for future browser support)
+  */
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
+}

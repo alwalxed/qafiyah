@@ -52,7 +52,7 @@ const parseIdList = z
 
 export const searchRequestSchema = z.object({
   // always required
-  q: z.string().min(2),
+  q: z.string().min(2).max(50),
   page: pageStringNumberSchema,
   search_type: z.enum(["poems", "poets"]),
   match_type: z.enum(["exact", "all", "any"]),
