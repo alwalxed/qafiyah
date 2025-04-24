@@ -36,6 +36,7 @@ export function SearchInput({
 }: Props) {
   return (
     <div className="w-full">
+      <PreservedErrorSpace hasSubmitted={hasSubmitted} validationError={validationError} />
       <div className="relative">
         <Input
           maxLength={50}
@@ -43,10 +44,17 @@ export function SearchInput({
           onChange={handleCustomInputChange}
           onKeyDown={handleCustomKeyDown}
           placeholder={currentInputPlaceholderText}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          autoSave="off"
+          spellCheck={false}
+          autoFocus={true}
           className={cn(
             'pl-10 text-right h-12 border-0 ring-1 ring-zinc-300/80 shadow-none focus:border-0 focus:ring-0 focus-visible:ring-zinc-500 focus-within:ring-1 md:text-lg placeholder:text-zinc-800/50 bg-white rounded-lg',
             {
-              'border-red-300': validationError && hasSubmitted,
+              'ring-red-300 ring-1 focus-within:ring-red-300 focus-within:ring-1 focus-visible:ring-red-300':
+                validationError && hasSubmitted,
             }
           )}
           dir="rtl"
@@ -75,8 +83,24 @@ export function SearchInput({
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function PreservedErrorSpace({
+  validationError,
+  hasSubmitted,
+}: {
+  validationError: string | null;
+  hasSubmitted: boolean;
+}) {
+  {
+    /* Error message container with fixed height to prevent layout shift */
+  }
+  return (
+    <div className={cn('mb-2 h-4 flex justify-between items-center')}>
       {validationError && hasSubmitted && (
-        <p className="text-red-500 text-xs mt-1 text-right">{validationError}</p>
+        <p className={cn('text-red-500 text-xs md:text-base text-right')}>{validationError}</p>
       )}
     </div>
   );

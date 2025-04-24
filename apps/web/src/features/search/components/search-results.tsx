@@ -80,7 +80,7 @@ export function SearchResults({
         ))}
 
       {data.length > 0 && (
-        <div ref={loadMoreRef} className="h-8 flex justify-center">
+        <div ref={loadMoreRef} className="h-32 flex justify-center items-center">
           {isFetchingNextPage && <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />}
         </div>
       )}

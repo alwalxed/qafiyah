@@ -28,7 +28,7 @@ export function FilterBadges({
       {selectedErasLength > 0 && (
         <Badge
           variant="outline"
-          className="text-xs md:text-sm font-normal text-zinc-800/80 border-zinc-300/30 bg-zinc-50"
+          className="text-xs md:text-sm font-normal text-zinc-900 border-zinc-300/30 bg-white"
         >
           {badgeErasCountText}
         </Badge>

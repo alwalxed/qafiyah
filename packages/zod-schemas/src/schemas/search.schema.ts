@@ -10,29 +10,99 @@ import { pageStringNumberSchema } from "./common.schema";
 const arabicRegex = /^[\u0600-\u06FF\s]+$/;
 
 export const searchQueriesSchema = {
-  poets: z
-    .string()
-    .refine((val) => arabicRegex.test(val), "Only Arabic letters are allowed")
-    .refine(
-      (val) => val.trim().length >= 2,
-      "Query must be at least 2 characters long"
-    )
-    .refine(
-      (val) => val.trim().split(/\s+/).length === 1,
-      "Poet name must be one word"
-    ),
+  poets: z.string().superRefine((val, ctx) => {
+    // Early return for empty strings
+    if (!val.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Only Arabic letters are allowed",
+      });
+      return;
+    }
 
-  poems: z
-    .string()
-    .refine((val) => arabicRegex.test(val), "Only Arabic letters are allowed")
-    .refine(
-      (val) => val.trim().length >= 2,
-      "Query must be at least 2 characters long"
-    )
-    .refine((val) => {
-      const words = val.trim().split(/\s+/);
-      return words.length >= 2 && words.every((word) => word.length >= 2);
-    }, "Query must contain at least 2 words, each with at least 2 characters"),
+    if (!arabicRegex.test(val)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Only Arabic letters are allowed",
+      });
+      return;
+    }
+
+    // Split only once and reuse
+    const words = val.trim().split(/\s+/);
+    const wordCount = words.length;
+
+    // Check length constraints
+    if (wordCount === 1) {
+      if (
+        words !== undefined &&
+        words[0] !== undefined &&
+        words[0].length < 2
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "Must be one word with at least 2 letters or multiple words totaling up to 50 letters",
+        });
+      }
+    } else {
+      // Calculate total length only once
+      const totalLength = val.replace(/\s+/g, "").length;
+
+      if (totalLength > 50 || words.some((w) => w.length < 1)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "Must be one word with at least 2 letters or multiple words totaling up to 50 letters",
+        });
+      }
+    }
+  }),
+
+  poems: z.string().superRefine((val, ctx) => {
+    // Early return for empty strings
+    if (!val.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Only Arabic letters are allowed",
+      });
+      return;
+    }
+
+    // Single regex test
+    if (!arabicRegex.test(val)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Only Arabic letters are allowed",
+      });
+      return;
+    }
+
+    // Split only once and reuse
+    const words = val.trim().split(/\s+/);
+    const wordCount = words.length;
+
+    // Fast path for word count
+    if (wordCount < 2) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Must have at least 2 words, each ≥ 2 letters, and total letters ≤ 50",
+      });
+      return;
+    }
+
+    // Calculate total length only once
+    const totalLength = val.replace(/\s+/g, "").length;
+
+    if (totalLength > 50 || words.some((w) => w.length < 2)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Must have at least 2 words, each ≥ 2 letters, and total letters ≤ 50",
+      });
+    }
+  }),
 };
 
 const parseIdList = z
@@ -52,7 +122,7 @@ const parseIdList = z
 
 export const searchRequestSchema = z.object({
   // always required
-  q: z.string().min(2).max(50),
+  q: z.string().min(2),
   page: pageStringNumberSchema,
   search_type: z.enum(["poems", "poets"]),
   match_type: z.enum(["exact", "all", "any"]),
