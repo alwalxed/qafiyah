@@ -88,14 +88,14 @@ export default function RootLayout({
       lang="ar"
       dir="rtl"
       className={cn(
-        'overflow-x-hidden bg-zinc-50 text-zinc-950 font-sans',
+        'overflow-x-hidden bg-zinc-50 text-zinc-950 font-sans overflow-y-scroll',
         ibmPlexSansArabic.variable,
         {
           'debug-screens': isDev,
         }
       )}
     >
-      <body className="bg-zinc-50 font-sans h-svh min-h-svh justify-between items-start flex flex-col relative overflow-x-hidden overflow-y-scroll text-zinc-950 w-full px-4 md:px-20 lg:px-40 xl:px-60 2xl:px-80">
+      <body className="bg-zinc-50 font-sans min-h-svh justify-between items-start flex flex-col relative overflow-x-hidden text-zinc-950 w-full px-4 md:px-20 lg:px-40 xl:px-60 2xl:px-80">
         <RootLayoutClient>{children}</RootLayoutClient>
         <Script
           defer
