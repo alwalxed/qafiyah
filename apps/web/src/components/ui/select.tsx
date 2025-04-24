@@ -52,13 +52,17 @@ export function Select({
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
-    window.addEventListener('click', handler);
-    return () => window.removeEventListener('click', handler);
+
+    // Use mousedown instead of click for better responsiveness
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   // Handle keyboard navigation

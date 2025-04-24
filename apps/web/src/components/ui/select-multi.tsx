@@ -16,7 +16,7 @@ interface CheckboxSelectProps {
   value: string | string[];
   onChange: (value: string | string[]) => void;
   placeholderNounForms: ArabicNounForms;
-  placeholder?: string;
+  placeholder: string;
   disabled?: boolean;
   className?: string;
   multiple?: boolean;
@@ -27,7 +27,7 @@ export function CheckboxSelect({
   value,
   onChange,
   placeholderNounForms,
-  placeholder = 'Select option(s)',
+  placeholder,
   disabled = false,
   className,
   multiple = false,
@@ -77,13 +77,17 @@ export function CheckboxSelect({
 
   // Click outside to close
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
-    window.addEventListener('click', handler);
-    return () => window.removeEventListener('click', handler);
+
+    // Use mousedown instead of click for better responsiveness
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   // Keyboard navigation
@@ -169,7 +173,7 @@ export function CheckboxSelect({
         <ul
           id="checkbox-select-options"
           className={cn(
-            'absolute z-50 w-full mt-1 overflow-auto bg-background border rounded-md shadow-md',
+            'absolute z-50 w-full mt-2 overflow-auto bg-background border rounded-md shadow-md',
             'max-h-60 focus:outline-none'
           )}
           role="listbox"
@@ -185,17 +189,17 @@ export function CheckboxSelect({
                 role="option"
                 aria-selected={isSelected}
                 className={cn(
-                  'px-3 py-2 text-sm cursor-pointer',
+                  'px-0.5 py-2 text-sm cursor-pointer',
                   index === highlightedIndex && 'bg-muted',
                   isSelected && 'font-medium'
                 )}
                 onClick={() => toggleOption(option)}
                 onMouseEnter={() => setHighlightedIndex(index)}
               >
-                <div className="flex items-center">
+                <div className="flex items-center gap-2">
                   <div
                     className={cn(
-                      'flex items-center justify-center w-4 h-4 mr-2 border rounded',
+                      'flex items-center justify-center w-4 h-4 mr-4 border rounded',
                       multiple ? 'rounded' : 'rounded-full',
                       isSelected ? 'bg-primary border-primary' : 'border-input'
                     )}
