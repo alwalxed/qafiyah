@@ -44,7 +44,7 @@ export function SearchInput({
           onKeyDown={handleCustomKeyDown}
           placeholder={currentInputPlaceholderText}
           className={cn(
-            'pl-10 text-right h-12 border-0 ring-1 ring-zinc-300/80 shadow-none focus:border-0 focus:ring-0 focus-visible:ring-zinc-500 focus-within:ring-1 md:text-lg placeholder:text-zinc-800/50',
+            'pl-10 text-right h-12 border-0 ring-1 ring-zinc-300/80 shadow-none focus:border-0 focus:ring-0 focus-visible:ring-zinc-500 focus-within:ring-1 md:text-lg placeholder:text-zinc-800/50 bg-white rounded-lg',
             {
               'border-red-300': validationError && hasSubmitted,
             }

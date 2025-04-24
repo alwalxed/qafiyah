@@ -54,7 +54,14 @@ export function SearchResults({
   }
   return (
     <div className="space-y-3">
-      {data.length > 0 && <p className="text-sm text-zinc-500 px-1">{resultTextText}</p>}
+      {/* Tiny Result Counts */}
+      {data.length > 0 && (
+        <div className="w-full flex justify-start items-start">
+          <span className="bg-zinc-50 py-0.5 px-3 rounded-md ring-1 ring-zinc-300/30">
+            <p className="text-sm md:text-base font-normal">{resultTextText}</p>
+          </span>
+        </div>
+      )}
 
       {searchType === 'poems' &&
         (data as PoemsSearchResult[]).map((item, index) => (

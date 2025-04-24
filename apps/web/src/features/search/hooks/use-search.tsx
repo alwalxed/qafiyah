@@ -197,28 +197,28 @@ export function useSearch() {
     search: 'ابحث',
 
     erasLabel: 'العصور',
-    erasPlaceholder: 'اختر عصر أو عدة عصور',
+    erasPlaceholder: 'عصر أو عدة عصور',
     erasPlaceholderNounForms: {
       singular: 'عصر',
       dual: 'عصران',
       plural: 'عصور',
     },
     metersLabel: 'البحور',
-    metersPlaceholder: 'اختر بحر أو عدة بحور',
+    metersPlaceholder: 'بحر أو عدة بحور',
     metersPlaceholderNounForms: {
       singular: 'بحر',
       dual: 'بحران',
       plural: 'بحور',
     },
     themesLabel: 'الموضوعات',
-    themesPlaceholder: 'اختر موضوع أو عدة مواضيع',
+    themesPlaceholder: 'موضوع أو عدة مواضيع',
     themesPlaceholderNounForms: {
       singular: 'موضوع',
       dual: 'موضوعان',
       plural: 'مواضيع',
     },
     rhymesLabel: 'القوافي',
-    rhymesPlaceholder: 'اختر قافية أو عدة قوافي',
+    rhymesPlaceholder: 'قافية أو عدة قوافي',
     rhymesPlaceholderNounForms: {
       singular: 'قافية',
       dual: 'قافيتان',
