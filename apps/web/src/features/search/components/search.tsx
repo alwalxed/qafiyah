@@ -52,13 +52,13 @@ export function Search() {
   } = useSearch();
 
   return (
-    <div className="w-full max-w-4xl mx-auto my-48 flex flex-col gap-4" dir="rtl">
-      <h1 className="font-bold text-center justify-center items-center text-5xl text-zinc-800 flex py-2">
+    <div className="w-full max-w-4xl mx-auto flex flex-col my-32 gap-10 md:gap-16 " dir="rtl">
+      <h1 className="font-bold text-center justify-center items-center text-2xl xxs:text-3xl xs:text-4xl md:text-5xl text-zinc-800 flex py-2">
         {text.currentHeaderTitle}
       </h1>
       <Card className="border-0 shadow-none">
         <div className="p-0 bg">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-10">
             <SearchInput
               hasSubmitted={hasSubmitted}
               isLoading={isLoading}
@@ -72,11 +72,7 @@ export function Search() {
               resetAllStates={resetAllStates}
             />
             <div className="flex items-center justify-between">
-              <FiltersButton
-                toggleFilters={toggleFilters}
-                filtersVisible={filtersVisible}
-                currentFiltersButtonText={text.currentFiltersButton}
-              />
+              <FiltersButton toggleFilters={toggleFilters} filtersVisible={filtersVisible} />
 
               <FilterBadges
                 selectedErasLength={selectedEras.length}
@@ -142,7 +138,7 @@ export function Search() {
         <Card className="border-zinc-100 shadow-sm bg-white">
           <CardContent className="flex flex-col items-center justify-center p-8 text-zinc-400">
             <SearchIcon className="h-10 w-10 mb-3 text-zinc-200" />
-            <p className="text-base">{text.noResultsFound}</p>
+            <p className="text-base text-center">{text.noResultsFound}</p>
           </CardContent>
         </Card>
       )}

@@ -131,9 +131,7 @@ export function CheckboxSelect({
     >
       <div
         className={cn(
-          'flex items-center justify-between w-full h-10 px-3 py-2 text-sm border rounded-md shadow-sm',
-          'bg-background text-foreground',
-          'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
+          'flex items-center justify-between w-full h-9 md:h-11 px-3 py-2 text-sm md:text-base border border-zinc-300/80 rounded-md shadow-none bg-white/90 text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-300',
           disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
           isOpen ? 'border-primary ring-2 ring-primary/20' : 'border-input'
         )}
@@ -148,7 +146,7 @@ export function CheckboxSelect({
         aria-label="Checkbox select input"
       >
         <div className="flex items-center justify-between w-full">
-          <span className={cn(selectedValues.length === 0 && 'text-muted-foreground')}>
+          <span className={cn(selectedValues.length === 0 && 'text-zinc-600')}>
             {getDisplayValue()}
           </span>
           <div className="flex items-center">

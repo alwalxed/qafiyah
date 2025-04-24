@@ -4,20 +4,18 @@ import type { MouseEventHandler } from 'react';
 
 type Props = {
   toggleFilters: MouseEventHandler<HTMLButtonElement>;
-  currentFiltersButtonText: string;
   filtersVisible: boolean;
 };
 
-export function FiltersButton({ toggleFilters, currentFiltersButtonText, filtersVisible }: Props) {
+export function FiltersButton({ toggleFilters, filtersVisible }: Props) {
   return (
     <Button
       variant="ghost"
       onClick={toggleFilters}
-      className="text-xs flex items-center gap-1 px-2 py-1 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100"
+      className="text-base font-normal flex items-center gap-4 px-2 py-1 text-white hover:bg-zinc-950 bg-zinc-900 hover:text-zinc-50"
     >
-      <Filter className="h-3 w-3" />
-      {currentFiltersButtonText}
-      {filtersVisible ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+      <Filter className="h-2 w-2" />
+      {filtersVisible ? <ChevronUp className="h-2 w-2" /> : <ChevronDown className="h-2 w-2" />}
     </Button>
   );
 }

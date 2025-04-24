@@ -1,6 +1,7 @@
 'use client';
 
 import { Input } from '@/components/shadcn/input';
+import { cn } from '@/lib/utils';
 import { CircleX, Loader2, SearchIcon } from 'lucide-react';
 import type { ChangeEventHandler, KeyboardEventHandler, MouseEventHandler } from 'react';
 
@@ -41,9 +42,12 @@ export function SearchInput({
           onChange={handleCustomInputChange}
           onKeyDown={handleCustomKeyDown}
           placeholder={currentInputPlaceholderText}
-          className={`pl-10 text-right border-zinc-200 focus:border-zinc-400 focus:ring-zinc-400 ${
-            validationError && hasSubmitted ? 'border-red-300' : ''
-          }`}
+          className={cn(
+            'pl-10 text-right h-12 border-0 ring-1 ring-zinc-300/80 shadow-none focus:border-0 focus:ring-0 focus-visible:ring-zinc-500 focus-within:ring-1 md:text-lg placeholder:text-zinc-800/50',
+            {
+              'border-red-300': validationError && hasSubmitted,
+            }
+          )}
           dir="rtl"
         />
         <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2">

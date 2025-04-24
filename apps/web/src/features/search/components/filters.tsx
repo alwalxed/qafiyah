@@ -84,12 +84,12 @@ export function Filters({
   handleRhymesChange,
   rhymesPlaceholderText,
 }: Props) {
+  const containerClassname = 'flex flex-col items-start justify-start gap-2';
+  const labelClassname = 'block text-xs md:text-sm font-medium text-zinc-700';
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-2 p-0 bg-zinc-50 rounded-md border border-zinc-100">
-      <div>
-        <label className="block text-xs font-medium mb-1 text-zinc-600">
-          {searchTypeLabelText}
-        </label>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 py-6 px-6 bg-zinc-50 rounded-md border border-zinc-300/30">
+      <div className={containerClassname}>
+        <label className={labelClassname}>{searchTypeLabelText}</label>
         <Select
           options={searchTypeOptions}
           value={searchParamsSearchType}
@@ -98,8 +98,8 @@ export function Filters({
         />
       </div>
 
-      <div>
-        <label className="block text-xs font-medium mb-1 text-zinc-600">{matchTypeLabelText}</label>
+      <div className={containerClassname}>
+        <label className={labelClassname}>{matchTypeLabelText}</label>
         <Select
           options={matchTypeOptions}
           value={searchParamsMatchType}
@@ -108,8 +108,8 @@ export function Filters({
         />
       </div>
 
-      <div>
-        <label className="block text-xs font-medium mb-1 text-zinc-600">{erasLabelText}</label>
+      <div className={containerClassname}>
+        <label className={labelClassname}>{erasLabelText}</label>
         <CheckboxSelect
           options={erasOptions}
           value={selectedEras}
@@ -122,10 +122,8 @@ export function Filters({
 
       {searchType === 'poems' && (
         <>
-          <div>
-            <label className="block text-xs font-medium mb-1 text-zinc-600">
-              {metersLabelText}
-            </label>
+          <div className={containerClassname}>
+            <label className={labelClassname}>{metersLabelText}</label>
             <CheckboxSelect
               options={metersOptions}
               value={selectedMeters}
@@ -136,10 +134,8 @@ export function Filters({
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-medium mb-1 text-zinc-600">
-              {themesLabelText}
-            </label>
+          <div className={containerClassname}>
+            <label className={labelClassname}>{themesLabelText}</label>
             <CheckboxSelect
               options={themesOptions}
               value={selectedThemes}
@@ -150,10 +146,8 @@ export function Filters({
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-medium mb-1 text-zinc-600">
-              {rhymesLabelText}
-            </label>
+          <div className={containerClassname}>
+            <label className={labelClassname}>{rhymesLabelText}</label>
             <CheckboxSelect
               options={rhymesOptions}
               value={selectedRhymes}

@@ -223,10 +223,10 @@ export function useSearch() {
       plural: 'قوافي',
     },
 
-    badgeErasCount: `العصور: ${toArabicDigits(selectedEras.length || 0)}`,
-    badgeMetersCount: `البحور: ${toArabicDigits(selectedMeters.length || 0)}`,
-    badgeThemesCount: `الموضوعات: ${toArabicDigits(selectedThemes.length || 0)}`,
-    badgeRhymesCount: `القوافي: ${toArabicDigits(selectedRhymes.length || 0)}`,
+    badgeErasCount: `عصر: ${toArabicDigits(selectedEras.length || 0)}`,
+    badgeMetersCount: `بحر: ${toArabicDigits(selectedMeters.length || 0)}`,
+    badgeThemesCount: `موضوع: ${toArabicDigits(selectedThemes.length || 0)}`,
+    badgeRhymesCount: `قافية: ${toArabicDigits(selectedRhymes.length || 0)}`,
 
     searchTypeLabel: 'نوع البحث',
     searchTypePlaceholder: 'اختر نوع البحث',
