@@ -131,9 +131,11 @@ export function CheckboxSelect({
     >
       <div
         className={cn(
-          'flex items-center justify-between w-full h-9 md:h-11 px-3 py-2 text-sm md:text-base border border-zinc-300/80 rounded-md shadow-none bg-white/90 text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-300',
+          'flex text-zinc-600 items-center justify-between w-full h-9 md:h-11 px-3 py-2 text-sm md:text-base border-0 ring-1 ring-zinc-300/40 rounded-lg shadow-none focus:outline-none focus:ring-1 focus:ring-zinc-300',
           disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-          isOpen ? 'border-primary ring-2 ring-primary/20' : 'border-input'
+          {
+            isOpen: 'ring-2 ring-zinc-300',
+          }
         )}
         onClick={toggleOpen}
         onKeyDown={(e) => {
@@ -171,7 +173,7 @@ export function CheckboxSelect({
         <ul
           id="checkbox-select-options"
           className={cn(
-            'absolute z-50 w-full mt-2 overflow-auto bg-background border rounded-md shadow-md',
+            'absolute z-50 w-full mt-1 overflow-auto bg-white ring-1 ring-zinc-300/50 rounded-lg shadow-xs shadow-zinc-300',
             'max-h-60 focus:outline-none'
           )}
           role="listbox"
@@ -187,8 +189,8 @@ export function CheckboxSelect({
                 role="option"
                 aria-selected={isSelected}
                 className={cn(
-                  'px-0.5 py-2 text-sm cursor-pointer',
-                  index === highlightedIndex && 'bg-muted',
+                  'px-0.5 py-2 text-sm md:text-base cursor-pointer',
+                  index === highlightedIndex && 'bg-zinc-100',
                   isSelected && 'font-medium'
                 )}
                 onClick={() => toggleOption(option)}
@@ -197,9 +199,9 @@ export function CheckboxSelect({
                 <div className="flex items-center gap-2">
                   <div
                     className={cn(
-                      'flex items-center justify-center w-4 h-4 mr-4 border rounded',
+                      'flex items-center justify-center bg-white w-4 h-4 mr-4 border rounded',
                       multiple ? 'rounded' : 'rounded-full',
-                      isSelected ? 'bg-primary border-primary' : 'border-input'
+                      isSelected ? 'bg-zinc-900 border-zinc-950' : 'border-zinc-300'
                     )}
                   >
                     {isSelected &&

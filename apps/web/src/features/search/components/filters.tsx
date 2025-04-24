@@ -85,9 +85,9 @@ export function Filters({
   rhymesPlaceholderText,
 }: Props) {
   const containerClassname = 'flex flex-col items-start justify-start gap-2';
-  const labelClassname = 'block text-xs md:text-sm font-medium text-zinc-700';
+  const labelClassname = 'block text-xs md:text-base font-medium text-zinc-700';
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 py-6 px-6 bg-white rounded-md border border-zinc-300/70">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 py-6 px-6 bg-white rounded-xl border border-zinc-300/40">
       <div className={containerClassname}>
         <label className={labelClassname}>{searchTypeLabelText}</label>
         <Select

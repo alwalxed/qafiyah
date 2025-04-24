@@ -28,7 +28,7 @@ export default function ThemePoemsSlugClientPage() {
 
   // Handle loading state
   if (isLoading) {
-    return <SectionSkeleton title="قصائد موضوع بعينه" itemsCount={10} />;
+    return <SectionSkeleton title="قصائد غرض بعينه" itemsCount={10} />;
   }
 
   // Handle error state
@@ -56,7 +56,7 @@ export default function ThemePoemsSlugClientPage() {
     headerTip: `صـ ${toArabicDigits(pageNumber)} من ${toArabicDigits(totalPages)}`,
     next: 'التالي',
     previous: 'السابق',
-    noMore: 'لا توجد قصائد لهذا الموضوع.',
+    noMore: 'لا توجد قصائد لهذا الغرض.',
   };
 
   return (

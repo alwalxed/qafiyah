@@ -20,7 +20,7 @@ export function HighlightedText({ text, className = '' }: Props) {
       <Fragment key={index}>
         {segments.map((segment, segIndex) => (
           <Fragment key={`${index}-${segIndex}`}>
-            {segIndex > 0 && <span className="inline-block mx-2 py-1">{`—`}</span>}
+            {segIndex > 0 && <span className="inline-block mx-1 py-1 text-zinc-400">{`—`}</span>}
             {isHighlighted ? (
               <span className="text-red-400 font-medium py-1">{segment}</span>
             ) : (

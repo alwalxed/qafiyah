@@ -13,10 +13,10 @@ import { useSearch } from '../hooks/use-search';
 import { Filters } from './filters';
 import { FilterBadges } from './filters-badges';
 import { FiltersButton } from './filters-button';
+import { ResultList } from './result-list';
 import { SearchInput } from './search-input';
-import { SearchResults } from './search-results';
 
-export function Search() {
+export function SearchContainer() {
   const {
     text,
 
@@ -56,7 +56,7 @@ export function Search() {
       </h1>
       <Card className="border-0 shadow-none bg-transparent">
         <div className="p-0 bg">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             <SearchInput
               hasSubmitted={hasSubmitted}
               isLoading={isLoading}
@@ -126,7 +126,7 @@ export function Search() {
         </div>
       </Card>
 
-      <SearchResults
+      <ResultList
         data={data}
         loadMoreRef={loadMoreRef}
         isError={isError}

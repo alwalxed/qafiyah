@@ -115,9 +115,11 @@ export function Select({
     >
       <div
         className={cn(
-          'flex text-zinc-600 items-center justify-between w-full h-9 md:h-11 px-3 py-2 text-sm md:text-base border border-zinc-300/80 rounded-md shadow-none bg-white/90 focus:outline-none focus:ring-1 focus:ring-zinc-300',
+          'flex text-zinc-600 items-center justify-between w-full h-9 md:h-11 px-3 py-2 text-sm md:text-base border-0 ring-1 ring-zinc-300/40 rounded-lg shadow-none focus:outline-none focus:ring-1 focus:ring-zinc-300',
           disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-          isOpen ? 'border-primary ring-2 ring-primary/20' : 'border-input'
+          {
+            isOpen: 'ring-2 ring-zinc-300',
+          }
         )}
         onClick={toggleOpen}
         onKeyDown={(e) => {
@@ -142,7 +144,7 @@ export function Select({
         <ul
           id="select-options"
           className={cn(
-            'absolute z-50 w-full mt-1 overflow-auto bg-background border rounded-md shadow-md',
+            'absolute z-50 w-full mt-1 overflow-auto bg-white ring-1 ring-zinc-300/50 rounded-lg shadow-xs shadow-zinc-300',
             'max-h-60 focus:outline-none'
           )}
           role="listbox"
@@ -153,8 +155,8 @@ export function Select({
               key={option.value}
               id={`option-${index}`}
               className={cn(
-                'px-3 py-2 text-sm cursor-pointer flex items-center justify-between',
-                index === highlightedIndex && 'bg-muted',
+                'px-3 py-2 text-sm md:text-base cursor-pointer flex items-center justify-between',
+                index === highlightedIndex && 'bg-zinc-100',
                 option.value === value && 'font-medium'
               )}
               onClick={() => selectOption(option)}

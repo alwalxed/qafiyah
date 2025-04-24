@@ -19,6 +19,9 @@ export default function PoemSlugClientPage() {
     data: poem,
     isLoading,
     isError,
+    isFetching,
+    isPending,
+    isPaused,
     refetch,
     error,
   } = useQuery({
@@ -53,7 +56,7 @@ export default function PoemSlugClientPage() {
     );
   }
 
-  if (isLoading) {
+  if (isLoading || isPending || isFetching || isPaused) {
     return (
       <div className="animate-pulse max-w-3xl mx-auto p-4">
         <div className="h-10 bg-zinc-200/70 rounded-md w-3/4 mb-6"></div>

@@ -1,5 +1,4 @@
 import { formatArabicCount } from 'arabic-count-format';
-import { toArabicDigits } from 'to-arabic-digits';
 import { useInfiniteQuery } from './use-infinite-query';
 import { useInfiniteScroll } from './use-infinite-scroll';
 import { useInputValidation } from './use-input-validation';
@@ -91,10 +90,11 @@ export function useSearch() {
 
       // Reset filters that don't apply to the new search type
       if (newSearchType === 'poets') {
-        setQuery('');
         setSearchType(newSearchType);
+        setQuery('');
         setMeterIds('');
         setThemeIds('');
+        setRhymeIds('');
       } else {
         setQuery('');
         setSearchType(newSearchType);
@@ -175,8 +175,14 @@ export function useSearch() {
   const searchTypeText = searchType === 'poems' ? 'بيت' : 'شاعر';
   const matchTypeText =
     matchType === 'any' ? 'أي كلمة' : matchType === 'all' ? 'جميع الكلمات' : 'مطابقة';
+  //
   const normalizedCount = data?.[0]?.total_count ?? 0;
-  const shortenedInputText = inputValue.length > 10 ? inputValue.slice(0, 10) + '...' : inputValue;
+
+  const rawInput = searchParams.q || '';
+  const cleanedInput = rawInput.replace(/[^\u0600-\u06FF\s]/g, '');
+  const shortenedInputText =
+    cleanedInput.length > 10 ? cleanedInput.slice(0, 10) + '...' : cleanedInput;
+
   const resultsText = formatArabicCount({
     count: normalizedCount,
     nounForms: {
@@ -210,12 +216,12 @@ export function useSearch() {
       dual: 'بحران',
       plural: 'بحور',
     },
-    themesLabel: 'الموضوعات',
-    themesPlaceholder: 'موضوع أو عدة مواضيع',
+    themesLabel: 'الأغراض',
+    themesPlaceholder: 'غرض أو عدة أغراض',
     themesPlaceholderNounForms: {
-      singular: 'موضوع',
-      dual: 'موضوعان',
-      plural: 'مواضيع',
+      singular: 'غرض',
+      dual: 'غرضان',
+      plural: 'أغراض',
     },
     rhymesLabel: 'القوافي',
     rhymesPlaceholder: 'قافية أو عدة قوافي',
@@ -225,10 +231,38 @@ export function useSearch() {
       plural: 'قوافي',
     },
 
-    badgeErasCount: `عصر: ${toArabicDigits(selectedEras.length || 0)}`,
-    badgeMetersCount: `بحر: ${toArabicDigits(selectedMeters.length || 0)}`,
-    badgeThemesCount: `موضوع: ${toArabicDigits(selectedThemes.length || 0)}`,
-    badgeRhymesCount: `قافية: ${toArabicDigits(selectedRhymes.length || 0)}`,
+    badgeErasCount: formatArabicCount({
+      count: selectedEras.length || 0,
+      nounForms: {
+        singular: 'عصر',
+        dual: 'عصران',
+        plural: 'عصور',
+      },
+    }),
+    badgeMetersCount: formatArabicCount({
+      count: selectedMeters.length || 0,
+      nounForms: {
+        singular: 'بحر',
+        dual: 'بحران',
+        plural: 'بحور',
+      },
+    }),
+    badgeThemesCount: formatArabicCount({
+      count: selectedThemes.length || 0,
+      nounForms: {
+        singular: 'غرض',
+        dual: 'غرضان',
+        plural: 'أغراض',
+      },
+    }),
+    badgeRhymesCount: formatArabicCount({
+      count: selectedRhymes.length || 0,
+      nounForms: {
+        singular: 'قافية',
+        dual: 'قافيتان',
+        plural: 'قوافي',
+      },
+    }),
 
     searchTypeLabel: 'نوع البحث',
     searchTypePlaceholder: 'اختر نوع البحث',

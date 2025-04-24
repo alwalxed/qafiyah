@@ -6,10 +6,10 @@ import ErasClientPage from './client';
 export const runtime = 'edge';
 
 export const metadata: Metadata = {
-  title: 'قافية | تصفح حسب المواضيع',
+  title: 'قافية | تصفح حسب الأغراض',
   openGraph: {
     url: `${SITE_URL}/themes`,
-    title: 'قافية | تصفح حسب المواضيع',
+    title: 'قافية | تصفح حسب الأغراض',
     images: [
       {
         url: htmlHeadMetadata.openGraphUrl,
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    title: 'قافية | تصفح حسب المواضيع',
+    title: 'قافية | تصفح حسب الأغراض',
     images: [htmlHeadMetadata.openGraphUrl],
   },
 };

@@ -51,7 +51,7 @@ export function SearchInput({
           spellCheck={false}
           autoFocus={true}
           className={cn(
-            'pl-10 text-right h-12 border-0 ring-1 ring-zinc-300/80 shadow-none focus:border-0 focus:ring-0 focus-visible:ring-zinc-500 focus-within:ring-1 md:text-lg placeholder:text-zinc-800/50 bg-white rounded-lg',
+            'pl-10 text-right h-12 border-0 ring-1 ring-zinc-300/40 shadow-none focus:border-0 focus:ring-0 focus-visible:ring-zinc-300/90 focus-within:ring-1 md:text-lg placeholder:text-zinc-800/50 bg-white rounded-xl',
             {
               'ring-red-300 ring-1 focus-within:ring-red-300 focus-within:ring-1 focus-visible:ring-red-300':
                 validationError && hasSubmitted,

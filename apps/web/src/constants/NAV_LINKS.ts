@@ -12,7 +12,7 @@ export const NAV_LINKS: NavLink[] = [
     href: `https://x.com/${TWITTER_HANDLE}`,
     external: true,
   },
-  { name: 'المواضيع', href: '/themes', external: false },
+  { name: 'الأغراض', href: '/themes', external: false },
   { name: 'القوافي', href: '/rhymes', external: false },
   { name: 'البحور', href: '/meters', external: false },
   { name: 'العصور', href: '/eras', external: false },

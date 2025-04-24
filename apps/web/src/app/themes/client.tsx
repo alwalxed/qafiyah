@@ -20,13 +20,13 @@ export default function ThemesClientPage() {
   });
 
   if (isLoading) {
-    return <SectionSkeleton title="جميع المواضيع" itemsCount={10} />;
+    return <SectionSkeleton title="جميع الأغراض" itemsCount={10} />;
   }
 
   // Handle error state
   if (isError || !themes) {
     return (
-      <SectionList title="المواضيع">
+      <SectionList title="الأغراض">
         <ErrorMessage />
       </SectionList>
     );
@@ -34,8 +34,8 @@ export default function ThemesClientPage() {
 
   return (
     <SectionList
-      title="المواضيع"
-      dynamicTitle={`جميع المواضيع (${toArabicDigits(themes.length)} موضوع)`}
+      title="الأغراض"
+      dynamicTitle={`جميع الأغراض (${toArabicDigits(themes.length)} غرض)`}
     >
       {themes.length > 0 ? (
         themes.map(({ id, name, poemsCount, poetsCount, slug }) => (

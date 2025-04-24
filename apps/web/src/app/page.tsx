@@ -1,5 +1,5 @@
-import {Search} from '@/features/search/components/search';
+import { SearchContainer } from '@/features/search/components/__search-container';
 
 export default function Page() {
-  return <Search />;
+  return <SearchContainer />;
 }

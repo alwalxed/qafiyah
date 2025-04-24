@@ -23,37 +23,26 @@ export function FilterBadges({
   badgeThemesCountText,
   badgeRhymesCountText,
 }: Props) {
+  const badgeClassname = 'text-xs md:text-sm font-normal text-zinc-600 border-zinc-300/50 bg-white';
   return (
     <div className="flex flex-wrap gap-1 justify-end">
       {selectedErasLength > 0 && (
-        <Badge
-          variant="outline"
-          className="text-xs md:text-sm font-normal text-zinc-900 border-zinc-300/30 bg-white"
-        >
+        <Badge variant="outline" className={badgeClassname}>
           {badgeErasCountText}
         </Badge>
       )}
       {selectedMetersLength > 0 && (
-        <Badge
-          variant="outline"
-          className="text-xs md:text-sm font-normal text-zinc-800/80 border-zinc-300/30 bg-zinc-50"
-        >
+        <Badge variant="outline" className={badgeClassname}>
           {badgeMetersCountText}
         </Badge>
       )}
       {selectedThemesLength > 0 && (
-        <Badge
-          variant="outline"
-          className="text-xs md:text-sm font-normal text-zinc-800/80 border-zinc-300/30 bg-zinc-50"
-        >
+        <Badge variant="outline" className={badgeClassname}>
           {badgeThemesCountText}
         </Badge>
       )}
       {selectedRhymesLength > 0 && (
-        <Badge
-          variant="outline"
-          className="text-xs md:text-sm font-normal text-zinc-800/80 border-zinc-300/30 bg-zinc-50"
-        >
+        <Badge variant="outline" className={badgeClassname}>
           {badgeRhymesCountText}
         </Badge>
       )}

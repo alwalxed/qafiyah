@@ -23,7 +23,7 @@ type Props = {
   resultTextText: string;
 };
 
-export function SearchResults({
+export function ResultList({
   data,
   loadMoreRef,
 
@@ -57,8 +57,8 @@ export function SearchResults({
       {/* Tiny Result Counts */}
       {data.length > 0 && (
         <div className="w-full flex justify-start items-start">
-          <span className="bg-zinc-50 py-0.5 px-3 rounded-md ring-1 ring-zinc-300/30">
-            <p className="text-sm md:text-base font-normal">{resultTextText}</p>
+          <span className="">
+            <p className="text-sm md:text-base font-normal text-zinc-700">{resultTextText}</p>
           </span>
         </div>
       )}
