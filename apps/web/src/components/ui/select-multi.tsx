@@ -6,13 +6,13 @@ import { Check, ChevronDown, X } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-export interface SelectOption {
+export type Option = {
   value: string;
   label: string;
-}
+};
 
-interface CheckboxSelectProps {
-  options: SelectOption[];
+type Props = {
+  options: Option[];
   value: string | string[];
   onChange: (value: string | string[]) => void;
   placeholderNounForms: ArabicNounForms;
@@ -20,9 +20,9 @@ interface CheckboxSelectProps {
   disabled?: boolean;
   className?: string;
   multiple?: boolean;
-}
+};
 
-export function CheckboxSelect({
+export function SelectMulti({
   options,
   value,
   onChange,
@@ -31,7 +31,7 @@ export function CheckboxSelect({
   disabled = false,
   className,
   multiple = false,
-}: CheckboxSelectProps) {
+}: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -46,7 +46,7 @@ export function CheckboxSelect({
   };
 
   const toggleOption = useCallback(
-    (option: SelectOption) => {
+    (option: Option) => {
       if (multiple) {
         if (selectedValues.includes(option.value)) {
           onChange(selectedValues.filter((v) => v !== option.value));
@@ -173,12 +173,21 @@ export function CheckboxSelect({
         <ul
           id="checkbox-select-options"
           className={cn(
-            'absolute z-50 w-full mt-1 overflow-auto bg-white ring-1 ring-zinc-300/50 rounded-lg shadow-xs shadow-zinc-300',
+            'absolute z-50 w-full overflow-auto bg-white ring-1 ring-zinc-300/50 rounded-lg shadow-xs shadow-zinc-300',
             'max-h-60 focus:outline-none'
           )}
           role="listbox"
           aria-multiselectable={multiple}
           aria-activedescendant={`option-${highlightedIndex}`}
+          style={{
+            maxHeight: '15rem',
+            position: 'absolute',
+            bottom: '100%',
+            left: 0,
+            right: 0,
+            marginBottom: '0.25rem',
+            overflowY: 'auto',
+          }}
         >
           {options.map((option, index) => {
             const isSelected = selectedValues.includes(option.value);

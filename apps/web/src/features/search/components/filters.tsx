@@ -1,5 +1,6 @@
-import { Select, type SelectOption } from '@/components/ui/select';
-import { CheckboxSelect } from '@/components/ui/select-multi';
+import { type SelectOption } from '@/components/ui/select';
+import { SelectMulti } from '@/components/ui/select-multi';
+import { SelectSingle } from '@/components/ui/select-single';
 import { type ArabicNounForms } from 'arabic-count-format';
 
 type Props = {
@@ -90,7 +91,7 @@ export function Filters({
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 py-6 px-6 bg-white rounded-xl border border-zinc-300/40">
       <div className={containerClassname}>
         <label className={labelClassname}>{searchTypeLabelText}</label>
-        <Select
+        <SelectSingle
           options={searchTypeOptions}
           value={searchParamsSearchType}
           onChange={handleCustomSearchTypeChange}
@@ -100,7 +101,7 @@ export function Filters({
 
       <div className={containerClassname}>
         <label className={labelClassname}>{matchTypeLabelText}</label>
-        <Select
+        <SelectSingle
           options={matchTypeOptions}
           value={searchParamsMatchType}
           onChange={handleMatchTypeChange}
@@ -110,7 +111,7 @@ export function Filters({
 
       <div className={containerClassname}>
         <label className={labelClassname}>{erasLabelText}</label>
-        <CheckboxSelect
+        <SelectMulti
           options={erasOptions}
           value={selectedEras}
           placeholderNounForms={erasPlaceholderNounFormsText}
@@ -124,7 +125,7 @@ export function Filters({
         <>
           <div className={containerClassname}>
             <label className={labelClassname}>{metersLabelText}</label>
-            <CheckboxSelect
+            <SelectMulti
               options={metersOptions}
               value={selectedMeters}
               placeholderNounForms={metersPlaceholderNounFormsText}
@@ -136,7 +137,7 @@ export function Filters({
 
           <div className={containerClassname}>
             <label className={labelClassname}>{themesLabelText}</label>
-            <CheckboxSelect
+            <SelectMulti
               options={themesOptions}
               value={selectedThemes}
               placeholderNounForms={themesPlaceholderNounFormsText}
@@ -148,7 +149,7 @@ export function Filters({
 
           <div className={containerClassname}>
             <label className={labelClassname}>{rhymesLabelText}</label>
-            <CheckboxSelect
+            <SelectMulti
               options={rhymesOptions}
               value={selectedRhymes}
               placeholderNounForms={rhymesPlaceholderNounFormsText}
