@@ -1,5 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
-import { searchQueriesSchema, searchRequestSchema } from "@qaf/zod-schemas";
+import { searchRequestSchema } from "@qaf/zod-schemas";
 import { createValidatedResponse } from "@qaf/zod-schemas/server";
 import { sql } from "drizzle-orm";
 import { Hono } from "hono";
@@ -78,41 +78,6 @@ const app = new Hono<AppContext>().get(
         });
       }
 
-      let parsedQuery;
-
-      switch (search_type) {
-        case "poems": {
-          const parsed = searchQueriesSchema.poems.safeParse(sanitizedQuery);
-          if (!parsed.success) {
-            log(c, parsed.error.message);
-            throw new HTTPException(ERROR_TYPES.INVALID_POEM_QUERY.code, {
-              message: `تبحث عن قصيدة، وأقل ما يبحث عنه كلمتان | ${parsed.error.message.trim()}`,
-            });
-          }
-
-          parsedQuery = parsed.data;
-          break;
-        }
-        case "poets": {
-          const parsed = searchQueriesSchema.poets.safeParse(sanitizedQuery);
-          if (!parsed.success) {
-            log(c, parsed.error.message);
-            throw new HTTPException(ERROR_TYPES.INVALID_POET_QUERY.code, {
-              message: `تبحث عن شاعر، وأقل ما يبحث عنه كلمة | ${parsed.error.message.trim()}`,
-            });
-          }
-
-          parsedQuery = parsed.data;
-          break;
-        }
-        default: {
-          log(c, "Default Block");
-          throw new HTTPException(ERROR_TYPES.INVALID_SEARCH_TYPE.code, {
-            message: "نوع البحث غير صالح",
-          });
-        }
-      }
-
       const meterIds = parseIds(meter_ids);
       const eraIds = parseIds(era_ids);
       const rhymeIds = parseIds(rhyme_ids);
@@ -124,7 +89,7 @@ const app = new Hono<AppContext>().get(
         case "poems": {
           dbResult = await db.execute(
             sql`SELECT * FROM search_poems(
-              ${parsedQuery}::TEXT,
+              ${sanitizedQuery}::TEXT,
               ${page}::INTEGER,
               ${match_type}::TEXT,
               ${meterIds ? sql`${meterIds}::INTEGER[]` : sql`NULL::INTEGER[]`},
