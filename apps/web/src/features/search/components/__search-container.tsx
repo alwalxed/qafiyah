@@ -47,6 +47,10 @@ export function SearchContainer() {
     toggleFilters,
     handleCustomSearchTypeChange,
     resetAllStates,
+
+    // type-effect
+    effectText,
+    handleTypingEffect,
   } = useSearch();
 
   return (
@@ -58,9 +62,10 @@ export function SearchContainer() {
         <div className="p-0 bg">
           <div className="flex flex-col gap-4">
             <SearchInput
+              effectText={effectText}
+              handleTypingEffect={handleTypingEffect}
               hasSubmitted={hasSubmitted}
               isLoading={isLoading}
-              currentInputPlaceholderText={text.currentInputPlaceholder}
               searchLabel={text.search}
               inputValue={inputValue}
               validationError={validationError}

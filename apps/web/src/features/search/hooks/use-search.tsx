@@ -2,6 +2,7 @@ import { formatArabicCount } from 'arabic-count-format';
 import { useInfiniteQuery } from './use-infinite-query';
 import { useInfiniteScroll } from './use-infinite-scroll';
 import { useInputValidation } from './use-input-validation';
+import { usePlaceholderTypewriter } from './use-placeholder-typewriter';
 import { useSearchFilters } from './use-search-filters';
 import { useSearchInput } from './use-search-input';
 
@@ -70,6 +71,8 @@ export function useSearch() {
     search_type: searchType,
     match_type: searchParams.match_type,
   });
+
+  const { effectText, handleTypingEffect, isTypingActive } = usePlaceholderTypewriter();
 
   // Custom handlers that integrate the extracted hooks
   const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -323,5 +326,9 @@ export function useSearch() {
     handleErasChange: handleErasChangeWithState,
     handleMetersChange: handleMetersChangeWithState,
     handleThemesChange: handleThemesChangeWithState,
+
+    // type-effects
+    effectText,
+    handleTypingEffect,
   };
 }

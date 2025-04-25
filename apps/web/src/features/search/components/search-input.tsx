@@ -3,14 +3,13 @@
 import { Input } from '@/components/shadcn/input';
 import { cn } from '@/lib/utils';
 import { CircleX, Loader2, SearchIcon } from 'lucide-react';
-import type { ChangeEventHandler, KeyboardEventHandler, MouseEventHandler } from 'react';
+import { type ChangeEventHandler, type KeyboardEventHandler, type MouseEventHandler } from 'react';
 
 type Props = {
   hasSubmitted: boolean;
   isLoading: boolean;
 
   inputValue: string;
-  currentInputPlaceholderText: string;
   validationError: string | null;
   searchLabel: string;
 
@@ -18,6 +17,9 @@ type Props = {
   handleCustomKeyDown: KeyboardEventHandler<HTMLInputElement>;
   handleCustomInputChange: ChangeEventHandler<HTMLInputElement>;
   resetAllStates: () => void;
+
+  effectText: string;
+  handleTypingEffect: (show: boolean) => void;
 };
 
 export function SearchInput({
@@ -25,7 +27,6 @@ export function SearchInput({
   isLoading,
 
   inputValue,
-  currentInputPlaceholderText,
   validationError,
   searchLabel,
 
@@ -33,23 +34,27 @@ export function SearchInput({
   handleCustomKeyDown,
   handleCustomInputChange,
   resetAllStates,
+
+  effectText,
+  handleTypingEffect,
 }: Props) {
   return (
     <div className="w-full">
       <PreservedErrorSpace hasSubmitted={hasSubmitted} validationError={validationError} />
       <div className="relative">
         <Input
+          placeholder={effectText}
+          onFocus={() => handleTypingEffect(false)}
+          onBlur={() => handleTypingEffect(true)}
           maxLength={50}
           value={inputValue}
-          onChange={handleCustomInputChange}
-          onKeyDown={handleCustomKeyDown}
-          placeholder={currentInputPlaceholderText}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
           autoSave="off"
           spellCheck={false}
-          autoFocus={true}
+          onChange={handleCustomInputChange}
+          onKeyDown={handleCustomKeyDown}
           className={cn(
             'pl-10 text-right h-12 border-0 ring-1 ring-zinc-300/40 shadow-none focus:border-0 focus:ring-0 focus-visible:ring-zinc-300/90 focus-within:ring-1 md:text-lg placeholder:text-zinc-800/50 bg-white rounded-xl',
             {

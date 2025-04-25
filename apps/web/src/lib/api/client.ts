@@ -1,3 +1,4 @@
+import { removeTashkeel } from '@/utils/texts/remove-tashkeel';
 import { fetchWithValidation, validateParams } from '@qaf/zod-schemas/client';
 import type {
   Era,
@@ -124,6 +125,22 @@ const apiClient = (baseUrl: string) => {
       };
     },
 
+    // Random Line
+    async getRandomLine(): Promise<string> {
+      try {
+        const response = await fetch('https://api.qafiyah.com/poems/random');
+        if (!response.ok) {
+          return `إن الذي سمك السماء بنى لنا`;
+        }
+        const content = await response.text();
+
+        return removeTashkeel(content.trim().split('\n')[0]);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        return `إن الذي سمك السماء بنى لنا`;
+      }
+    },
+
     // Eras
     async getEras(): Promise<Era[]> {
       const response = await fetchWithValidation('erasList', `${baseUrl}/eras`);
@@ -225,16 +242,6 @@ const apiClient = (baseUrl: string) => {
         throw new Error(response.error);
       }
       return response.data;
-    },
-
-    async getRandomPoem(): Promise<string> {
-      const response = await fetch(`${baseUrl}/poems/random`);
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
-      }
-
-      return response.text();
     },
 
     // Rhymes
