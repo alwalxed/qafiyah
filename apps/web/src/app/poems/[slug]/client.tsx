@@ -139,7 +139,6 @@ export default function PoemSlugClientPage() {
         verseCount={verseCount}
         metadata={metadata}
       />
-      s
     </>
   );
 }

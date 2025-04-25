@@ -1,9 +1,11 @@
 'use client';
 
+import JsonLd from '@/components/json-ld';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { ListCard } from '@/components/ui/list-card';
 import { SectionPaginationControllers, SectionWrapper } from '@/components/ui/section-wrapper';
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
+import { SITE_URL } from '@/constants/GLOBALS';
 import { getThemePoems } from '@/lib/api/queries';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
@@ -59,34 +61,63 @@ export default function ThemePoemsSlugClientPage() {
     noMore: 'لا توجد قصائد لهذا الغرض.',
   };
 
+  const itemListElements = poems.map((poem, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'CreativeWork',
+      name: poem.title,
+      url: `${SITE_URL}/poems/${poem.slug}`,
+    },
+  }));
+
+  // Create the JSON-LD object with dynamic data
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Collection',
+    name: `قصائد ${themeDetails.name}`,
+    url: `${SITE_URL}/themes/${slug}/page/${pageNumber}`,
+    description: `مجموعة قصائد ${themeDetails.name} - الصفحة ${toArabicDigits(pageNumber)} من ${toArabicDigits(totalPages)}`,
+    mainEntityOfPage: {
+      '@type': 'CollectionPage',
+      name: `قصائد ${themeDetails.name}`,
+      url: `${SITE_URL}/themes/${slug}/page/1`,
+    },
+    numberOfItems: themeDetails.poemsCount,
+    itemListElement: itemListElements,
+  };
+
   return (
-    <SectionWrapper
-      dynamicTitle={content.header}
-      pagination={{
-        totalPages,
-        component: (
-          <SectionPaginationControllers
-            headerTip={content.headerTip}
-            nextPageUrl={nextPageUrl}
-            prevPageUrl={prevPageUrl}
-            hasNextPage={hasNextPage}
-            hasPrevPage={hasPrevPage}
-          />
-        ),
-      }}
-    >
-      {poems.length > 0 ? (
-        poems.map((poem) => (
-          <ListCard
-            key={poem.slug}
-            href={`/poems/${poem.slug}`}
-            name={poem.title}
-            title={`${poem.poetName} • ${poem.meter}`}
-          />
-        ))
-      ) : (
-        <p className="text-center text-zinc-500">{content.noMore}</p>
-      )}
-    </SectionWrapper>
+    <>
+      <JsonLd data={jsonLd} />
+      <SectionWrapper
+        dynamicTitle={content.header}
+        pagination={{
+          totalPages,
+          component: (
+            <SectionPaginationControllers
+              headerTip={content.headerTip}
+              nextPageUrl={nextPageUrl}
+              prevPageUrl={prevPageUrl}
+              hasNextPage={hasNextPage}
+              hasPrevPage={hasPrevPage}
+            />
+          ),
+        }}
+      >
+        {poems.length > 0 ? (
+          poems.map((poem) => (
+            <ListCard
+              key={poem.slug}
+              href={`/poems/${poem.slug}`}
+              name={poem.title}
+              title={`${poem.poetName} • ${poem.meter}`}
+            />
+          ))
+        ) : (
+          <p className="text-center text-zinc-500">{content.noMore}</p>
+        )}
+      </SectionWrapper>
+    </>
   );
 }

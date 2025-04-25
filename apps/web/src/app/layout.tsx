@@ -103,6 +103,7 @@ export default function RootLayout({
           data-cf-beacon='{"token": "06489115d0274ef48365b8f35fd857ee"}'
           strategy="afterInteractive"
         />
+        <Script id="json-ld" type="application/ld+json" strategy="afterInteractive" />
       </body>
     </html>
   );

@@ -1,12 +1,15 @@
 'use client';
 
+import JsonLd from '@/components/json-ld';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { ListCard } from '@/components/ui/list-card';
 import { SectionPaginationControllers, SectionWrapper } from '@/components/ui/section-wrapper';
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
+import { SITE_URL } from '@/constants/GLOBALS';
 import { getPoetPoems } from '@/lib/api/queries';
 import { getFormattedVersesCount } from '@/utils/texts/get-verse-count';
 import { useQuery } from '@tanstack/react-query';
+import { formatArabicCount } from 'arabic-count-format';
 import { useParams } from 'next/navigation';
 import type { Key } from 'react';
 import { toArabicDigits } from 'to-arabic-digits';
@@ -61,41 +64,76 @@ export default function PoetPoemsSlugPaginatedClientPage() {
     noMore: 'لا توجد قصائد لهذا الشاعر.',
   };
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: poetDetails.name,
+    url: `${SITE_URL}/poets/${slug}/page/${pageNumber}`,
+    description: `ديوان ${poetDetails.name} (${formatArabicCount({
+      count: poetDetails.poemsCount,
+      nounForms: {
+        singular: 'قصيدة',
+        dual: 'قصيدتان',
+        plural: 'قصائد',
+      },
+    })})`,
+    mainEntityOfPage: {
+      '@type': 'CollectionPage',
+      name: `ديوان ${poetDetails.name}`,
+      url: `${SITE_URL}/poets/${slug}/page/1`,
+    },
+    workExample: poems.slice(0, 10).map((poem) => ({
+      '@type': 'CreativeWork',
+      name: poem.title,
+      description: `قصيدة (${poem.title}) على ${poem.meter} من ${formatArabicCount({
+        count: poem.numVerses,
+        nounForms: {
+          singular: 'بيت',
+          dual: 'بيتان',
+          plural: 'بيوت',
+        },
+      })}`,
+      url: `${SITE_URL}/poems/${poem.slug}`,
+    })),
+  };
   return (
-    <SectionWrapper
-      dynamicTitle={content.header}
-      pagination={{
-        totalPages,
-        component: (
-          <SectionPaginationControllers
-            headerTip={content.headerTip}
-            nextPageUrl={nextPageUrl}
-            prevPageUrl={prevPageUrl}
-            hasNextPage={hasNextPage}
-            hasPrevPage={hasPrevPage}
-          />
-        ),
-      }}
-    >
-      {poems.length > 0 ? (
-        poems.map(
-          (poem: {
-            slug: Key | null | undefined;
-            title: string;
-            meter: string;
-            numVerses: number;
-          }) => (
-            <ListCard
-              key={poem.slug}
-              href={`/poems/${poem.slug}`}
-              name={poem.title}
-              title={`${getFormattedVersesCount(poem.numVerses)} / ${poem.meter}`}
+    <>
+      <JsonLd data={jsonLd} />
+      <SectionWrapper
+        dynamicTitle={content.header}
+        pagination={{
+          totalPages,
+          component: (
+            <SectionPaginationControllers
+              headerTip={content.headerTip}
+              nextPageUrl={nextPageUrl}
+              prevPageUrl={prevPageUrl}
+              hasNextPage={hasNextPage}
+              hasPrevPage={hasPrevPage}
             />
+          ),
+        }}
+      >
+        {poems.length > 0 ? (
+          poems.map(
+            (poem: {
+              slug: Key | null | undefined;
+              title: string;
+              meter: string;
+              numVerses: number;
+            }) => (
+              <ListCard
+                key={poem.slug}
+                href={`/poems/${poem.slug}`}
+                name={poem.title}
+                title={`${getFormattedVersesCount(poem.numVerses)} / ${poem.meter}`}
+              />
+            )
           )
-        )
-      ) : (
-        <p className="text-center text-zinc-500">{content.noMore}</p>
-      )}
-    </SectionWrapper>
+        ) : (
+          <p className="text-center text-zinc-500">{content.noMore}</p>
+        )}
+      </SectionWrapper>
+    </>
   );
 }

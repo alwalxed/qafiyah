@@ -1,9 +1,11 @@
 'use client';
 
+import JsonLd from '@/components/json-ld';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { ListCard } from '@/components/ui/list-card';
 import { SectionPaginationControllers, SectionWrapper } from '@/components/ui/section-wrapper';
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
+import { SITE_URL } from '@/constants/GLOBALS';
 import { getMeterPoems } from '@/lib/api/queries';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
@@ -58,34 +60,62 @@ export default function MeterSlugClientPage() {
     noMore: 'لا توجد قصائد لهذا البحر.',
   };
 
+  const itemListElements = poems.map((poem, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'CreativeWork',
+      name: poem.title,
+      url: `${SITE_URL}/poems/${poem.slug}`,
+    },
+  }));
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Collection',
+    name: `قصائد من بحر ${meterDetails.name}`,
+    url: `${SITE_URL}/meters/${slug}/page/${pageNumber}`,
+    description: `مجموعة قصائد من بحر ${meterDetails.name} - الصفحة ${toArabicDigits(pageNumber)} من ${toArabicDigits(totalPages)}`,
+    mainEntityOfPage: {
+      '@type': 'CollectionPage',
+      name: `قصائد من بحر ${meterDetails.name}`,
+      url: `${SITE_URL}/meters/${slug}/page/1`,
+    },
+    numberOfItems: meterDetails.poemsCount,
+    itemListElement: itemListElements,
+  };
+
   return (
-    <SectionWrapper
-      dynamicTitle={content.header}
-      pagination={{
-        totalPages,
-        component: (
-          <SectionPaginationControllers
-            headerTip={content.headerTip}
-            nextPageUrl={nextPageUrl}
-            prevPageUrl={prevPageUrl}
-            hasNextPage={hasNextPage}
-            hasPrevPage={hasPrevPage}
-          />
-        ),
-      }}
-    >
-      {poems.length > 0 ? (
-        poems.map((poem: { slug: Key | null | undefined; title: string; poetName: string }) => (
-          <ListCard
-            key={poem.slug}
-            href={`/poems/${poem.slug}`}
-            name={poem.title}
-            title={poem.poetName}
-          />
-        ))
-      ) : (
-        <p className="text-center text-zinc-500">{content.noMore}</p>
-      )}
-    </SectionWrapper>
+    <>
+      <JsonLd data={jsonLd} />
+      <SectionWrapper
+        dynamicTitle={content.header}
+        pagination={{
+          totalPages,
+          component: (
+            <SectionPaginationControllers
+              headerTip={content.headerTip}
+              nextPageUrl={nextPageUrl}
+              prevPageUrl={prevPageUrl}
+              hasNextPage={hasNextPage}
+              hasPrevPage={hasPrevPage}
+            />
+          ),
+        }}
+      >
+        {poems.length > 0 ? (
+          poems.map((poem: { slug: Key | null | undefined; title: string; poetName: string }) => (
+            <ListCard
+              key={poem.slug}
+              href={`/poems/${poem.slug}`}
+              name={poem.title}
+              title={poem.poetName}
+            />
+          ))
+        ) : (
+          <p className="text-center text-zinc-500">{content.noMore}</p>
+        )}
+      </SectionWrapper>
+    </>
   );
 }
