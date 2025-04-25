@@ -204,7 +204,7 @@ export function useSearch() {
     refreshThePage: 'حدث الصفحة',
 
     currentHeaderTitle: searchType === 'poems' ? 'ابحث في مليون بيت' : 'ابحث عن ديوان شاعر',
-    currentInputPlaceholder: searchType === 'poems' ? 'إن الذي سمك السماء بنى لنا' : 'المتنبي',
+    currentInputPlaceholder: searchType === 'poems' ? effectText : 'المتنبي',
     currentFiltersButton: filtersVisible ? 'إخفاء الفلاتر' : 'عرض الفلاتر',
 
     search: 'ابحث',
@@ -328,7 +328,6 @@ export function useSearch() {
     handleThemesChange: handleThemesChangeWithState,
 
     // type-effects
-    effectText,
     handleTypingEffect,
   };
 }
