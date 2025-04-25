@@ -1,5 +1,6 @@
 'use client';
 
+import JsonLd from '@/components/json-ld';
 import { PoemDisplay } from '@/components/poem/poem-display';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { SITE_URL } from '@/constants/GLOBALS';
@@ -89,13 +90,43 @@ export default function PoemSlugClientPage() {
     readingTime: readTime,
   };
 
+  const joinedVerses = verses.flat().join(' - ');
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: poem.clearTitle,
+    headline: `${poem.clearTitle} | ${poem.data.poet_name}`,
+    author: {
+      '@type': 'Person',
+      name: poem.data.poet_name,
+    },
+    inLanguage: 'ar',
+    datePublished: new Date().toISOString(),
+    url: `${SITE_URL}/poems/${params.slug}`,
+    description: joinedVerses,
+    keywords: keywords,
+    publisher: {
+      '@type': 'Organization',
+      name: 'قافية',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/logo.png`,
+      },
+    },
+  };
+
   return (
-    <PoemDisplay
-      clearTitle={clearTitle}
-      data={data}
-      verses={verses}
-      verseCount={verseCount}
-      metadata={metadata}
-    />
+    <>
+      <JsonLd data={jsonLd} />
+      <PoemDisplay
+        clearTitle={clearTitle}
+        data={data}
+        verses={verses}
+        verseCount={verseCount}
+        metadata={metadata}
+      />
+      s
+    </>
   );
 }

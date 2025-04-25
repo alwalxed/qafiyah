@@ -141,8 +141,10 @@ export function useSearch() {
 
       // 1- Clear any previous errors
       setValidationError(null);
-      // 1- Hide filters
-      toggleFilters();
+      // 1- Hide filters only if visible
+      if (filtersVisible) {
+        toggleFilters();
+      }
       setQuery(inputValue);
     }
   };

@@ -59,7 +59,7 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
     setCurrentUrl(window.location.href);
   }, []);
   return (
-    <article className="w-full flex justify-center items-start my-14 xs:my-20 lg:my-28">
+    <div className="w-full flex justify-center items-start my-14 xs:my-20 lg:my-28">
       <div className="w-full flex flex-col gap-8 justify-center items-center">
         {/* Header */}
         <header className="flex justify-center items-center flex-col gap-4 xxs:gap-6 text-center w-full">
@@ -112,7 +112,7 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
           </div>
 
           {/* POEM */}
-          <div className="flex flex-col items-center w-full">
+          <article className="flex flex-col items-center w-full">
             <div className="w-full sm:w-11/12 md:w-10/12 xl:w-6/12">
               {verses.map((verse, index) => (
                 <div
@@ -139,9 +139,9 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
                 </div>
               ))}
             </div>
-          </div>
+          </article>
         </div>
       </div>
-    </article>
+    </div>
   );
 }
