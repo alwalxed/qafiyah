@@ -72,7 +72,7 @@ export function useSearch() {
     match_type: searchParams.match_type,
   });
 
-  const { effectText, handleTypingEffect, isTypingActive } = usePlaceholderTypewriter();
+  const { effectText, handleTypingEffect } = usePlaceholderTypewriter();
 
   // Custom handlers that integrate the extracted hooks
   const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
