@@ -24,7 +24,7 @@ export function RootLayoutClient({
         <NuqsAdapter>
           <Nav ref={navRef} />
           <MobileMenu />
-          <main className="w-full flex justify-start items-start h-full">{children}</main>
+          <main className="w-full flex justify-start items-start h-full flex-1">{children}</main>
           <Footer ref={footerRef} />
         </NuqsAdapter>
       </Providers>
