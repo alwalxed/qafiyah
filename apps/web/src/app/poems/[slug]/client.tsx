@@ -127,7 +127,7 @@ export default function PoemSlugClientPage() {
         url: `${SITE_URL}/logo.png`,
       },
     },
-  };
+  } as const;
 
   return (
     <>
