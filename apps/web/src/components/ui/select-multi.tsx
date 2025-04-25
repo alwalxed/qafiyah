@@ -173,7 +173,7 @@ export function SelectMulti({
         <ul
           id="checkbox-select-options"
           className={cn(
-            'absolute z-50 w-full overflow-auto bg-white ring-1 ring-zinc-300/50 rounded-lg shadow-xs shadow-zinc-300',
+            'absolute z-50 w-full overflow-auto bg-white ring-1 ring-zinc-300 p-2 rounded-lg shadow-xs shadow-zinc-300',
             'max-h-60 focus:outline-none'
           )}
           role="listbox"
@@ -198,8 +198,8 @@ export function SelectMulti({
                 role="option"
                 aria-selected={isSelected}
                 className={cn(
-                  'px-0.5 py-2 text-sm md:text-base cursor-pointer',
-                  index === highlightedIndex && 'bg-zinc-100',
+                  'px-0.5 py-2 rounded-md text-sm md:text-base cursor-pointer',
+                  index === highlightedIndex && 'bg-zinc-50 ring-1 ring-zinc-300/60 font-medium',
                   isSelected && 'font-medium'
                 )}
                 onClick={() => toggleOption(option)}

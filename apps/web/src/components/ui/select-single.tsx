@@ -144,7 +144,7 @@ export function SelectSingle({
         <ul
           id="select-options"
           className={cn(
-            'absolute z-50 w-full overflow-auto bg-white ring-1 ring-zinc-300/50 rounded-lg shadow-xs shadow-zinc-300',
+            'absolute z-50 w-full overflow-auto bg-white ring-1 p-2 ring-zinc-300 rounded-lg shadow-xs shadow-zinc-300',
             'max-h-60 focus:outline-none'
           )}
           role="listbox"
@@ -164,8 +164,8 @@ export function SelectSingle({
               key={option.value}
               id={`option-${index}`}
               className={cn(
-                'px-3 py-2 text-sm md:text-base cursor-pointer flex items-center justify-between',
-                index === highlightedIndex && 'bg-zinc-100',
+                'px-3 py-2 text-sm md:text-base rounded-md cursor-pointer flex items-center justify-between',
+                index === highlightedIndex && 'bg-zinc-50 ring-1 ring-zinc-300/60 font-medium',
                 option.value === value && 'font-medium'
               )}
               onClick={() => selectOption(option)}
