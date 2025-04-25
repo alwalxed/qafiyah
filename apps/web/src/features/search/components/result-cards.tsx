@@ -56,7 +56,7 @@ export function PoemCard({
 }
 
 export function PoetCard({
-  item: { poet_bio, poet_era, poet_name, poet_slug },
+  item: { poet_era, poet_name, poet_slug },
 }: {
   item: PoetsSearchResult;
 }) {
