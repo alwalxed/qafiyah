@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { dbMiddleware } from "./middlewares/drizzle.middleware";
 import eras from "./routes/eras.routes";
+import index from "./routes/index.routes";
 import meters from "./routes/meters.routes";
 import poems from "./routes/poems.routes";
 import poets from "./routes/poets.routes";
@@ -32,6 +33,7 @@ app.use(
 app.use("*", dbMiddleware);
 
 const routes = app
+  .route("/", index)
   .route("/eras", eras)
   .route("/meters", meters)
   .route("/poems", poems)
