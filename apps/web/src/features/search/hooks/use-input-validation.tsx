@@ -6,7 +6,7 @@ export function useInputValidation() {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  const validateInput = (input: string, type: 'poems' | 'poets'): string | null => {
+  const validateInput = (input: string): string | null => {
     const arabicRegex = /^[\u0600-\u06FF\s]+$/;
 
     if (!arabicRegex.test(input)) {

@@ -116,7 +116,7 @@ export function useSearch() {
   const handleCustomKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       // Validate before allowing the original handler to proceed
-      const error = validateInput(inputValue, searchType);
+      const error = validateInput(inputValue);
       if (error) {
         e.preventDefault();
         setHasSubmitted(true);
@@ -133,7 +133,7 @@ export function useSearch() {
       setHasSubmitted(true);
 
       // Validate input
-      const error = validateInput(inputValue, searchType);
+      const error = validateInput(inputValue);
       if (error) {
         setValidationError(error);
         return;
