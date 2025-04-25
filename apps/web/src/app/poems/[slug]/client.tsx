@@ -100,10 +100,23 @@ export default function PoemSlugClientPage() {
     author: {
       '@type': 'Person',
       name: poem.data.poet_name,
+      url: poem.data.poet_slug,
     },
     inLanguage: 'ar',
     datePublished: new Date().toISOString(),
     url: `${SITE_URL}/poems/${params.slug}`,
+    isPartOf: [
+      {
+        '@type': 'Collection',
+        name: poem.data.poet_name,
+        url: poem.data.poet_slug,
+      },
+      {
+        '@type': 'Collection',
+        name: poem.data.era_name,
+        url: poem.data.era_slug,
+      },
+    ],
     description: joinedVerses,
     keywords: keywords,
     publisher: {
