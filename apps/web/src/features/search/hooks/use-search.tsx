@@ -139,8 +139,10 @@ export function useSearch() {
         return;
       }
 
-      // Clear any previous errors and proceed with search
+      // 1- Clear any previous errors
       setValidationError(null);
+      // 1- Hide filters
+      toggleFilters();
       setQuery(inputValue);
     }
   };
