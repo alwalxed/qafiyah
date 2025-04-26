@@ -189,42 +189,44 @@ export function SelectMulti({
             overflowY: 'auto',
           }}
         >
-          {options.map((option, index) => {
-            const isSelected = selectedValues.includes(option.value);
-            return (
-              <li
-                key={option.value}
-                id={`option-${index}`}
-                role="option"
-                aria-selected={isSelected}
-                className={cn(
-                  'px-0.5 py-2 rounded-md text-sm md:text-base cursor-pointer',
-                  index === highlightedIndex && 'bg-zinc-50 ring-1 ring-zinc-300/60 font-medium',
-                  isSelected && 'font-medium'
-                )}
-                onClick={() => toggleOption(option)}
-                onMouseEnter={() => setHighlightedIndex(index)}
-              >
-                <div className="flex items-center gap-2">
-                  <div
-                    className={cn(
-                      'flex items-center justify-center bg-white w-4 h-4 mr-4 border rounded',
-                      multiple ? 'rounded' : 'rounded-full',
-                      isSelected ? 'bg-zinc-900 border-zinc-950' : 'border-zinc-300'
-                    )}
-                  >
-                    {isSelected &&
-                      (multiple ? (
-                        <Check className="h-3 w-3 text-primary-foreground" />
-                      ) : (
-                        <div className="w-2 h-2 rounded-full bg-primary-foreground" />
-                      ))}
+          {options
+            .sort((a, b) => a.label.localeCompare(b.label, 'ar'))
+            .map((option, index) => {
+              const isSelected = selectedValues.includes(option.value);
+              return (
+                <li
+                  key={option.value}
+                  id={`option-${index}`}
+                  role="option"
+                  aria-selected={isSelected}
+                  className={cn(
+                    'px-0.5 py-2 rounded-md text-sm md:text-base cursor-pointer',
+                    index === highlightedIndex && 'bg-zinc-50 ring-1 ring-zinc-300/60 font-medium',
+                    isSelected && 'font-medium'
+                  )}
+                  onClick={() => toggleOption(option)}
+                  onMouseEnter={() => setHighlightedIndex(index)}
+                >
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={cn(
+                        'flex items-center justify-center bg-white w-4 h-4 mr-4 border rounded',
+                        multiple ? 'rounded' : 'rounded-full',
+                        isSelected ? 'bg-zinc-900 border-zinc-950' : 'border-zinc-300'
+                      )}
+                    >
+                      {isSelected &&
+                        (multiple ? (
+                          <Check className="h-3 w-3 text-primary-foreground" />
+                        ) : (
+                          <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                        ))}
+                    </div>
+                    <span>{option.label}</span>
                   </div>
-                  <span>{option.label}</span>
-                </div>
-              </li>
-            );
-          })}
+                </li>
+              );
+            })}
         </ul>
       )}
     </div>
