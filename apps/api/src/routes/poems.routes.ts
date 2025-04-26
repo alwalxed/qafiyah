@@ -12,36 +12,39 @@ import { extractPoemExcerpt, processPoemContent } from "../utils/poem";
 const app = new Hono<AppContext>()
   .get("/random", async (c) => {
     const db = c.get("db");
-    const result = await db.execute(sql`SELECT get_a_random_poem()`);
+    try {
+      let result = await db.execute(sql`SELECT get_random_eligible_poem()`);
+      let poemField = "get_random_eligible_poem";
 
-    if (
-      !result ||
-      !result.rows ||
-      result.rows.length === 0 ||
-      !result.rows[0]
-    ) {
-      throw new HTTPException(500, { message: "No poem data returned" });
+      if (!result?.rows?.length || !result.rows[0]?.[poemField]) {
+        result = await db.execute(sql`SELECT get_a_random_poem()`);
+        poemField = "get_a_random_poem";
+      }
+
+      if (result?.rows?.length && result.rows[0]?.[poemField]) {
+        const poemJson = result.rows[0][poemField];
+        const poem: Poem =
+          typeof poemJson === "string" ? JSON.parse(poemJson) : poemJson;
+
+        if (poem?.content) {
+          const content = extractPoemExcerpt(poem);
+
+          if (content.length <= MAX_EXCERPT_LENGTH) {
+            c.header("Content-Type", "text/plain; charset=utf-8");
+            c.header("Cache-Control", "no-store");
+            return c.text(content);
+          }
+        }
+      }
+
+      throw new Error("Could not retrieve valid poem");
+    } catch (error) {
+      const staticPoem = `تُضحي إِذا دَقَّ المَطِيُّ كَأَنَّها\nفَدَنُ اِبنِ حَيَّةَ شادَهُ بِالآجُرِ\n\nثعلبة المازني`;
+
+      c.header("Content-Type", "text/plain; charset=utf-8");
+      c.header("Cache-Control", "no-store");
+      return c.text(staticPoem);
     }
-
-    const poemJson = result.rows[0].get_a_random_poem;
-    const poem: Poem =
-      typeof poemJson === "string" ? JSON.parse(poemJson) : poemJson;
-
-    if (!poem || typeof poem !== "object" || !poem.content) {
-      throw new HTTPException(500, { message: "Invalid poem data format" });
-    }
-
-    const content = extractPoemExcerpt(poem);
-
-    if (content.length > MAX_EXCERPT_LENGTH) {
-      throw new HTTPException(500, {
-        message: `Excerpt exceeds maximum length: ${content.length}/${MAX_EXCERPT_LENGTH}`,
-      });
-    }
-
-    c.header("Content-Type", "text/plain; charset=utf-8");
-    c.header("Cache-Control", "no-store");
-    return c.text(content);
   })
   .get(
     "/slug/:slug",
