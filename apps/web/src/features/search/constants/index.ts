@@ -118,7 +118,7 @@ export const RHYMES = [
   { id: 45, name: 'العين' },
 ];
 
-export const searchTypeOptions: SelectOption[] = [
+export const searchTypeOptions: [SelectOption, SelectOption] = [
   { value: 'poems', label: 'بيـت' },
   { value: 'poets', label: 'شاعر' },
 ];

@@ -6,7 +6,7 @@ import { type ArabicNounForms } from 'arabic-count-format';
 
 type Props = {
   searchTypeLabelText: string;
-  searchTypeOptions: SelectOption[];
+  searchTypeOptions: [SelectOption, SelectOption];
   searchParamsSearchType: string;
   handleCustomSearchTypeChange: (value: string) => void;
   searchTypePlaceholderText: string;
