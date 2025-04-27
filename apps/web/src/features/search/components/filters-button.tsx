@@ -1,4 +1,5 @@
 import { Button } from '@/components/shadcn/button';
+import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronUp, Filter } from 'lucide-react';
 import type { MouseEventHandler } from 'react';
 
@@ -10,9 +11,14 @@ type Props = {
 export function FiltersButton({ toggleFilters, filtersVisible }: Props) {
   return (
     <Button
-      variant="ghost"
+      variant="default"
       onClick={toggleFilters}
-      className="text-base font-normal flex items-center gap-4 px-2 py-1 text-white hover:bg-zinc-950 bg-zinc-900 hover:text-zinc-50"
+      className={cn(
+        'text-base font-normal flex items-center gap-4 px-2 py-1',
+        filtersVisible
+          ? 'text-zinc-950 hover:text-zinc-800 bg-white hover:bg-zinc-50 focus-visible:ring-zinc-300/40'
+          : ' text-white hover:text-zinc-50 bg-zinc-900 hover:bg-zinc-800'
+      )}
       aria-label={filtersVisible ? 'Collapse filters' : 'Expand filters'}
     >
       <Filter className="h-2 w-2" />

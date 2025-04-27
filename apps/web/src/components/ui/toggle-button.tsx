@@ -47,7 +47,7 @@ function ToggleItem({ label, isActive }: { label: string; isActive: boolean }) {
     <span
       className={cn(
         'flex items-center justify-center w-full h-full text-zinc-600',
-        isActive ? 'text-zinc-950 bg-zinc-400/70' : 'text-zinc-600'
+        isActive ? 'text-white bg-zinc-900' : 'text-zinc-600'
       )}
     >
       {label}
