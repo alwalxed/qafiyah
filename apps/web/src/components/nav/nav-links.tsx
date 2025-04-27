@@ -42,7 +42,7 @@ export function NavLinks({ links, className = '', isMobile = false, onLinkClick 
         {links.map((link) => (
           <li
             key={link.href}
-            className={isMobile ? 'w-full text-right border-b border-zinc-100 pb-2' : ''}
+            className={isMobile ? 'w-full text-right border-b border-zinc-300/30 pb-2' : ''}
           >
             <a
               href={link.href}

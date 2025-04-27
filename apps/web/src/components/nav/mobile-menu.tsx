@@ -22,7 +22,7 @@ export function MobileMenu() {
   return (
     <div
       id="mobile-menu"
-      className={`fixed overflow-auto inset-0 bg-white z-20 pt-20 px-4 transition-transform duration-300 ease-in-out transform ${
+      className={`fixed overflow-auto inset-0 bg-zinc-50 z-20 pt-20 px-4 transition-transform duration-300 ease-in-out transform ${
         mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}
     >
