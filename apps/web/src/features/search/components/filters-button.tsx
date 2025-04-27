@@ -13,6 +13,7 @@ export function FiltersButton({ toggleFilters, filtersVisible }: Props) {
       variant="ghost"
       onClick={toggleFilters}
       className="text-base font-normal flex items-center gap-4 px-2 py-1 text-white hover:bg-zinc-950 bg-zinc-900 hover:text-zinc-50"
+      aria-label={filtersVisible ? 'Collapse filters' : 'Expand filters'}
     >
       <Filter className="h-2 w-2" />
       {filtersVisible ? <ChevronUp className="h-2 w-2" /> : <ChevronDown className="h-2 w-2" />}

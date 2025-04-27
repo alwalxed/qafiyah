@@ -55,6 +55,7 @@ export function SearchInput({
           spellCheck={false}
           onChange={handleCustomInputChange}
           onKeyDown={handleCustomKeyDown}
+          aria-label={searchLabel}
           className={cn(
             'pl-10 text-right h-12 border-0 ring-1 ring-zinc-300/40 shadow-none focus:border-0 focus:ring-0 focus-visible:ring-zinc-300/90 focus-within:ring-1 md:text-lg placeholder:text-zinc-800/50 bg-white rounded-xl',
             {
