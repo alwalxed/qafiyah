@@ -10,7 +10,7 @@ export function usePlaceholderTypewriter() {
     queryKey: ['random-line'],
     queryFn: getRandomLine,
     retry: 2,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 60 * 60 * 1000 * 24 * 30, // 1 month
   });
 
   const [currentContent, setCurrentContent] = useState('');
@@ -29,7 +29,7 @@ export function usePlaceholderTypewriter() {
     reset,
   } = useTypingEffect({
     text: currentContent,
-    options: { loop: true, loopDelay: 5 * 1000 },
+    options: { loop: true, loopDelay: 7 * 1000 },
   });
 
   useEffect(() => {

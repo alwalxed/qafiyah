@@ -119,8 +119,8 @@ export const RHYMES = [
 ];
 
 export const searchTypeOptions: SelectOption[] = [
-  { value: 'poems', label: 'عن بيت أو قصيدة' },
-  { value: 'poets', label: 'عن شاعر أو شاعرة' },
+  { value: 'poems', label: 'بيـت' },
+  { value: 'poets', label: 'شاعر' },
 ];
 
 export const matchTypeOptions: SelectOption[] = [
