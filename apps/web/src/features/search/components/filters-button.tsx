@@ -16,7 +16,7 @@ export function FiltersButton({ toggleFilters, filtersVisible }: Props) {
       className={cn(
         'text-base font-normal flex items-center gap-4 px-2 py-1 transition-none duration-0 shadow-none ring-1 ring-zinc-300/40 border-0 outline-none',
         filtersVisible
-          ? 'text-zinc-500/80 hover:text-zinc-500 duration-200 bg-white hover:bg-zinc-50/80 focus-visible:ring-zinc-300/40'
+          ? 'text-zinc-500/80 hover:text-zinc-500 duration-200 bg-white hover:bg-white focus-visible:ring-zinc-300/40'
           : ' text-white hover:text-zinc-50 bg-zinc-900 hover:bg-zinc-800'
       )}
       aria-label={filtersVisible ? 'Collapse filters' : 'Expand filters'}
