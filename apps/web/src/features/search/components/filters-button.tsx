@@ -14,7 +14,7 @@ export function FiltersButton({ toggleFilters, filtersVisible }: Props) {
       variant="default"
       onClick={toggleFilters}
       className={cn(
-        'text-base font-normal rounded-xl flex items-center gap-4 px-2 py-1 transition-none duration-0 shadow-none ring-1 ring-zinc-300/40 border-0 outline-none',
+        'text-base font-normal h-12 rounded-xl flex justify-between gap-4 items-center px-8 transition-none duration-0 shadow-none ring-1 ring-zinc-300/40 border-0 outline-none',
         filtersVisible
           ? 'text-zinc-500/80 hover:text-zinc-500 duration-200 bg-white hover:bg-white focus-visible:ring-zinc-300/40'
           : ' text-white hover:text-zinc-50 bg-zinc-900 hover:bg-zinc-800'
