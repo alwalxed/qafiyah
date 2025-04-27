@@ -95,31 +95,8 @@ export default function RootLayout({
         }
       )}
     >
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        {/* Security Headers */}
-        <meta
-          httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; media-src 'self'; frame-src 'self';"
-        />
-        <meta
-          httpEquiv="Strict-Transport-Security"
-          content="max-age=31536000; includeSubDomains; preload"
-        />
-        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
-        <meta httpEquiv="X-Frame-Options" content="DENY" />
-        <meta httpEquiv="X-XSS-Protection" content="1; mode=block" />
-        <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
-      </head>
       <body className="bg-zinc-50 font-sans min-h-svh justify-between items-start flex flex-col relative overflow-x-hidden text-zinc-950 w-full px-4 md:px-20 lg:px-40 xl:px-60 2xl:px-80">
         <RootLayoutClient>{children}</RootLayoutClient>
-        <Script
-          defer
-          src="https://static.cloudflareinsights.com/beacon.min.js"
-          data-cf-beacon='{"token": "06489115d0274ef48365b8f35fd857ee"}'
-          strategy="afterInteractive"
-        />
         <Script
           id="json-ld"
           type="application/ld+json"
