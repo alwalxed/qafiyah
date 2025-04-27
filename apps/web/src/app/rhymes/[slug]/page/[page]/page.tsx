@@ -1,6 +1,7 @@
 import { NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import type { Metadata } from 'next';
+import { toArabicDigits } from 'to-arabic-digits';
 import RhymePoemsSlugClientPage from './client';
 export const runtime = 'edge';
 
@@ -64,7 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (RHYMES.has(slug)) {
     const rhymePattern = RHYMES.get(slug);
     return {
-      title: `قافية | قصائد على قافية ${rhymePattern}`,
+      title: `قافية | قصائد على قافية ${rhymePattern} | صفحة (${toArabicDigits(page)})`,
       openGraph: {
         url: `${SITE_URL}/rhymes/${slug}/page/${page || 1}`,
         title: `قافية | قصائد على قافية ${rhymePattern}`,

@@ -71,15 +71,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     const description = flattenVerses(processedContent.verses);
 
+    const title = `${clearTitle} — ${poet_name}`;
     return {
-      title: `${clearTitle} | ${poet_name} | قافية`,
+      title,
       description,
       keywords: keywords,
       authors: [{ name: poet_name }],
       robots: { index: true, follow: true },
       openGraph: {
         url: `${SITE_URL}/poems/${slug}`,
-        title: `${clearTitle} | ${poet_name} | قافية`,
+        title,
         description,
         images: [
           {
@@ -91,7 +92,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ],
       },
       twitter: {
-        title: `${clearTitle} — ${poet_name}`,
+        title,
         card: 'summary',
         creatorId: '1570116567538475010',
         creator: '@qafiyahdotcom',

@@ -1,6 +1,7 @@
 import { NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import type { Metadata } from 'next';
+import { toArabicDigits } from 'to-arabic-digits';
 import PoetsClientPage from './client';
 
 export const runtime = 'edge';
@@ -11,13 +12,13 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { page } = await params;
-
+  const title = `قافية | تصفح حسب الدواوين | صفحة (${toArabicDigits(page)})`;
   if (page) {
     return {
-      title: 'قافية | تصفح حسب الدواوين',
+      title,
       openGraph: {
         url: `${SITE_URL}/poets/page/${page || 1}`,
-        title: 'قافية | تصفح حسب الدواوين',
+        title,
         images: [
           {
             url: htmlHeadMetadata.openGraphUrl,
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ],
       },
       twitter: {
-        title: 'قافية | تصفح حسب الدواوين',
+        title,
         images: [htmlHeadMetadata.openGraphUrl],
       },
     };

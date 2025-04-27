@@ -1,6 +1,7 @@
 import { NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import type { Metadata } from 'next';
+import { toArabicDigits } from 'to-arabic-digits';
 import MeterSlugClientPage from './client';
 export const runtime = 'edge';
 
@@ -60,11 +61,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (METERS.has(slug)) {
     const meterName = METERS.get(slug);
+    const title = `قافية | قصائد بحر ${meterName} | صفحة (${toArabicDigits(page)})`;
     return {
-      title: `قافية | قصائد بحر ${meterName}`,
+      title,
       openGraph: {
         url: `${SITE_URL}/meters/page/${page || 1}`,
-        title: `قافية | قصائد بحر ${meterName}`,
+        title,
         images: [
           {
             url: htmlHeadMetadata.openGraphUrl,
@@ -75,7 +77,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ],
       },
       twitter: {
-        title: `قافية | قصائد بحر ${meterName}`,
+        title,
         images: [htmlHeadMetadata.openGraphUrl],
       },
     };

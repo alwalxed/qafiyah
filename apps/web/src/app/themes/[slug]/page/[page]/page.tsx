@@ -1,6 +1,7 @@
 import { NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import type { Metadata } from 'next';
+import { toArabicDigits } from 'to-arabic-digits';
 import ThemePoemsSlugClientPage from './client';
 export const runtime = 'edge';
 
@@ -43,11 +44,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (THEMES.has(slug)) {
     const themeName = THEMES.get(slug);
+    const title = `قافية | قصائد ${themeName} | صفحة (${toArabicDigits(page)})`;
     return {
-      title: `قافية | قصائد ${themeName}`,
+      title,
       openGraph: {
         url: `${SITE_URL}/themes/${slug}/page/${page || 1}`,
-        title: `قافية | قصائد ${themeName}`,
+        title,
         images: [
           {
             url: htmlHeadMetadata.openGraphUrl,
@@ -58,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ],
       },
       twitter: {
-        title: `قافية | قصائد ${themeName}`,
+        title,
         images: [htmlHeadMetadata.openGraphUrl],
       },
     };

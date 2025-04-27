@@ -19,7 +19,7 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
           className="hover:cursor-pointer hover:underline"
           href={TWITTER_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
           تويترنا
         </a>
@@ -28,7 +28,7 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
           className="hover:cursor-pointer hover:underline"
           href={GITHUB_REPO_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
           كود الموقع
         </a>
@@ -37,7 +37,7 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
           className="hover:cursor-pointer hover:underline"
           href={DB_DUMPS_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
           قاعدة البيانات
         </a>

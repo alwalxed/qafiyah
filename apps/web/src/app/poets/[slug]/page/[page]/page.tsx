@@ -57,8 +57,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const poemsCount = poetData?.poemsCount || 0;
     const eraName = poetData?.era?.name || 'غير محدد';
 
+    const title = `قافية | ديوان «${poetName}» | صفحة (${toArabicDigits(page)})`;
     return {
-      title: `قافية | ديوان ${poetName}`,
+      title,
       description: `قصائد الشاعر ${poetName} من العصر ال${eraName}، عدد القصائد: ${toArabicDigits(poemsCount)}`,
       keywords: `${poetName}, شعر, قصائد, العصر ال${eraName}, شاعر`,
       authors: [{ name: poetName }],
