@@ -3,7 +3,7 @@
 import { Input } from '@/components/shadcn/input';
 import { cn } from '@/lib/utils';
 import { CircleX } from 'lucide-react';
-import { type ChangeEventHandler, type KeyboardEventHandler, type MouseEventHandler } from 'react';
+import { type ChangeEventHandler, type KeyboardEventHandler } from 'react';
 
 type Props = {
   hasSubmitted: boolean;
@@ -13,7 +13,6 @@ type Props = {
   validationError: string | null;
   searchLabel: string;
 
-  handleCustomSearch: MouseEventHandler<HTMLButtonElement>;
   handleCustomKeyDown: KeyboardEventHandler<HTMLInputElement>;
   handleCustomInputChange: ChangeEventHandler<HTMLInputElement>;
   resetAllStates: () => void;
