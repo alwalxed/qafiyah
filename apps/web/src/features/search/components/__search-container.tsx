@@ -68,7 +68,6 @@ export function SearchContainer() {
                 inputValue={inputValue}
                 validationError={validationError}
                 handleCustomKeyDown={handleCustomKeyDown}
-                handleCustomSearch={handleCustomSearch}
                 handleCustomInputChange={handleCustomInputChange}
                 resetAllStates={resetAllStates}
               />
@@ -89,6 +88,10 @@ export function SearchContainer() {
 
               {filtersVisible && (
                 <Filters
+                  handleCustomSearch={handleCustomSearch}
+                  inputValue={inputValue}
+                  isLoading={isLoading}
+                  searchLabel={text.search}
                   searchType={searchType}
                   searchTypeLabelText={text.searchTypeLabel}
                   searchTypeOptions={searchTypeOptions}

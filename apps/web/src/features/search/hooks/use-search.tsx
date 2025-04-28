@@ -184,8 +184,8 @@ export function useSearch() {
     matchType === 'any'
       ? 'بعض الكلمات'
       : matchType === 'all'
-        ? 'جميع الكلمات'
-        : 'جميع الكلمات (متتالية)';
+        ? 'كل الكلمات'
+        : 'كل الكلمات (متتالية)';
   //
   const normalizedCount = data?.[0]?.total_count ?? 0;
 

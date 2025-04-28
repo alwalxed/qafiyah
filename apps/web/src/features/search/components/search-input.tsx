@@ -2,7 +2,7 @@
 
 import { Input } from '@/components/shadcn/input';
 import { cn } from '@/lib/utils';
-import { CircleX, Loader2, SearchIcon } from 'lucide-react';
+import { CircleX } from 'lucide-react';
 import { type ChangeEventHandler, type KeyboardEventHandler, type MouseEventHandler } from 'react';
 
 type Props = {
@@ -30,7 +30,6 @@ export function SearchInput({
   validationError,
   searchLabel,
 
-  handleCustomSearch,
   handleCustomKeyDown,
   handleCustomInputChange,
   resetAllStates,
@@ -65,7 +64,7 @@ export function SearchInput({
           )}
           dir="rtl"
         />
-        <div className="bg-white pr-2 absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 h-full">
+        <div className="bg-white pr-2 absolute left-3 top-1/2 -translate-y-1/2 flex items-center h-full">
           {inputValue.trim() && !isLoading && (
             <button
               onClick={resetAllStates}
@@ -75,18 +74,6 @@ export function SearchInput({
               <CircleX className="h-4 w-4" />
             </button>
           )}
-          <button
-            onClick={handleCustomSearch}
-            disabled={isLoading || !inputValue.trim()}
-            className="text-zinc-500 hover:text-zinc-800 disabled:opacity-50 disabled:pointer-events-none"
-            aria-label={searchLabel}
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <SearchIcon className="h-4 w-4" />
-            )}
-          </button>
         </div>
       </div>
     </div>
