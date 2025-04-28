@@ -181,7 +181,11 @@ export function useSearch() {
 
   const searchTypeText = searchType === 'poems' ? 'بيت' : 'شاعر';
   const matchTypeText =
-    matchType === 'any' ? 'أي كلمة' : matchType === 'all' ? 'جميع الكلمات' : 'مطابقة';
+    matchType === 'any'
+      ? 'بعض الكلمات'
+      : matchType === 'all'
+        ? 'جميع الكلمات'
+        : 'جميع الكلمات (متتالية)';
   //
   const normalizedCount = data?.[0]?.total_count ?? 0;
 
