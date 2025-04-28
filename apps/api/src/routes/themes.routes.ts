@@ -5,15 +5,17 @@ import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { FETCH_PER_PAGE } from "../constants";
-import { themePoemsMaterialized, themeStatsMaterialized } from "../schemas/db";
+import { themePoems, themeStats } from "../schemas/db";
 import type { AppContext } from "../types";
 
 const app = new Hono<AppContext>()
   .get("/", async (c) => {
     const db = c.get("db");
-    const themeStats = await db.select().from(themeStatsMaterialized);
-
-    const cleanup = themeStats.sort((a, b) => b.poemsCount - a.poemsCount);
+    const themeStatResults = await db.select().from(themeStats);
+    // -------------------------------------------------------->
+    const cleanup = themeStatResults.sort(
+      (a, b) => b.poemsCount - a.poemsCount
+    );
 
     return c.json(createValidatedResponse("themesList", cleanup));
   })
@@ -29,12 +31,12 @@ const app = new Hono<AppContext>()
 
       const themeInfo = await db
         .select({
-          themeId: themePoemsMaterialized.themeId,
-          themeName: themePoemsMaterialized.themeName,
-          totalPoems: themePoemsMaterialized.totalPoemsByTheme,
+          themeId: themePoems.themeId,
+          themeName: themePoems.themeName,
+          totalPoems: themePoems.totalPoemsByTheme,
         })
-        .from(themePoemsMaterialized)
-        .where(eq(themePoemsMaterialized.themeSlug, slug))
+        .from(themePoems)
+        .where(eq(themePoems.themeSlug, slug))
         .limit(1);
 
       if (!themeInfo.length || !themeInfo[0]) {
@@ -43,13 +45,13 @@ const app = new Hono<AppContext>()
 
       const poems = await db
         .select({
-          title: themePoemsMaterialized.poemTitle,
-          slug: themePoemsMaterialized.poemSlug,
-          poetName: themePoemsMaterialized.poetName,
-          meter: themePoemsMaterialized.meterName,
+          title: themePoems.poemTitle,
+          slug: themePoems.poemSlug,
+          poetName: themePoems.poetName,
+          meter: themePoems.meterName,
         })
-        .from(themePoemsMaterialized)
-        .where(eq(themePoemsMaterialized.themeSlug, slug))
+        .from(themePoems)
+        .where(eq(themePoems.themeSlug, slug))
         .limit(limit)
         .offset(offset);
 

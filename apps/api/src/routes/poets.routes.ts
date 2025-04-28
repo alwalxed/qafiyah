@@ -9,11 +9,7 @@ import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { FETCH_PER_PAGE } from "../constants";
-import {
-  poemsView,
-  poetPoemsMaterialized,
-  poetStatsMaterialized,
-} from "../schemas/db";
+import { poemsFullData, poetPoems, poetStats } from "../schemas/db";
 import type { AppContext } from "../types";
 
 const app = new Hono<AppContext>()
@@ -24,17 +20,13 @@ const app = new Hono<AppContext>()
     const limit = FETCH_PER_PAGE;
     const offset = (page - 1) * limit;
 
-    const poets = await db
-      .select()
-      .from(poetStatsMaterialized)
-      .limit(limit)
-      .offset(offset);
+    const poets = await db.select().from(poetStats).limit(limit).offset(offset);
 
     if (poets.length === 0 || !poets[0]) {
       throw new HTTPException(404, { message: "No poets found for this page" });
     }
 
-    const totalPoets = await db.$count(poetStatsMaterialized);
+    const totalPoets = await db.$count(poetStats);
     const totalPages = Math.ceil(totalPoets / limit);
 
     const responseData = {
@@ -61,12 +53,12 @@ const app = new Hono<AppContext>()
 
     const poetInfo = await db
       .select({
-        poetId: poetPoemsMaterialized.poetId,
-        poetName: poetPoemsMaterialized.poetName,
-        totalPoems: poetPoemsMaterialized.totalPoemsByPoet,
+        poetId: poetPoems.poetId,
+        poetName: poetPoems.poetName,
+        totalPoems: poetPoems.totalPoemsByPoet,
       })
-      .from(poetPoemsMaterialized)
-      .where(eq(poetPoemsMaterialized.poetSlug, slug))
+      .from(poetPoems)
+      .where(eq(poetPoems.poetSlug, slug))
       .limit(1);
 
     if (!poetInfo.length || !poetInfo[0]) {
@@ -75,11 +67,11 @@ const app = new Hono<AppContext>()
 
     const eraInfo = await db
       .select({
-        eraName: poemsView.era_name,
-        eraSlug: poemsView.era_slug,
+        eraName: poemsFullData.era_name,
+        eraSlug: poemsFullData.era_slug,
       })
-      .from(poemsView)
-      .where(eq(poemsView.poet_slug, slug))
+      .from(poemsFullData)
+      .where(eq(poemsFullData.poet_slug, slug))
       .limit(1);
 
     const responseData = {
@@ -110,12 +102,12 @@ const app = new Hono<AppContext>()
 
       const poetInfo = await db
         .select({
-          poetId: poetPoemsMaterialized.poetId,
-          poetName: poetPoemsMaterialized.poetName,
-          totalPoems: poetPoemsMaterialized.totalPoemsByPoet,
+          poetId: poetPoems.poetId,
+          poetName: poetPoems.poetName,
+          totalPoems: poetPoems.totalPoemsByPoet,
         })
-        .from(poetPoemsMaterialized)
-        .where(eq(poetPoemsMaterialized.poetSlug, slug))
+        .from(poetPoems)
+        .where(eq(poetPoems.poetSlug, slug))
         .limit(1);
 
       if (!poetInfo.length || !poetInfo[0]) {
@@ -124,13 +116,13 @@ const app = new Hono<AppContext>()
 
       const poems = await db
         .select({
-          title: poetPoemsMaterialized.poemTitle,
-          slug: poetPoemsMaterialized.poemSlug,
-          meter: poetPoemsMaterialized.meterName,
-          numVerses: poetPoemsMaterialized.numVerses,
+          title: poetPoems.poemTitle,
+          slug: poetPoems.poemSlug,
+          meter: poetPoems.meterName,
+          numVerses: poetPoems.numVerses,
         })
-        .from(poetPoemsMaterialized)
-        .where(eq(poetPoemsMaterialized.poetSlug, slug))
+        .from(poetPoems)
+        .where(eq(poetPoems.poetSlug, slug))
         .limit(limit)
         .offset(offset);
 

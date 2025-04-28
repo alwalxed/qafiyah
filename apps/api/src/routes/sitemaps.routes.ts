@@ -10,12 +10,12 @@ import {
   SITE_URL,
 } from "../constants";
 import {
-  eraStatsMaterialized,
-  meterStatsMaterialized,
-  poemsView,
-  poetStatsMaterialized,
-  rhymeStatsMaterialized,
-  themeStatsMaterialized,
+  eraStats,
+  meterStats,
+  poemsFullData,
+  poetStats,
+  rhymeStats,
+  themeStats,
 } from "../schemas/db";
 import { paginationSchema } from "../schemas/zod";
 import type { AppContext } from "../types";
@@ -28,7 +28,7 @@ const app = new Hono<AppContext>()
 
     const poemsCountResult = await db
       .select({ count: sql`count(*)` })
-      .from(poemsView);
+      .from(poemsFullData);
 
     if (!poemsCountResult[0]) {
       throw new Error();
@@ -122,7 +122,7 @@ const app = new Hono<AppContext>()
   // Eras sitemap
   .get("/eras", async (c) => {
     const db = c.get("db");
-    const eras = await db.select().from(eraStatsMaterialized);
+    const eras = await db.select().from(eraStats);
 
     const eraListEntries = [
       {
@@ -169,7 +169,7 @@ const app = new Hono<AppContext>()
   // Meters sitemap
   .get("/meters", async (c) => {
     const db = c.get("db");
-    const meters = await db.select().from(meterStatsMaterialized);
+    const meters = await db.select().from(meterStats);
 
     const meterListEntries = [
       {
@@ -218,7 +218,7 @@ const app = new Hono<AppContext>()
     const db = c.get("db");
     const totalPoetsResult = await db
       .select({ count: sql`count(*)` })
-      .from(poetStatsMaterialized);
+      .from(poetStats);
     const totalPoets = Number(totalPoetsResult[0]?.count) || 0;
 
     // Calculate total pages for poets based on actual FETCH_PER_PAGE
@@ -234,7 +234,7 @@ const app = new Hono<AppContext>()
     }));
 
     // Get all poets to generate individual poet page URLs
-    const poets = await db.select().from(poetStatsMaterialized);
+    const poets = await db.select().from(poetStats);
 
     // Create entries for individual poet pages
     const poetEntries = poets.flatMap((poet) => {
@@ -277,7 +277,7 @@ const app = new Hono<AppContext>()
   // Rhymes sitemap
   .get("/rhymes", async (c) => {
     const db = c.get("db");
-    const rhymes = await db.select().from(rhymeStatsMaterialized);
+    const rhymes = await db.select().from(rhymeStats);
 
     // Create entries for rhyme list page
     const rhymeListEntries = [
@@ -330,7 +330,7 @@ const app = new Hono<AppContext>()
   // Themes sitemap
   .get("/themes", async (c) => {
     const db = c.get("db");
-    const themes = await db.select().from(themeStatsMaterialized);
+    const themes = await db.select().from(themeStats);
 
     // Create entries for theme list page
     const themeListEntries = [
@@ -387,7 +387,7 @@ const app = new Hono<AppContext>()
     // Count total poems
     const poemsCountResult = await db
       .select({ count: sql`count(*)` })
-      .from(poemsView);
+      .from(poemsFullData);
 
     if (!poemsCountResult[0]) {
       throw new Error();
@@ -431,7 +431,7 @@ const app = new Hono<AppContext>()
     // Get poems for this page
     const poems = await db
       .select()
-      .from(poemsView)
+      .from(poemsFullData)
       .limit(MAX_URLS_PER_SITEMAP)
       .offset(offset);
 

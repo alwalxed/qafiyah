@@ -5,24 +5,42 @@ const app = new Hono<AppContext>().get("/", (c) => {
   return c.text(
     `Qafiyah API Reference
 
-- /                        - API health check
-- /eras                    - Get all literary eras
-- /eras/:slug/page/:page   - Get poems from a specific era
-- /meters                  - Get all poetic meters
-- /meters/:slug/page/:page - Get poems in a specific meter
-- /poems/random            - Get a random poem excerpt
-- /poems/slug/:slug        - Get poem details by slug
-- /poets/page/:page        - Get paginated list of poets
-- /poets/slug/:slug        - Get poet basic info
-- /poets/:slug/page/:page  - Get poems by a specific poet
-- /rhymes                  - Get all rhyme patterns
-- /rhymes/:slug/page/:page - Get poems with a specific rhyme
-- /search                  - Search poems or poets (params: q, search_type, page, match_type)
-- /sitemaps                - Get sitemap index
-- /themes                  - Get all themes
-- /themes/:slug/page/:page - Get poems with a specific theme
+Health Check:
+- GET /
 
-For more details, visit our repository:
+Eras:
+- GET /eras
+- GET /eras/:slug/page/:page
+
+Meters:
+- GET /meters
+- GET /meters/:slug/page/:page
+
+Poems:
+- GET /poems/random
+- GET /poems/slug/:slug
+
+Poets:
+- GET /poets/page/:page
+- GET /poets/slug/:slug
+- GET /poets/:slug/page/:page
+
+Rhymes:
+- GET /rhymes
+- GET /rhymes/:slug/page/:page
+
+Search:
+- GET /search
+  (params: q, search_type, page, match_type)
+
+Sitemaps:
+- GET /sitemaps
+
+Themes:
+- GET /themes
+- GET /themes/:slug/page/:page
+
+Repository:
 https://github.com/alwalxed/qafiyah`
   );
 });

@@ -5,25 +5,25 @@ import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { ARABIC_LETTERS_MAP, FETCH_PER_PAGE } from "../constants";
-import { rhymePoemsMaterialized, rhymeStatsMaterialized } from "../schemas/db";
+import { rhymePoems, rhymeStats } from "../schemas/db";
 import type { AppContext } from "../types";
 import { normalizeRhymePattern } from "../utils/rhyme";
 
 const app = new Hono<AppContext>()
   .get("/", async (c) => {
     const db = c.get("db");
-    const rhymeStats = await db.select().from(rhymeStatsMaterialized);
+    const rhymeStatResults = await db.select().from(rhymeStats);
 
     const groupedRhymes = new Map<
       string,
       {
-        rhymes: typeof rhymeStats;
+        rhymes: typeof rhymeStatResults;
         totalPoemsCount: number;
         totalPoetsCount: number;
       }
     >();
 
-    for (const rhyme of rhymeStats) {
+    for (const rhyme of rhymeStatResults) {
       const cleanPattern = normalizeRhymePattern(rhyme.pattern);
 
       for (const [letterName, variants] of ARABIC_LETTERS_MAP.entries()) {
@@ -82,12 +82,12 @@ const app = new Hono<AppContext>()
 
       const rhymeInfo = await db
         .select({
-          rhymeId: rhymePoemsMaterialized.rhymeId,
-          rhymePattern: rhymePoemsMaterialized.rhymePattern,
-          totalPoems: rhymePoemsMaterialized.totalPoemsByRhyme,
+          rhymeId: rhymePoems.rhymeId,
+          rhymePattern: rhymePoems.rhymePattern,
+          totalPoems: rhymePoems.totalPoemsByRhyme,
         })
-        .from(rhymePoemsMaterialized)
-        .where(eq(rhymePoemsMaterialized.rhymeSlug, slug))
+        .from(rhymePoems)
+        .where(eq(rhymePoems.rhymeSlug, slug))
         .limit(1);
 
       if (!rhymeInfo.length || !rhymeInfo[0]) {
@@ -96,12 +96,12 @@ const app = new Hono<AppContext>()
 
       const poems = await db
         .select({
-          title: rhymePoemsMaterialized.poemTitle,
-          slug: rhymePoemsMaterialized.poemSlug,
-          meter: rhymePoemsMaterialized.meterName,
+          title: rhymePoems.poemTitle,
+          slug: rhymePoems.poemSlug,
+          meter: rhymePoems.meterName,
         })
-        .from(rhymePoemsMaterialized)
-        .where(eq(rhymePoemsMaterialized.rhymeSlug, slug))
+        .from(rhymePoems)
+        .where(eq(rhymePoems.rhymeSlug, slug))
         .limit(limit)
         .offset(offset);
 

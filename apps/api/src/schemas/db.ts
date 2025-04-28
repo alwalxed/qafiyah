@@ -1,19 +1,12 @@
 import {
   integer,
   pgMaterializedView,
-  pgTable,
   pgView,
   text,
   uuid,
 } from "drizzle-orm/pg-core";
 
-/*
--------------------------------------
--------- MATERIALIZED VIEWS:
--------------------------------------
-*/
-
-export const eraStatsMaterialized = pgMaterializedView("era_stats_mv", {
+export const eraStats = pgView("era_stats", {
   id: integer("id").notNull(),
   name: text("name").notNull(),
   slug: text("slug").notNull(),
@@ -21,7 +14,7 @@ export const eraStatsMaterialized = pgMaterializedView("era_stats_mv", {
   poemsCount: integer("poems_count").notNull(),
 }).existing();
 
-export const eraPoemsMaterialized = pgMaterializedView("era_poems_mv", {
+export const eraPoems = pgView("era_poems", {
   poemId: integer("poem_id").notNull(),
   poemTitle: text("poem_title").notNull(),
   poemSlug: uuid("poem_slug").notNull(),
@@ -33,7 +26,7 @@ export const eraPoemsMaterialized = pgMaterializedView("era_poems_mv", {
   totalPoemsInEra: integer("total_poems_in_era").notNull(),
 }).existing();
 
-export const meterStatsMaterialized = pgMaterializedView("meter_stats_mv", {
+export const meterStats = pgView("meter_stats", {
   id: integer("id").notNull(),
   name: text("name").notNull(),
   slug: text("slug").notNull(),
@@ -41,7 +34,7 @@ export const meterStatsMaterialized = pgMaterializedView("meter_stats_mv", {
   poetsCount: integer("poets_count").notNull(),
 }).existing();
 
-export const meterPoemsMaterialized = pgMaterializedView("meter_poems_mv", {
+export const meterPoems = pgView("meter_poems", {
   poemId: integer("poem_id").notNull(),
   poemTitle: text("poem_title").notNull(),
   poemSlug: uuid("poem_slug").notNull(),
@@ -52,7 +45,7 @@ export const meterPoemsMaterialized = pgMaterializedView("meter_poems_mv", {
   totalPoemsInMeter: integer("total_poems_in_meter").notNull(),
 }).existing();
 
-export const poetStatsMaterialized = pgMaterializedView("poet_stats_mv", {
+export const poetStats = pgView("poet_stats", {
   id: integer("id").notNull(),
   name: text("name").notNull(),
   slug: text("slug").notNull(),
@@ -60,7 +53,7 @@ export const poetStatsMaterialized = pgMaterializedView("poet_stats_mv", {
   poemsCount: integer("poems_count").notNull(),
 }).existing();
 
-export const poetPoemsMaterialized = pgMaterializedView("poet_poems_mv", {
+export const poetPoems = pgView("poet_poems", {
   poemId: integer("poem_id").notNull(),
   poemTitle: text("poem_title").notNull(),
   poemSlug: uuid("poem_slug").notNull(),
@@ -72,7 +65,7 @@ export const poetPoemsMaterialized = pgMaterializedView("poet_poems_mv", {
   totalPoemsByPoet: integer("total_poems_by_poet").notNull(),
 }).existing();
 
-export const rhymeStatsMaterialized = pgMaterializedView("rhyme_stats_mv", {
+export const rhymeStats = pgView("rhyme_stats", {
   id: integer("id").notNull(),
   pattern: text("pattern").notNull(),
   slug: uuid("slug").notNull(),
@@ -80,7 +73,7 @@ export const rhymeStatsMaterialized = pgMaterializedView("rhyme_stats_mv", {
   poetsCount: integer("poets_count").notNull(),
 }).existing();
 
-export const rhymePoemsMaterialized = pgMaterializedView("rhyme_poems_mv", {
+export const rhymePoems = pgView("rhyme_poems", {
   poemId: integer("poem_id").notNull(),
   poemTitle: text("poem_title").notNull(),
   poemSlug: uuid("poem_slug").notNull(),
@@ -91,7 +84,7 @@ export const rhymePoemsMaterialized = pgMaterializedView("rhyme_poems_mv", {
   totalPoemsByRhyme: integer("total_poems_by_rhyme").notNull(),
 }).existing();
 
-export const themeStatsMaterialized = pgMaterializedView("theme_stats_mv", {
+export const themeStats = pgView("theme_stats", {
   id: integer("id").notNull(),
   name: text("name").notNull(),
   slug: uuid("slug").notNull(),
@@ -99,7 +92,7 @@ export const themeStatsMaterialized = pgMaterializedView("theme_stats_mv", {
   poetsCount: integer("poets_count").notNull(),
 }).existing();
 
-export const themePoemsMaterialized = pgMaterializedView("theme_poems_mv", {
+export const themePoems = pgView("theme_poems", {
   poemId: integer("poem_id").notNull(),
   poemTitle: text("poem_title").notNull(),
   poemSlug: uuid("poem_slug").notNull(),
@@ -111,20 +104,14 @@ export const themePoemsMaterialized = pgMaterializedView("theme_poems_mv", {
   totalPoemsByTheme: integer("total_poems_by_theme").notNull(),
 }).existing();
 
-export const topPoetsMaterialized = pgMaterializedView("top_poets_mv", {
+export const topPoets = pgView("top_poets", {
   id: integer("id").notNull(),
   name: text("name").notNull(),
   slug: text("slug").notNull(),
   poemsCount: integer("poems_count").notNull(),
 }).existing();
 
-/*
--------------------------------------
--------- MATERIALIZED VIEWS:
--------------------------------------
-*/
-
-export const poemsView = pgView("poem_full_data_v", {
+export const poemsFullData = pgMaterializedView("poem_full_data", {
   slug: text("slug").notNull(),
   title: text("title"),
   content: text("content"),
@@ -136,68 +123,3 @@ export const poemsView = pgView("poem_full_data_v", {
   era_name: text("era_name"),
   era_slug: text("era_slug"),
 }).existing();
-
-/*
--------------------------------------
--------- TABLES
--------------------------------------
-*/
-
-export const poetsTable = pgTable("poets", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: text("name").notNull(),
-  slug: text("slug").notNull(),
-  era_id: integer("era_id")
-    .references(() => erasTable.id)
-    .notNull(),
-  bio: text("bio"),
-});
-
-export const poemsTable = pgTable("poems", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  title: text("title").notNull(),
-  meter_id: integer("meter_id")
-    .references(() => metersTable.id)
-    .notNull(),
-  num_verses: integer("num_verses").notNull(),
-  theme_id: integer("theme_id")
-    .references(() => themesTable.id)
-    .notNull(),
-  poet_id: integer("poet_id")
-    .references(() => poetsTable.id)
-    .notNull(),
-  filename: text("filename").notNull(),
-  slug: uuid("slug").notNull(),
-  content: text("content").notNull(),
-  rhyme_id: integer("rhyme_id").references(() => rhymesTable.id),
-  type_id: integer("type_id").references(() => typesTable.id),
-});
-
-export const themesTable = pgTable("themes", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: text("name").unique().notNull(),
-  slug: uuid("slug").unique().notNull(),
-});
-
-export const rhymesTable = pgTable("rhymes", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  pattern: text("pattern").unique().notNull(),
-  slug: uuid("slug").unique().notNull(),
-});
-
-export const metersTable = pgTable("meters", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: text("name").unique().notNull(),
-  slug: text("slug").unique().notNull(),
-});
-
-export const erasTable = pgTable("eras", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: text("name").unique().notNull(),
-  slug: text("slug").unique().notNull(),
-});
-
-export const typesTable = pgTable("types", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: text("name").notNull(),
-});

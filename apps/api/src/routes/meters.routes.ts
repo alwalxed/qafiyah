@@ -5,21 +5,22 @@ import { eq, inArray } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { FETCH_PER_PAGE, FORMAL_METERS } from "../constants";
-import { meterPoemsMaterialized, meterStatsMaterialized } from "../schemas/db";
+import { meterPoems, meterStats } from "../schemas/db";
 import type { AppContext } from "../types";
 
 const app = new Hono<AppContext>()
   .get("/", async (c) => {
     const db = c.get("db");
-    const meterStats = await db
+    const meterStatResults = await db
       .select()
-      .from(meterStatsMaterialized)
-      .where(inArray(meterStatsMaterialized.name, FORMAL_METERS));
-    const cleanup = meterStats.sort((a, b) =>
+      .from(meterStats)
+      .where(inArray(meterStats.name, FORMAL_METERS));
+    // ---------------------------------------------->
+    const meterStatCleanResults = meterStatResults.sort((a, b) =>
       a.name.localeCompare(b.name, "ar")
     );
 
-    return c.json(createValidatedResponse("metersList", cleanup));
+    return c.json(createValidatedResponse("metersList", meterStatCleanResults));
   })
   .get(
     "/:slug/page/:page",
@@ -33,12 +34,12 @@ const app = new Hono<AppContext>()
 
       const meterInfo = await db
         .select({
-          meterId: meterPoemsMaterialized.meterId,
-          meterName: meterPoemsMaterialized.meterName,
-          totalPoems: meterPoemsMaterialized.totalPoemsInMeter,
+          meterId: meterPoems.meterId,
+          meterName: meterPoems.meterName,
+          totalPoems: meterPoems.totalPoemsInMeter,
         })
-        .from(meterPoemsMaterialized)
-        .where(eq(meterPoemsMaterialized.meterSlug, slug))
+        .from(meterPoems)
+        .where(eq(meterPoems.meterSlug, slug))
         .limit(1);
 
       if (!meterInfo.length || !meterInfo[0]) {
@@ -47,12 +48,12 @@ const app = new Hono<AppContext>()
 
       const poems = await db
         .select({
-          title: meterPoemsMaterialized.poemTitle,
-          slug: meterPoemsMaterialized.poemSlug,
-          poetName: meterPoemsMaterialized.poetName,
+          title: meterPoems.poemTitle,
+          slug: meterPoems.poemSlug,
+          poetName: meterPoems.poetName,
         })
-        .from(meterPoemsMaterialized)
-        .where(eq(meterPoemsMaterialized.meterSlug, slug))
+        .from(meterPoems)
+        .where(eq(meterPoems.meterSlug, slug))
         .limit(limit)
         .offset(offset);
 

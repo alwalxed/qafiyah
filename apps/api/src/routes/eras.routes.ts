@@ -5,19 +5,20 @@ import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { ERAS_SORT_ORDER, FETCH_PER_PAGE } from "../constants";
-import { eraPoemsMaterialized, eraStatsMaterialized } from "../schemas/db";
+import { eraPoems, eraStats } from "../schemas/db";
 import type { AppContext } from "../types";
 
 const app = new Hono<AppContext>()
   .get("/", async (c) => {
     const db = c.get("db");
-    const eraStats = await db.select().from(eraStatsMaterialized);
-    const cleanup = eraStats.sort(
+    const eraStatResults = await db.select().from(eraStats);
+    // ---------------------------------------------------->
+    const eraStatCleanResults = eraStatResults.sort(
       (a, b) =>
         ERAS_SORT_ORDER.indexOf(a.name) - ERAS_SORT_ORDER.indexOf(b.name)
     );
 
-    return c.json(createValidatedResponse("erasList", cleanup));
+    return c.json(createValidatedResponse("erasList", eraStatCleanResults));
   })
   .get(
     "/:slug/page/:page",
@@ -29,42 +30,41 @@ const app = new Hono<AppContext>()
       const limit = FETCH_PER_PAGE;
       const offset = (page - 1) * limit;
 
-      // Get era info and poems
-      const eraInfo = await db
+      const eraInfoResults = await db
         .select({
-          eraId: eraPoemsMaterialized.eraId,
-          eraName: eraPoemsMaterialized.eraName,
-          totalPoems: eraPoemsMaterialized.totalPoemsInEra,
+          eraId: eraPoems.eraId,
+          eraName: eraPoems.eraName,
+          totalPoems: eraPoems.totalPoemsInEra,
         })
-        .from(eraPoemsMaterialized)
-        .where(eq(eraPoemsMaterialized.eraSlug, slug))
+        .from(eraPoems)
+        .where(eq(eraPoems.eraSlug, slug))
         .limit(1);
 
-      if (!eraInfo.length || !eraInfo[0]) {
+      if (!eraInfoResults.length || !eraInfoResults[0]) {
         throw new HTTPException(404, { message: "Era not found" });
       }
 
-      const poems = await db
+      const poemResults = await db
         .select({
-          title: eraPoemsMaterialized.poemTitle,
-          slug: eraPoemsMaterialized.poemSlug,
-          poetName: eraPoemsMaterialized.poetName,
-          meter: eraPoemsMaterialized.meterName,
+          title: eraPoems.poemTitle,
+          slug: eraPoems.poemSlug,
+          poetName: eraPoems.poetName,
+          meter: eraPoems.meterName,
         })
-        .from(eraPoemsMaterialized)
-        .where(eq(eraPoemsMaterialized.eraSlug, slug))
+        .from(eraPoems)
+        .where(eq(eraPoems.eraSlug, slug))
         .limit(limit)
         .offset(offset);
 
-      const totalPages = Math.ceil(eraInfo[0].totalPoems / limit);
+      const totalPages = Math.ceil(eraInfoResults[0].totalPoems / limit);
 
       const responseData = {
         eraDetails: {
-          id: eraInfo[0].eraId,
-          name: eraInfo[0].eraName,
-          poemsCount: eraInfo[0].totalPoems,
+          id: eraInfoResults[0].eraId,
+          name: eraInfoResults[0].eraName,
+          poemsCount: eraInfoResults[0].totalPoems,
         },
-        poems,
+        poems: poemResults,
       };
 
       const paginationMeta = {
