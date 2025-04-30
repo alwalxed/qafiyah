@@ -1,5 +1,3 @@
-import { TWITTER_HANDLE } from './GLOBALS';
-
 export type NavLink = {
   name: string;
   href: string;
@@ -7,11 +5,6 @@ export type NavLink = {
 };
 
 export const NAV_LINKS: NavLink[] = [
-  {
-    name: 'التواصل',
-    href: `https://x.com/${TWITTER_HANDLE}`,
-    external: true,
-  },
   { name: 'الأغراض', href: '/themes', external: false },
   { name: 'القوافي', href: '/rhymes', external: false },
   { name: 'البحور', href: '/meters', external: false },

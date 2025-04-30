@@ -51,7 +51,10 @@ export function SearchContainer() {
   } = useSearch();
 
   return (
-    <section className="w-full mx-auto max-w-2xl py-24 flex h-full flex-1 justify-center items-center">
+    <section className="w-full mx-auto max-w-2xl flex flex-col h-full flex-1 justify-start items pb-24">
+      {/*  */}
+      <div className="h-[25svh] w-full"></div>
+
       <div className="w-full flex flex-col gap-10 md:gap-16" dir="rtl">
         <h1 className="font-bold text-center justify-center items-center text-2xl xxs:text-3xl xs:text-4xl md:text-5xl text-zinc-800 flex py-2">
           {text.currentHeaderTitle}

@@ -1,6 +1,6 @@
 'use client';
 
-import { DB_DUMPS_URL, GITHUB_REPO_URL, TWITTER_URL } from '@/constants/GLOBALS';
+import { GITHUB_REPO_URL, TWITTER_URL } from '@/constants/GLOBALS';
 import { cn } from '@/utils/conversions/cn';
 import { getArabicYear } from '@/utils/dates/get-arabic-year';
 
@@ -23,11 +23,20 @@ export function Footer({ className }: Props) {
       <div className="flex md:gap-3 gap-[6px]">
         <a
           className="hover:cursor-pointer hover:underline"
+          href="mailto:contact@qafiyah.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          بريد
+        </a>
+        <p>•</p>
+        <a
+          className="hover:cursor-pointer hover:underline"
           href={TWITTER_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
-          تويترنا
+          تويتر
         </a>
         <p>•</p>
         <a
@@ -36,16 +45,7 @@ export function Footer({ className }: Props) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          كود الموقع
-        </a>
-        <p>•</p>
-        <a
-          className="hover:cursor-pointer hover:underline"
-          href={DB_DUMPS_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          قاعدة البيانات
+          قتهب
         </a>
       </div>
 
