@@ -1,6 +1,6 @@
 # Qafiyah | قافية
 
-A free open-source Arabic poetry platform with 944K+ verses from 932 poets across 10 eras. Built with Nextjs, Hono, and Supabase. Provides full data dumps with no need for scraping. Supports advanced Arabic search. A Twitter bot posts a verse every 30 minutes.
+A free open-source Arabic poetry platform and database with 944K+ verses from 932 poets across 10 eras. Built with Nextjs, Hono, and Supabase. Provides full data dumps with no need for scraping. Supports advanced Arabic search. A Twitter bot posts a verse every hour.
 
 ## 📑 Table of Contents
 
@@ -10,26 +10,19 @@ A free open-source Arabic poetry platform with 944K+ verses from 932 poets acros
 - [📊 Data Statistics](#-data-statistics)
 - [🗄️ Data Schema](#️-data-schema)
 - [🚀 Development Setup](#-development-setup)
-- [📚 Terminology](#-terminology)
-- [❓ FAQ](#-faq)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
 
 ## 📋 Project Overview
 
-Our main channels:
-
 - **Website**: [qafiyah.com](https://qafiyah.com)
 - **API**: [api.qafiyah.com](https://api.qafiyah.com)
-- **Random Poem Endpoint**: [api.qafiyah.com/poems/random](https://api.qafiyah.com/poems/random)
-- **Twitter**: [@qafiyahdotcom](https://twitter.com/qafiyahdotcom)
-- **DB Dumps**: [database_dump.sql](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps)
+- **Twitter**: [x.com/qafiyahdotcom](https://twitter.com/qafiyahdotcom)
+- **Database**: [github.com/alwalxed/qafiyah/tree/main/.db_dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps)
 
 > **Important**: No need to scrape the website or API. All data is freely available in the [database dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps).
 
 ## 🏗️ Architecture
-
-This monorepo contains:
 
 - **Web**: Nextjs app running on Cloudflare Pages (Edge)
 - **API**: Hono-based Cloudflare Worker
@@ -38,11 +31,11 @@ This monorepo contains:
 
 ## 💻 Tech Stack
 
-| Component    | Technologies                                    |
-| ------------ | ----------------------------------------------- |
-| **Frontend** | Nextjs, React Query, Tailwind CSS, Zustand, Zod |
-| **Backend**  | Hono, Cloudflare Workers, Zod                   |
-| **Database** | Supabase PostgreSQL with Drizzle ORM            |
+| Component    | Technologies                               |
+| ------------ | ------------------------------------------ |
+| **Frontend** | Nextjs, React Query, Tailwind CSS, Zustand |
+| **Backend**  | Hono, Cloudflare Workers,                  |
+| **Database** | Supabase PostgreSQL with Drizzle ORM       |
 
 ## 📊 Data Statistics
 
@@ -126,27 +119,6 @@ _For latest data, use our [DB dumps](https://github.com/alwalxed/qafiyah/tree/ma
 | id     | integer | NO       | Primary key  |
 | name   | text    | NO       | Type of poem |
 
-### 🔁 `poem_cycle`
-
-Used to ensure random verse selection for the Twitter bot's PostgreSQL function
-
-| Column          | Type                        | Nullable | Default                        | Description             |
-| --------------- | --------------------------- | -------- | ------------------------------ | ----------------------- |
-| id              | integer                     | NO       | `nextval('poem_cycle_id_seq')` | Primary key             |
-| remaining_poems | ARRAY                       | YES      |                                | Poems left in the cycle |
-| cycle_start     | timestamp without time zone | YES      | `now()`                        | When the cycle started  |
-
-### 🐦 `poem_tweets`
-
-Stores verses to prevent reposting
-
-| Column     | Type                     | Nullable | Default | Description                  |
-| ---------- | ------------------------ | -------- | ------- | ---------------------------- |
-| id         | bigint                   | NO       |         | Tweet ID                     |
-| created_at | timestamp with time zone | NO       | `now()` | When the tweet was posted    |
-| content    | character varying        | NO       |         | Tweet content                |
-| poem_id    | integer                  | YES      |         | FK to `poems(id)` (optional) |
-
 ## 🚀 Development Setup
 
 ```bash
@@ -159,24 +131,16 @@ Add DATABASE_URL and SEARCH_DATABASE_URL to your .dev.vars file
 # 3. Import database dump
 Download and restore from https://github.com/alwalxed/qafiyah/tree/main/.db_dumps
 
-# 4. Recreate views and functions
-Run the materialized views and functions SQL from the Performance Optimizations section
-
-# 5. Install dependencies
+# 4. Install dependencies
 pnpm install
 
-# 6. Start development server
+# 5. Start development server
 pnpm dev
-
-# 7. Build for production
-pnpm build
 ```
 
-## 📚 Terminology
+## 📚 Further Reading
 
-- **Meter (بحر)**: Rhythmic pattern of syllables that structures a poem. Arabic poetry has 16 classical meters.
-- **Rhyme (قافية)**: Repeating sound pattern at the end of verses, based on the final letter and vowel patterns.
-- **Verse (بيت)**: Single line of poetry, typically composed of two hemistichs in classical Arabic poetry.
+Learn more about the search implementation in [SEARCH.md](https://github.com/alwalxed/qafiyah/blob/main/notes/features/SEARCH.md).
 
 ## 🤝 Contributing
 
