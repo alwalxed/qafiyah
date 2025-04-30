@@ -194,7 +194,7 @@ export function Filters({
           )}
         </button>
         <div className="absolute bottom-0 left-0 w-full justify-center px-8 items-center flex text-xs sm:text-sm py-4 text-zinc-700">
-          {'فرق بين همزة القطع والوصل، والتاء المربوطة والهاء'}
+          {'فرق بين القطع والوصل والتاء المربوطة والهاء'}
         </div>
       </div>
     </div>

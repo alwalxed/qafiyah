@@ -16,7 +16,7 @@ export function Footer({ className }: Props) {
   return (
     <footer
       className={cn(
-        'w-full flex justify-between items-center py-4 text-xs xss:text-sm md:text-base xl:text-lg border-t border-zinc-200/50 text-zinc-700/90 gap-4',
+        'w-full flex justify-between items-center py-4 text-xs xss:text-sm md:text-base xl:text-lg border-t border-zinc-300/40 text-zinc-600 gap-4',
         className
       )}
     >
