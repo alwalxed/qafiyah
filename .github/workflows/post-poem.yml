@@ -2,7 +2,7 @@ name: 🐦 Post Poem to Twitter
 
 on:
   schedule:
-    - cron: "*/29 * * * *" # Every 29 minutes (~50 times/day)
+    - cron: "0 * * * *" # Every hour (24 times/day)
   workflow_dispatch:
 
 jobs:
