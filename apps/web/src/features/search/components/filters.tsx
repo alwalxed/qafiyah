@@ -2,6 +2,7 @@ import { type SelectOption } from '@/components/ui/select';
 import { SelectMulti } from '@/components/ui/select-multi';
 import { SelectSingle } from '@/components/ui/select-single';
 import { BinaryToggleButton } from '@/components/ui/toggle-button';
+import { cn } from '@/utils/conversions/cn';
 import { type ArabicNounForms } from 'arabic-count-format';
 import { Loader2, SearchIcon } from 'lucide-react';
 
@@ -178,7 +179,12 @@ export function Filters({
         <button
           onClick={handleCustomSearch}
           disabled={isLoading || !inputValue.trim()}
-          className="hover:text-white disabled:cursor-not-allowed disabled:pointer-events-none w-full justify-center items-center h-9 md:h-11 rounded-lg flex text-zinc-50 bg-zinc-900"
+          className={cn(
+            'hover:text-white disabled:cursor-not-allowed disabled:pointer-events-none w-full justify-center items-center h-9 md:h-11 rounded-lg flex duration-300',
+            isLoading || !inputValue.trim()
+              ? 'bg-white text-zinc-600 ring-1 ring-zinc-300/40'
+              : 'bg-zinc-900 text-zinc-50 ring-1 ring-zinc-300/40'
+          )}
           aria-label={searchLabel}
         >
           {isLoading ? (
