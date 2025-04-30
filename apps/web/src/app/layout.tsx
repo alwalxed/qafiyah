@@ -4,7 +4,7 @@ import { cn } from '@/utils/conversions/cn';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import type React from 'react';
-import { ibmPlexSansArabic } from './font';
+import { ibmPlexSansArabic } from './fonts';
 import './globals.css';
 import { RootLayoutClient } from './layout-client';
 

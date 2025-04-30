@@ -3,7 +3,7 @@
 import { isDev } from '@/constants/GLOBALS';
 import { cn } from '@/utils/conversions/cn';
 import { useEffect } from 'react';
-import { ibmPlexSansArabic } from './font';
+import { ibmPlexSansArabic } from './fonts';
 
 export default function GlobalError({
   error,
