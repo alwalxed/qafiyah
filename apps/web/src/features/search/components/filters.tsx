@@ -180,10 +180,10 @@ export function Filters({
           onClick={handleCustomSearch}
           disabled={isLoading || !inputValue.trim()}
           className={cn(
-            'hover:text-white disabled:cursor-not-allowed disabled:pointer-events-none w-full justify-center items-center h-9 md:h-11 rounded-lg flex duration-300',
+            'hover:text-white disabled:cursor-not-allowed disabled:pointer-events-none w-full justify-center items-center h-12 rounded-lg flex duration-300',
             isLoading || !inputValue.trim()
               ? 'bg-white text-zinc-600 ring-1 ring-zinc-300/40'
-              : 'bg-zinc-900 text-zinc-50 ring-1 ring-zinc-300/40'
+              : 'bg-zinc-800 text-zinc-50 ring-1 ring-zinc-300/40'
           )}
           aria-label={searchLabel}
         >
@@ -193,7 +193,7 @@ export function Filters({
             <SearchIcon className="h-4 w-4" />
           )}
         </button>
-        <div className="absolute bottom-0 left-0 w-full justify-center px-8 items-center flex text-xs sm:text-sm py-4 text-zinc-700">
+        <div className="absolute bottom-0 left-0 w-full justify-center px-8 items-center flex text-xs sm:text-sm py-4 text-zinc-600">
           {'فرق بين القطع والوصل والتاء المربوطة والهاء'}
         </div>
       </div>

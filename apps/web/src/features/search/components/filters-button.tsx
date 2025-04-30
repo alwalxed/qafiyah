@@ -14,10 +14,10 @@ export function FiltersButton({ toggleFilters, filtersVisible }: Props) {
       variant="default"
       onClick={toggleFilters}
       className={cn(
-        'text-base font-normal h-12 rounded-xl flex justify-between gap-4 items-center px-8 transition-none duration-0 shadow-none ring-1 ring-zinc-300/40 border-0 outline-none',
+        'text-base font-normal h-12 rounded-xl flex justify-between gap-6 items-center px-4 transition-none duration-0 shadow-none ring-1 ring-zinc-300/40 border-0 outline-none',
         filtersVisible
-          ? 'text-zinc-500/80 hover:text-zinc-500 duration-200 bg-white hover:bg-white focus-visible:ring-zinc-300/40'
-          : ' text-white hover:text-zinc-50 bg-zinc-900 hover:bg-zinc-800'
+          ? 'text-zinc-600/80 hover:text-zinc-500 duration-200 bg-white hover:bg-white focus-visible:ring-zinc-300/40'
+          : 'text-zinc-50 hover:text-zinc-50 bg-zinc-800 hover:bg-zinc-800'
       )}
       aria-label={filtersVisible ? 'Collapse filters' : 'Expand filters'}
     >
