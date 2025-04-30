@@ -10,6 +10,7 @@ A free open-source Arabic poetry platform and database with 944K+ verses from 93
 - [📊 Data Statistics](#-data-statistics)
 - [🗄️ Data Schema](#️-data-schema)
 - [🚀 Development Setup](#-development-setup)
+- [📚 Further Reading](#-further-reading)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
 
