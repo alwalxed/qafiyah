@@ -12,7 +12,7 @@ type Props = {
 
 export function Nav({ className }: Props) {
   return (
-    <header className={cn(`w-full z-10`, className)}>
+    <nav className={cn(`w-full z-10`, className)}>
       <div className="w-full border-b border-zinc-200/50 py-4">
         <div className="flex justify-between items-center gap-8">
           {/* LOGO */}
@@ -28,6 +28,6 @@ export function Nav({ className }: Props) {
           <NavLinks links={NAV_LINKS} className="hidden md:block" />
         </div>
       </div>
-    </header>
+    </nav>
   );
 }

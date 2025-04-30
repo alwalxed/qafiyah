@@ -19,6 +19,10 @@ export default function Page() {
 
   return (
     <>
+      {/* server rendered for SEO ----- */}
+      <p className="sr-only">{htmlHeadMetadata.description}</p>
+      {/* ----------------------------- */}
+
       <JsonLd data={jsonLd} />
       <SearchContainer />
     </>
