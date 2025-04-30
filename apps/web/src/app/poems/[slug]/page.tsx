@@ -1,7 +1,9 @@
+import Loading from '@/app/loading';
 import { API_URL, NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import type { ProcessedPoem } from '@/lib/api/types';
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import PoemSlugClientPage from './client';
 export const runtime = 'edge';
 
@@ -117,5 +119,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default function Page() {
-  return <PoemSlugClientPage />;
+  return (
+    <Suspense fallback={<Loading />}>
+      <PoemSlugClientPage />
+    </Suspense>
+  );
 }

@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="text-center mx-auto min-h-[50svh] flex justify-center items-center flex-col gap-20">
+    <div className="h-full text-center mx-auto flex justify-center items-center flex-col gap-20">
       <div className="flex flex-col justify-center items-center gap-2">
         <h1 className="text-9xl font-bold text-zinc-700">{NOT_FOUND_CODE}</h1>
         <p className="text-4xl text-zinc-500">{NOT_FOUND_MESSAGE}</p>

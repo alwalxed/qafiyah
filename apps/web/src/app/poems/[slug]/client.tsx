@@ -1,5 +1,6 @@
 'use client';
 
+import Loading from '@/app/loading';
 import JsonLd from '@/components/json-ld';
 import { PoemDisplay } from '@/components/poem/poem-display';
 import { ErrorMessage } from '@/components/ui/error-message';
@@ -8,6 +9,7 @@ import { getPoem } from '@/lib/api/queries';
 import { useQuery } from '@tanstack/react-query';
 import { Home, RefreshCcw } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
 export const runtime = 'edge';
 
@@ -22,7 +24,6 @@ export default function PoemSlugClientPage() {
     isError,
     isFetching,
     isPending,
-    isPaused,
     refetch,
     error,
   } = useQuery({
@@ -57,25 +58,27 @@ export default function PoemSlugClientPage() {
     );
   }
 
-  if (isLoading || isPending || isFetching || isPaused) {
+  if (isLoading || isPending || isFetching) {
     return (
-      <div className="animate-pulse max-w-3xl mx-auto p-4">
-        <div className="h-10 bg-zinc-200/70 rounded-md w-3/4 mb-6"></div>
-        <div className="h-6 bg-zinc-200/70 rounded-md w-1/2 mb-8"></div>
-        <div className="space-y-4">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="flex justify-between gap-4">
-              <div className="h-6 bg-zinc-200/70 rounded-md w-1/2"></div>
-              <div className="h-6 bg-zinc-200/70 rounded-md w-1/2"></div>
-            </div>
-          ))}
+      <div className="animate-pulse flex justify-center items-center max-w-3xl mx-auto p-4 w-full h-full flex-1">
+        <div className="w-full h-full flex flex-col justify-center items-center">
+          <div className="h-10 bg-zinc-300/40 rounded-md w-3/4 mb-6"></div>
+          <div className="h-6 bg-zinc-300/40 rounded-md w-1/2 mb-8"></div>
+          <div className="space-y-4 w-full">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={index} className="flex justify-between gap-4 w-full">
+                <div className="h-6 bg-zinc-300/40 rounded-md w-1/2"></div>
+                <div className="h-6 bg-zinc-300/40 rounded-md w-1/2"></div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
   if (!poem) {
-    return <ErrorMessage message="لم يتم العثور على القصيدة" />;
+    return <ErrorMessage message="لم يعثر على القصيدة" />;
   }
 
   const { data, clearTitle, processedContent } = poem;
@@ -130,15 +133,18 @@ export default function PoemSlugClientPage() {
   } as const;
 
   return (
-    <>
-      <JsonLd data={jsonLd} />
-      <PoemDisplay
-        clearTitle={clearTitle}
-        data={data}
-        verses={verses}
-        verseCount={verseCount}
-        metadata={metadata}
-      />
-    </>
+    <Suspense fallback={<Loading />}>
+      <>
+        <JsonLd data={jsonLd} />
+
+        <PoemDisplay
+          clearTitle={clearTitle}
+          data={data}
+          verses={verses}
+          verseCount={verseCount}
+          metadata={metadata}
+        />
+      </>
+    </Suspense>
   );
 }
