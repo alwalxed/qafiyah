@@ -1,18 +1,24 @@
 'use client';
 
 import { DB_DUMPS_URL, GITHUB_REPO_URL, TWITTER_URL } from '@/constants/GLOBALS';
+import { cn } from '@/utils/conversions/cn';
 import { getArabicYear } from '@/utils/dates/get-arabic-year';
-import { forwardRef } from 'react';
 
 const FOOTER_TITLE = 'قافية';
 const FOOTER_SYMBOL = '/';
 const FOOTER_YEAR = getArabicYear();
 
-export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
+type Props = {
+  className?: string;
+};
+
+export function Footer({ className }: Props) {
   return (
     <footer
-      ref={ref}
-      className="w-full flex justify-between items-center py-4 text-xs xss:text-sm md:text-base xl:text-lg border-t border-zinc-200/50 text-zinc-700/90 gap-4"
+      className={cn(
+        'w-full flex justify-between items-center py-4 text-xs xss:text-sm md:text-base xl:text-lg border-t border-zinc-200/50 text-zinc-700/90 gap-4',
+        className
+      )}
     >
       <div className="flex md:gap-3 gap-[6px]">
         <a
@@ -46,4 +52,4 @@ export const Footer = forwardRef<HTMLElement>(function Footer(_props, ref) {
       <p>{`${FOOTER_TITLE} ${FOOTER_SYMBOL} ${FOOTER_YEAR}`}</p>
     </footer>
   );
-});
+}

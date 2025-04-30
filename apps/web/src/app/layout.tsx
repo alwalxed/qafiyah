@@ -1,12 +1,16 @@
+import { Footer } from '@/components/footer';
+import { MobileMenu } from '@/components/nav/mobile-menu';
+import { Nav } from '@/components/nav/nav';
 import { isDev, SITE_NAME, SITE_URL, TWITTER_HANDLE, TWITTER_ID } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
+import { Providers } from '@/providers/react-query';
 import { cn } from '@/utils/conversions/cn';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import type React from 'react';
 import { ibmPlexSansArabic } from './fonts';
 import './globals.css';
-import { RootLayoutClient } from './layout-client';
 
 export const metadata: Metadata = {
   title: htmlHeadMetadata.title,
@@ -88,15 +92,33 @@ export default function RootLayout({
       lang="ar"
       dir="rtl"
       className={cn(
-        'overflow-x-hidden bg-zinc-50 text-zinc-950 font-sans overflow-y-scroll',
+        'bg-zinc-50 text-zinc-950 font-sans',
+        'overflow-x-hidden overflow-y-scroll',
         ibmPlexSansArabic.variable,
         {
           'debug-screens': isDev,
         }
       )}
     >
-      <body className="bg-zinc-50 font-sans min-h-svh justify-between items-start flex flex-col relative overflow-x-hidden text-zinc-950 w-full px-4 md:px-20 lg:px-40 xl:px-60 2xl:px-80">
-        <RootLayoutClient>{children}</RootLayoutClient>
+      <body
+        className={cn(
+          'relative overflow-x-hidden',
+          'min-h-svh w-full',
+          'grid grid-rows-[auto_1fr_auto]',
+          'bg-zinc-50 text-zinc-950 font-sans',
+          'px-4 md:px-20 lg:px-40 xl:px-60 2xl:px-80'
+        )}
+      >
+        <Providers>
+          <NuqsAdapter>
+            <Nav />
+            <MobileMenu />
+            <main className={cn('flex-1 w-full', 'flex justify-start items-start')}>
+              {children}
+            </main>
+            <Footer />
+          </NuqsAdapter>
+        </Providers>
         <Script
           id="json-ld"
           type="application/ld+json"

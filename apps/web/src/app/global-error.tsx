@@ -26,7 +26,7 @@ export default function GlobalError({
       lang="ar"
       dir="rtl"
       className={cn(
-        'overflow-x-hidden bg-zinc-50 text-zinc-950 w-full',
+        'overflow-x-hidden bg-zinc-50 text-zinc-950 w-full overflow-y-scroll',
         ibmPlexSansArabic.variable,
         {
           'debug-screens': isDev,
@@ -66,7 +66,7 @@ export default function GlobalError({
               href="/"
               className="px-4 py-2 bg-zinc-500/20 hover:bg-zinc-700/20 text-zinc-700 rounded-md transition-colors cursor-pointer"
             >
-              الصفحة الرئيسية
+              الصفحة الرئيسة
             </a>
           </div>
           {error.digest && (

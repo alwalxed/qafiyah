@@ -1,14 +1,18 @@
 'use client';
 
 import { NAV_LINKS } from '@/constants/NAV_LINKS';
-import { forwardRef } from 'react';
+import { cn } from '@/lib/utils';
 import { Logo } from './logo';
 import { MobileMenuButton } from './mobile-menu-button';
 import { NavLinks } from './nav-links';
 
-export const Nav = forwardRef<HTMLElement>(function Nav(_props, ref) {
+type Props = {
+  className?: string;
+};
+
+export function Nav({ className }: Props) {
   return (
-    <header ref={ref} className={`w-full z-10`}>
+    <header className={cn(`w-full z-10`, className)}>
       <div className="w-full border-b border-zinc-200/50 py-4">
         <div className="flex justify-between items-center gap-8">
           {/* LOGO */}
@@ -26,4 +30,4 @@ export const Nav = forwardRef<HTMLElement>(function Nav(_props, ref) {
       </div>
     </header>
   );
-});
+}
