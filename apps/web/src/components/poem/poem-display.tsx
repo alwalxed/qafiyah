@@ -1,9 +1,10 @@
 'use client';
 
+import { useFontSize } from '@/hooks/use-font-size';
+import { useTweetUrl } from '@/hooks/use-tweet-url';
 import { getFormattedVersesCount } from '@/utils/texts/get-verse-count';
 import { Minus, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
-import { useEffect, useState } from 'react';
 
 export type PoemProps = {
   clearTitle: string;
@@ -22,42 +23,10 @@ export type PoemProps = {
 };
 
 export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps) {
-  const [fontSize, setFontSize] = useState(1); // 1 is the default size multiplier
-  const [currentUrl, setCurrentUrl] = useState('');
-
-  const handleTwitterShare = (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    const twitterShareUrl = `https://x.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`;
-
-    window.open(twitterShareUrl, '_blank', 'noopener,noreferrer');
-  };
-
-  const increaseFontSize = () => {
-    if (fontSize < 1.5) setFontSize((prev) => prev + 0.1);
-  };
-
-  const decreaseFontSize = () => {
-    if (fontSize > 0.7) setFontSize((prev) => prev - 0.1);
-  };
-
-  // Calculate the dynamic font size classes based on the fontSize state
-  const getVerseFontSize = () => {
-    const baseClasses = 'text-base xxs:text-lg xs:text-xl sm:text-2xl md:text-2xl';
-    const scaleStyle = { transform: `scale(${fontSize})`, transformOrigin: 'center' };
-    return { className: baseClasses, style: scaleStyle };
-  };
-  const getVerseGap = () => {
-    // Base gap is 1rem (16px), scale it with the font size
-    const gapSize = 1 * fontSize * 16;
-    return { gap: `${gapSize}px` };
-  };
-
+  const { decreaseFontSize, increaseFontSize, getVerseFontSize, getVerseGap } = useFontSize();
+  const { handleTwitterShare } = useTweetUrl();
   const verseCountNum = parseInt(String(verseCount), 10) || 0;
 
-  useEffect(() => {
-    setCurrentUrl(window.location.href);
-  }, []);
   return (
     <div className="w-full flex justify-center items-start my-14 xs:my-20 lg:my-28">
       <div className="w-full flex flex-col gap-8 justify-center items-center">
@@ -79,7 +48,7 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
 
             <a
               onClick={handleTwitterShare}
-              className="flex w-full justify-center items-center mt-1 sm:mt-2"
+              className="flex w-full justify-center items-center mt-1 sm:mt-2 cursor-pointer"
             >
               <div className="bg-white/5 px-2 lg:px-4 rounded-md border border-zinc-300/60 flex justify-center items-center text-zinc-600 text-[8px] xxs:text-xs md:text-base">
                 <p>غردها</p>
