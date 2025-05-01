@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export function useInputValidation() {
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -38,12 +38,15 @@ export function useInputValidation() {
     setHasSubmitted(false);
   };
 
-  return {
-    validationError,
-    hasSubmitted,
-    validateInput,
-    setValidationError,
-    setHasSubmitted,
-    resetValidation,
-  };
+  return useMemo(
+    () => ({
+      validationError,
+      hasSubmitted,
+      validateInput,
+      setValidationError,
+      setHasSubmitted,
+      resetValidation,
+    }),
+    [hasSubmitted, validationError]
+  );
 }

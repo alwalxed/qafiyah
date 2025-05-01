@@ -2,6 +2,8 @@ import JsonLd from '@/components/json-ld';
 import { SITE_URL } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import { SearchContainer } from '@/features/search/components/__search-container';
+import { Suspense } from 'react';
+import Loading from './loading';
 
 export default function Page() {
   const jsonLd = {
@@ -24,7 +26,9 @@ export default function Page() {
       {/* ----------------------------- */}
 
       <JsonLd data={jsonLd} />
-      <SearchContainer />
+      <Suspense fallback={<Loading />}>
+        <SearchContainer />
+      </Suspense>
     </>
   );
 }

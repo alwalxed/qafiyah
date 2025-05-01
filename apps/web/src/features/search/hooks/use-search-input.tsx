@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export function useSearchInput(initialQuery = '') {
   const [inputValue, setInputValue] = useState(initialQuery);
@@ -21,10 +21,13 @@ export function useSearchInput(initialQuery = '') {
     setInputValue('');
   }, []);
 
-  return {
-    inputValue,
-    setInputValue,
-    handleInputChange,
-    resetInput,
-  };
+  return useMemo(
+    () => ({
+      inputValue,
+      setInputValue,
+      handleInputChange,
+      resetInput,
+    }),
+    [handleInputChange, inputValue, resetInput]
+  );
 }

@@ -3,7 +3,7 @@
 import { useTypingEffect } from '@/hooks/use-typing-effect';
 import { getRandomLine } from '@/lib/api/queries';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export function usePlaceholderTypewriter() {
   const { data: content = '' } = useQuery<string>({
@@ -67,9 +67,12 @@ export function usePlaceholderTypewriter() {
     return clearToggleTimer;
   }, [clearToggleTimer]);
 
-  return {
-    isTypingActive: isActive,
-    effectText: isActive ? typedText : '',
-    handleTypingEffect,
-  };
+  return useMemo(
+    () => ({
+      isTypingActive: isActive,
+      effectText: isActive ? typedText : '',
+      handleTypingEffect,
+    }),
+    [handleTypingEffect, isActive, typedText]
+  );
 }

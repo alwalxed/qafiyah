@@ -73,6 +73,7 @@ export const metadata: Metadata = {
     copyright: htmlHeadMetadata.author,
     abstract: htmlHeadMetadata.description,
     google: 'notranslate',
+    'priority-hints': 'on',
   },
 };
 
@@ -100,6 +101,45 @@ export default function RootLayout({
         }
       )}
     >
+      <head>
+        {/* PRE-CONNECTS */}
+        <link rel="dns-prefetch" href="https://api.qafiyah.com" />
+        <link rel="preconnect" href="https://api.qafiyah.com" />
+        <link rel="preconnect" href="https://static.cloudflareinsights.com" />
+        {/* PRE-LOADS */}
+        <link
+          rel="preload"
+          href="/fonts/IBMPlexSansArabic-Regular-400.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          href="/fonts/IBMPlexSansArabic-Medium-500.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+          fetchPriority="low"
+        />
+        <link
+          rel="preload"
+          href="/fonts/IBMPlexSansArabic-SemiBold-600.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+          fetchPriority="low"
+        />
+        <link
+          rel="preload"
+          href="/fonts/IBMPlexSansArabic-Bold-700.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+          fetchPriority="high"
+        />
+      </head>
       <body
         className={cn(
           'relative overflow-x-hidden',
@@ -119,6 +159,12 @@ export default function RootLayout({
             <Footer />
           </NuqsAdapter>
         </Providers>
+        <Script
+          id="cloudflare-analytics"
+          strategy="afterInteractive"
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "a707ff647c644bf69a7661040471963d"}'
+        />
         <Script
           id="json-ld"
           type="application/ld+json"

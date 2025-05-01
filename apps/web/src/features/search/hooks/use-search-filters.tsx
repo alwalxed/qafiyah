@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { joinCommaSeparated, splitCommaSeparated } from '../utils/helpers';
 
 export function useSearchFilters(initialSearchParams: {
@@ -13,7 +13,7 @@ export function useSearchFilters(initialSearchParams: {
 }) {
   const [filtersVisible, setFiltersVisible] = useState(false);
 
-  const toggleFilters = () => setFiltersVisible(!filtersVisible);
+  const toggleFilters = useCallback(() => setFiltersVisible(!filtersVisible), [filtersVisible]);
 
   const selectedEras = splitCommaSeparated(initialSearchParams.era_ids);
   const selectedRhymes = splitCommaSeparated(initialSearchParams.rhyme_ids);
@@ -36,25 +36,39 @@ export function useSearchFilters(initialSearchParams: {
     return joinCommaSeparated(value);
   };
 
-  const handleMatchTypeChange = (value: string) => {
-    const validMatchTypes = ['all', 'any', 'exact'] as const;
-    if (typeof value === 'string' && validMatchTypes.includes(value as never)) {
-      return value as (typeof validMatchTypes)[number];
-    }
-    return initialSearchParams.match_type;
-  };
+  const handleMatchTypeChange = useCallback(
+    (value: string) => {
+      const validMatchTypes = ['all', 'any', 'exact'] as const;
+      if (typeof value === 'string' && validMatchTypes.includes(value as never)) {
+        return value as (typeof validMatchTypes)[number];
+      }
+      return initialSearchParams.match_type;
+    },
+    [initialSearchParams.match_type]
+  );
 
-  return {
-    filtersVisible,
-    toggleFilters,
-    selectedEras,
-    selectedRhymes,
-    selectedMeters,
-    selectedThemes,
-    handleErasChange,
-    handleRhymesChange,
-    handleMetersChange,
-    handleThemesChange,
-    handleMatchTypeChange,
-  };
+  return useMemo(
+    () => ({
+      filtersVisible,
+      toggleFilters,
+      selectedEras,
+      selectedRhymes,
+      selectedMeters,
+      selectedThemes,
+      handleErasChange,
+      handleRhymesChange,
+      handleMetersChange,
+      handleThemesChange,
+      handleMatchTypeChange,
+    }),
+    [
+      filtersVisible,
+      handleMatchTypeChange,
+      selectedEras,
+      selectedMeters,
+      selectedRhymes,
+      selectedThemes,
+      toggleFilters,
+    ]
+  );
 }
