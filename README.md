@@ -21,7 +21,7 @@ A free, open-source Arabic poetry platform and database featuring 944K+ verses f
 - **Twitter**: [x.com/qafiyahdotcom](https://twitter.com/qafiyahdotcom)
 - **Database**: [github.com/alwalxed/.db_dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps)
 
-> **Important**: No need to scrape the website or API. All data is freely available in the [database dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps).
+> 🔔 **Note**: You don’t need to scrape the site or API — our [database dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps) are open and regularly updated.
 
 ## 🏗️ Architecture
 
@@ -40,7 +40,7 @@ A free, open-source Arabic poetry platform and database featuring 944K+ verses f
 
 ## 📊 Data Statistics
 
-_Last updated: May 01, 2025_
+_Last updated: May 02, 2025_
 
 - 📝 **Total Verses:** 944,844
 - 📚 **Total Poems:** 85,342
@@ -49,7 +49,7 @@ _Last updated: May 01, 2025_
 - 🪶 **Distinct Meters:** 44
 - 🎭 **Rhyme Schemes:** 47
 - 🎨 **Themes Covered:** 27
-- 🧾 **Poem Types:** 3
+- 🧾 **Poem Types:** 1
 
 _For latest data, use our [DB dumps](https://github.com/alwalxed/qafiyah/tree/main/.db_dumps) (updated with every change) instead of scraping._
 
@@ -65,7 +65,6 @@ _For latest data, use our [DB dumps](https://github.com/alwalxed/qafiyah/tree/ma
 | num_verses | integer | NO       | Number of verses      |
 | theme_id   | integer | NO       | FK to `themes(id)`    |
 | poet_id    | integer | NO       | FK to `poets(id)`     |
-| filename   | text    | NO       | File source name      |
 | slug       | uuid    | NO       | Unique URL identifier |
 | content    | text    | NO       | Full poem content     |
 | rhyme_id   | integer | YES      | FK to `rhymes(id)`    |
