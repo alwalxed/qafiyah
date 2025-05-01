@@ -102,43 +102,8 @@ export default function RootLayout({
       )}
     >
       <head>
-        {/* PRE-CONNECTS */}
         <link rel="dns-prefetch" href="https://api.qafiyah.com" />
         <link rel="preconnect" href="https://api.qafiyah.com" />
-        <link rel="preconnect" href="https://static.cloudflareinsights.com" />
-        {/* PRE-LOADS */}
-        <link
-          rel="preload"
-          href="/fonts/IBMPlexSansArabic-Regular-400.ttf"
-          as="font"
-          type="font/ttf"
-          crossOrigin="anonymous"
-          fetchPriority="high"
-        />
-        <link
-          rel="preload"
-          href="/fonts/IBMPlexSansArabic-Medium-500.ttf"
-          as="font"
-          type="font/ttf"
-          crossOrigin="anonymous"
-          fetchPriority="low"
-        />
-        <link
-          rel="preload"
-          href="/fonts/IBMPlexSansArabic-SemiBold-600.ttf"
-          as="font"
-          type="font/ttf"
-          crossOrigin="anonymous"
-          fetchPriority="low"
-        />
-        <link
-          rel="preload"
-          href="/fonts/IBMPlexSansArabic-Bold-700.ttf"
-          as="font"
-          type="font/ttf"
-          crossOrigin="anonymous"
-          fetchPriority="high"
-        />
       </head>
       <body
         className={cn(
