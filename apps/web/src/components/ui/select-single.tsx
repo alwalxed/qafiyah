@@ -164,7 +164,7 @@ export function SelectSingle({
               key={option.value}
               id={`option-${index}`}
               className={cn(
-                'px-3 py-2 text-sm md:text-base rounded-md cursor-pointer flex items-center justify-between',
+                'px-3 py-2 text-base rounded-md cursor-pointer flex items-center justify-between',
                 index === highlightedIndex && 'bg-zinc-50 ring-1 ring-zinc-300/60 font-medium',
                 option.value === value && 'font-medium'
               )}

@@ -200,7 +200,7 @@ export function SelectMulti({
                   role="option"
                   aria-selected={isSelected}
                   className={cn(
-                    'px-0.5 py-2 rounded-md text-sm md:text-base cursor-pointer',
+                    'px-0.5 py-2 rounded-md text-base cursor-pointer',
                     index === highlightedIndex && 'bg-zinc-50 ring-1 ring-zinc-300/60 font-medium',
                     isSelected && 'font-medium'
                   )}
