@@ -1,9 +1,11 @@
-import JsonLd from '@/components/json-ld';
 import { SITE_URL } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import { SearchContainer } from '@/features/search/components/__search-container';
+import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import Loading from './loading';
+
+const JsonLd = dynamic(() => import('@/components/json-ld'));
 
 export default function Page() {
   const jsonLd = {

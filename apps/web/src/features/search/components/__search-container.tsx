@@ -1,6 +1,8 @@
 'use client';
 
+import { LoadingDynamic } from '@/app/loading-dynamic';
 import { Card } from '@/components/shadcn/card';
+import dynamic from 'next/dynamic';
 import {
   erasOptions,
   matchTypeOptions,
@@ -10,11 +12,22 @@ import {
   themesOptions,
 } from '../constants';
 import { useSearch } from '../hooks/use-search';
-import { Filters } from './filters';
 import { FilterBadges } from './filters-badges';
 import { FiltersButton } from './filters-button';
-import { ResultList } from './result-list';
 import { SearchInput } from './search-input';
+
+const Filters = dynamic(() => import('./filters').then((mod) => ({ default: mod.Filters })), {
+  ssr: false,
+  loading: () => <LoadingDynamic />,
+});
+
+const ResultList = dynamic(
+  () => import('./result-list').then((mod) => ({ default: mod.ResultList })),
+  {
+    ssr: false,
+    loading: () => <LoadingDynamic />,
+  }
+);
 
 export function SearchContainer() {
   const {
