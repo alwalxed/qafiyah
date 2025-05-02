@@ -26,7 +26,7 @@ export function BinaryToggleButton({ options, currentValue, onToggle, className 
     <button
       onClick={handleToggle}
       className={cn(
-        'relative w-full flex justify-evenly items-center min-w-[180px] h-12 text-sm md:text-base rounded-md border-0 ring-1 ring-zinc-300/40 bg-white focus:outline-none focus:ring-1 focus:ring-zinc-300/50 overflow-hidden',
+        'relative w-full flex justify-evenly items-center min-w-[180px] h-12 text-base rounded-md border-0 ring-1 ring-zinc-300/40 bg-white focus:outline-none focus:ring-1 focus:ring-zinc-300/50 overflow-hidden',
         className
       )}
       aria-pressed={currentValue === option2?.value}

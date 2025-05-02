@@ -318,10 +318,10 @@ export function useSearch() {
         },
       }),
 
-      searchTypeLabel: 'نوع البحث',
+      searchTypeLabel: 'المجال',
       searchTypePlaceholder: 'اختر نوع البحث',
 
-      matchTypeLabel: 'طريقة البحث',
+      matchTypeLabel: 'الطريقة',
       matchTypePlaceholder: 'اختر طريقة البحث',
 
       errorMessage: 'عذرًا، وقع خلل غير متوقّع. إن استمر، فتواصل معنا تويتر',

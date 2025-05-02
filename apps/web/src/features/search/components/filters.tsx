@@ -99,10 +99,10 @@ export function Filters({
   searchLabel,
 }: Props) {
   const containerClassname = 'flex flex-col items-start justify-start gap-2';
-  const labelClassname = 'block text-xs md:text-base font-medium text-zinc-700';
+  const labelClassname = 'block text-base font-bold text-zinc-700';
   return (
-    <div className="px-8 py-8 gap-8 bg-white rounded-xl border border-zinc-300/40 relative flex flex-between flex-col">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full h-full flex-1">
+    <div className="px-8 py-10 lg:px-10 lg:py-10 gap-14 bg-white rounded-xl border border-zinc-300/40 relative flex flex-between flex-col">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 lg:gap-10 w-full h-full flex-1">
         <div className={containerClassname}>
           <label className={labelClassname}>{searchTypeLabelText}</label>
           <BinaryToggleButton
@@ -182,7 +182,7 @@ export function Filters({
           className={cn(
             'hover:text-white disabled:cursor-not-allowed disabled:pointer-events-none w-full justify-center items-center h-12 rounded-lg flex duration-300',
             isLoading || !inputValue.trim()
-              ? 'bg-white text-zinc-600 ring-1 ring-zinc-300/40'
+              ? 'bg-zinc-100/80 text-zinc-600 ring-1 ring-zinc-300/40'
               : 'bg-zinc-800 text-zinc-50 ring-1 ring-zinc-300/40'
           )}
           aria-label={searchLabel}
