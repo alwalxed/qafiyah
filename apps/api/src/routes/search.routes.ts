@@ -7,6 +7,7 @@ import { HTTPException } from "hono/http-exception";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import type { AppContext } from "../types";
 import { log } from "../utils/devlopment";
+import { logger } from "../utils/logger";
 import { parseIds } from "../utils/number";
 import { cleanArabicQuery } from "../utils/text";
 
@@ -197,7 +198,7 @@ const app = new Hono<AppContext>().get(
     } catch (error) {
       // Handle unexpected errors
       if (!(error instanceof HTTPException)) {
-        log(c, "Catch Block");
+        logger.error({ error });
         throw new HTTPException(ERROR_TYPES.SERVER_ERROR.code, {
           message: "حدث خطأ غير متوقع في الخادم",
         });

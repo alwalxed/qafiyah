@@ -7,6 +7,7 @@ import { HTTPException } from "hono/http-exception";
 import { ERAS_SORT_ORDER, FETCH_PER_PAGE } from "../constants";
 import { eraPoems, eraStats } from "../schemas/db";
 import type { AppContext } from "../types";
+import { logger } from "../utils/logger";
 
 const app = new Hono<AppContext>()
   .get("/", async (c) => {
@@ -83,7 +84,7 @@ const app = new Hono<AppContext>()
   )
   //! ERR HANDLING ------------------------------------------>
   .onError((error, c) => {
-    console.error("Error ERAS Route:", error);
+    logger.error({ error });
 
     if (error instanceof HTTPException) {
       return c.json(

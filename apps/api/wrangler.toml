@@ -2,8 +2,10 @@ name = "qafiyah-api"
 main = "src/app.ts"
 compatibility_date = "2025-04-09"
 
-# Uncomment these sections as needed
 compatibility_flags = ["nodejs_compat"]
+
+[observability.logs]
+enabled = true
 
 # [vars]
 # MY_VAR = "my-variable"

@@ -7,6 +7,7 @@ import { HTTPException } from "hono/http-exception";
 import { FETCH_PER_PAGE, FORMAL_METERS } from "../constants";
 import { meterPoems, meterStats } from "../schemas/db";
 import type { AppContext } from "../types";
+import { logger } from "../utils/logger";
 
 const app = new Hono<AppContext>()
   .get("/", async (c) => {
@@ -85,7 +86,7 @@ const app = new Hono<AppContext>()
   )
   //! ERR HANDLING ------------------------------------------>
   .onError((error, c) => {
-    console.error("Error METERS Route:", error);
+    logger.error({ error });
 
     if (error instanceof HTTPException) {
       return c.json(

@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { dbMiddleware } from "./middlewares/drizzle.middleware";
+import { loggerMiddleware } from "./middlewares/logger.middleware";
 import eras from "./routes/eras.routes";
 import index from "./routes/index.routes";
 import meters from "./routes/meters.routes";
@@ -12,17 +13,14 @@ import search from "./routes/search.routes";
 import sitemaps from "./routes/sitemaps.routes";
 import themes from "./routes/themes.routes";
 import type { AppContext } from "./types";
+import { logger } from "./utils/logger";
 
 const app = new Hono<AppContext>();
 
 app.use(
   "*",
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://qafiyah.com",
-      "https://www.qafiyah.com",
-    ],
+    origin: ["http://localhost:3000", "https://qafiyah.com"],
     allowMethods: ["GET", "OPTIONS"],
     exposeHeaders: ["Content-Length", "Content-Type"],
     maxAge: 600,
@@ -30,6 +28,7 @@ app.use(
   })
 );
 
+app.use("*", loggerMiddleware);
 app.use("*", dbMiddleware);
 
 const routes = app
@@ -44,7 +43,7 @@ const routes = app
   .route("/search", search)
   //* Global Error Handler
   .onError((error, c) => {
-    console.error("Global Error Route:", error);
+    logger.error({ error });
     if (error instanceof HTTPException) {
       return c.json(
         {
