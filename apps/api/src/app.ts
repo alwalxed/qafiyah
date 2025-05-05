@@ -8,8 +8,8 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
+import { logger } from "hono/logger";
 import { dbMiddleware } from "./middlewares/drizzle.middleware";
-import { loggerMiddleware } from "./middlewares/logger.middleware";
 import eras from "./routes/eras.routes";
 import index from "./routes/index.routes";
 import meters from "./routes/meters.routes";
@@ -20,7 +20,6 @@ import search from "./routes/search.routes";
 import sitemaps from "./routes/sitemaps.routes";
 import themes from "./routes/themes.routes";
 import type { AppContext } from "./types";
-import { logger } from "./utils/logger";
 
 /**
  * Initialize the Hono application
@@ -36,7 +35,6 @@ const app = new Hono<AppContext>();
  * 3. Database - Connect to the database for data access
  */
 app.use(
-  "*",
   cors({
     origin: ["http://localhost:3000", "https://qafiyah.com"],
     allowMethods: ["GET", "OPTIONS"],
@@ -45,9 +43,8 @@ app.use(
     credentials: true,
   })
 );
-
-app.use("*", loggerMiddleware);
-app.use("*", dbMiddleware);
+app.use(logger());
+app.use(dbMiddleware);
 
 /**
  * Register API routes
@@ -79,8 +76,7 @@ const routes = app
    * Catches all unhandled errors and provides a consistent error response format
    */
   .onError((error, c) => {
-    // Log the error with contextual information
-    logger.error({
+    console.error({
       message: "Global error handler caught an error",
       path: c.req.path,
       method: c.req.method,

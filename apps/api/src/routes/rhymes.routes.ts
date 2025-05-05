@@ -7,7 +7,6 @@ import { HTTPException } from "hono/http-exception";
 import { ARABIC_LETTERS_MAP, FETCH_PER_PAGE } from "../constants";
 import { rhymePoems, rhymeStats } from "../schemas/db";
 import type { AppContext } from "../types";
-import { logger } from "../utils/logger";
 import { normalizeRhymePattern } from "../utils/rhyme";
 
 const app = new Hono<AppContext>()
@@ -134,7 +133,7 @@ const app = new Hono<AppContext>()
   )
   //! ERR HANDLING ------------------------------------------>
   .onError((error, c) => {
-    logger.error({ error });
+    console.error(error);
 
     if (error instanceof HTTPException) {
       return c.json(

@@ -465,7 +465,7 @@ const app = new Hono<AppContext>()
   })
   //! ERR HANDLING ------------------------------------------>
   .onError((error, c) => {
-    console.error("Error SITEMAPS Route:", error);
+    console.error(error);
 
     if (error instanceof HTTPException) {
       return sendErrorResponse(c, error.message, error.status);

@@ -7,7 +7,6 @@ import { HTTPException } from "hono/http-exception";
 import { MAX_EXCERPT_LENGTH } from "../constants";
 import { poemsFullData } from "../schemas/db";
 import type { AppContext, Poem, PoemData } from "../types";
-import { logger } from "../utils/logger";
 import { extractPoemExcerpt, processPoemContent } from "../utils/poem";
 
 const app = new Hono<AppContext>()
@@ -101,7 +100,7 @@ const app = new Hono<AppContext>()
   )
   //! ERR HANDLING ------------------------------------------>
   .onError((error, c) => {
-    logger.error({ error });
+    console.error(error);
 
     if (error instanceof HTTPException) {
       return c.json(
