@@ -1,3 +1,10 @@
+/**
+ * Qafiyah API - Main Application Entry Point
+ *
+ * This file sets up the Hono application with all middleware, routes,
+ * and error handling for the Qafiyah API.
+ */
+
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
@@ -15,8 +22,19 @@ import themes from "./routes/themes.routes";
 import type { AppContext } from "./types";
 import { logger } from "./utils/logger";
 
+/**
+ * Initialize the Hono application
+ */
 const app = new Hono<AppContext>();
 
+/**
+ * Register global middleware
+ *
+ * Order is important:
+ * 1. CORS - Handle cross-origin requests
+ * 2. Logger - Log all requests before processing
+ * 3. Database - Connect to the database for data access
+ */
 app.use(
   "*",
   cors({
@@ -31,6 +49,20 @@ app.use(
 app.use("*", loggerMiddleware);
 app.use("*", dbMiddleware);
 
+/**
+ * Register API routes
+ *
+ * Each route module handles a specific domain of the API:
+ * - index: Simple API documentation
+ * - eras: Historical eras of Arabic poetry
+ * - meters: Poetic meters (buhur)
+ * - poems: Individual poems
+ * - poets: Poet information
+ * - rhymes: Rhyme patterns
+ * - search: Search functionality
+ * - sitemaps: SEO sitemaps
+ * - themes: Poetic themes
+ */
 const routes = app
   .route("/", index)
   .route("/eras", eras)
@@ -41,9 +73,21 @@ const routes = app
   .route("/sitemaps", sitemaps)
   .route("/themes", themes)
   .route("/search", search)
-  //* Global Error Handler
+  /**
+   * Global error handler
+   *
+   * Catches all unhandled errors and provides a consistent error response format
+   */
   .onError((error, c) => {
-    logger.error({ error });
+    // Log the error with contextual information
+    logger.error({
+      message: "Global error handler caught an error",
+      path: c.req.path,
+      method: c.req.method,
+      error: error instanceof Error ? error.message : String(error),
+    });
+
+    // Return appropriate error response
     if (error instanceof HTTPException) {
       return c.json(
         {
@@ -54,6 +98,8 @@ const routes = app
         error.status
       );
     }
+
+    // Default server error response
     return c.json(
       {
         success: false,

@@ -1,3 +1,4 @@
+import { API_URL } from '@/constants/GLOBALS';
 import { removeTashkeel } from '@/utils/texts/remove-tashkeel';
 import { fetchWithValidation, validateParams } from '@qaf/zod-schemas/client';
 import type {
@@ -128,7 +129,7 @@ const apiClient = (baseUrl: string) => {
     // Random Line
     async getRandomLine(): Promise<string> {
       try {
-        const response = await fetch('https://api.qafiyah.com/poems/random');
+        const response = await fetch(`${API_URL}/poems/random`);
         if (!response.ok) {
           return `إن الذي سمك السماء بنى لنا`;
         }

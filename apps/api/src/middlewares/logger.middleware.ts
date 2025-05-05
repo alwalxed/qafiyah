@@ -11,25 +11,26 @@ export const loggerMiddleware = createMiddleware<AppContext>(
     const cfData = c.req.raw.cf;
 
     logger.info({
+      type: "request",
       path,
       method,
       ip,
       userAgent,
-      cf: {
-        country: cfData?.country,
-        city: cfData?.city,
-        colo: cfData?.colo,
-        asn: cfData?.asn,
-      },
+      country: typeof cfData?.country === "string" ? cfData.country : "",
+      city: typeof cfData?.city === "string" ? cfData.city : "",
+      colo: typeof cfData?.colo === "string" ? cfData.colo : "",
+      asn: typeof cfData?.asn === "string" ? cfData.asn : "",
     });
 
     try {
       await next();
     } catch (error) {
-      logger.error(error, {
+      logger.error({
+        type: "error",
         path,
         method,
-        ip,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
       });
 
       throw error;

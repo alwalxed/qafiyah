@@ -1,48 +1,53 @@
-export enum LogLevel {
-  DEBUG = "debug",
-  INFO = "info",
-  WARN = "warn",
-  ERROR = "error",
+type LogLevel = "debug" | "info" | "warn" | "error";
+
+class Logger {
+  debug(message: string | object, ...args: any[]): void {
+    if (typeof message === "string") {
+      console.debug(message, ...args);
+    } else {
+      console.debug({
+        level: "debug",
+        timestamp: new Date().toISOString(),
+        ...message,
+      });
+    }
+  }
+
+  info(message: string | object, ...args: any[]): void {
+    if (typeof message === "string") {
+      console.log(message, ...args);
+    } else {
+      console.log({
+        level: "info",
+        timestamp: new Date().toISOString(),
+        ...message,
+      });
+    }
+  }
+
+  warn(message: string | object, ...args: any[]): void {
+    if (typeof message === "string") {
+      console.warn(message, ...args);
+    } else {
+      console.warn({
+        level: "warn",
+        timestamp: new Date().toISOString(),
+        ...message,
+      });
+    }
+  }
+
+  error(message: string | object, ...args: any[]): void {
+    if (typeof message === "string") {
+      console.error(message, ...args);
+    } else {
+      console.error({
+        level: "error",
+        timestamp: new Date().toISOString(),
+        ...message,
+      });
+    }
+  }
 }
 
-export const logger = {
-  debug: (data?: any) => {
-    console.debug(
-      JSON.stringify({
-        level: LogLevel.DEBUG,
-        timestamp: new Date().toISOString(),
-        data,
-      })
-    );
-  },
-  info: (data?: any) => {
-    console.info(
-      JSON.stringify({
-        level: LogLevel.INFO,
-        timestamp: new Date().toISOString(),
-        data,
-      })
-    );
-  },
-  warn: (data?: any) => {
-    console.warn(
-      JSON.stringify({
-        level: LogLevel.WARN,
-        timestamp: new Date().toISOString(),
-        data,
-      })
-    );
-  },
-  error: (error?: any, data?: any) => {
-    console.error(
-      JSON.stringify({
-        level: LogLevel.ERROR,
-
-        timestamp: new Date().toISOString(),
-        error: error?.message || error,
-        stack: error?.stack,
-        data,
-      })
-    );
-  },
-};
+export const logger = new Logger();
