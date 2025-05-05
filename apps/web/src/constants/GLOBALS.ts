@@ -18,7 +18,12 @@ export const TWITTER_HANDLE = '@qafiyahdotcom';
 export const TWITTER_ID = '1570116567538475010';
 export const TWITTER_URL = `https://x.com/${TWITTER_HANDLE}`;
 export const GITHUB_REPO_URL = `https://github.com/alwalxed/qafiyah`;
+export const DATABASE_DUMPS_URL = 'https://github.com/alwalxed/qafiyah/tree/main/.db_dumps';
 export const DB_DUMPS_URL = `https://github.com/alwalxed/qafiyah/tree/main/.db_dumps`;
+export const DEVELOPER_SITE_URL = `https://alwalxed.com`;
+export const DEVELOPER_TWITTER_URL = `https://x.com/alwalxed`;
+export const DEVELOPER_INSTAGRAM_URL = `https://instagram.com/alwalexd`;
+export const DEVELOPER_GITHUB_URL = `https://github.com/alwalxed`;
 // ------------------------------------->
 
 // ------------------------------------->
