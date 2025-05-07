@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export function usePlaceholderTypewriter() {
   const { data: content = '' } = useQuery<string>({
-    queryKey: ['random-line'],
+    queryKey: ['random-lines'],
     queryFn: getRandomLines,
     retry: 2,
     staleTime: 60 * 60 * 1000 * 24 * 30, // 1 month

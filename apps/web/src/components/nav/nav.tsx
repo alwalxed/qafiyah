@@ -15,16 +15,8 @@ export function Nav({ className }: Props) {
     <nav className={cn(`w-full z-10`, className)}>
       <div className="w-full border-b border-zinc-300/40 py-4">
         <div className="flex justify-between items-center gap-8">
-          {/* LOGO */}
           <Logo />
-
-          {/* HAMBURGER MENU (Mobile) */}
           <MobileMenuButton />
-
-          {/* SEARCH (Desktop) */}
-          {/* <SearchForm className="relative w-5/12 max-w-md hidden md:block" /> */}
-
-          {/* MENU (Desktop) */}
           <NavLinks links={NAV_LINKS} className="hidden md:block" />
         </div>
       </div>
