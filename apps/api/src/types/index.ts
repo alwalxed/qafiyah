@@ -12,45 +12,41 @@ export type AppContext = {
   };
 };
 
-export type PoemData = {
-  slug: string;
-  title: string | null;
-  content: string | null;
-  poet_name: string | null;
-  poet_slug: string | null;
-  meter_name: string | null;
-  theme_name: string | null;
-  type_name: string | null;
-  era_name: string | null;
-  era_slug: string | null;
-};
-
-export type Poem = {
+export type RandomPoemLines = {
   poem_id: number;
   poet_name: string;
   content: string;
 };
 
-// Standardized API response types
-export type ApiSuccessResponse<T> = {
-  success: true;
-  data: T;
-  meta?: Record<string, unknown>;
+export type PoemData = {
+  slug: string;
+  title: string;
+  content: string;
+  poet_name: string;
+  poet_slug: string;
+  meter_name: string;
+  theme_name: string;
+  era_name: string;
+  era_slug: string;
 };
 
-export type ApiErrorResponse = {
-  success: false;
+type RelatedPoem = {
+  poem_slug: string;
+  poet_name: string;
+  meter_name: string;
+  poem_title: string;
+};
+
+type PoemWithRelatedSuccess = {
+  poem: PoemData;
+  related_poems: RelatedPoem[];
+};
+
+type PoemWithRelatedError = {
   error: string;
   message?: string;
-  status: number;
 };
 
-export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
-
-export type PaginationMeta = {
-  currentPage: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
-  totalItems?: number;
-};
+export type PoemWithRelatedResponse =
+  | PoemWithRelatedSuccess
+  | PoemWithRelatedError;

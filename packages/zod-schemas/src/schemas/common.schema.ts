@@ -14,6 +14,12 @@ export const slugSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
 });
 
+export const uuidSlugStringSchema = z.object({
+  slug: z.string().uuid({
+    message: "Invalid UUID format",
+  }),
+});
+
 export const paginatedSlugSchema = slugSchema.extend({
   page: z
     .string()
