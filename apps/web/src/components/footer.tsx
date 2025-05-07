@@ -10,12 +10,8 @@ import {
   TWITTER_URL,
 } from '@/constants/GLOBALS';
 import { cn } from '@/utils/conversions/cn';
-import { getArabicYear } from '@/utils/dates/get-arabic-year';
 import React from 'react';
-
-const FOOTER_TITLE = 'قافية';
-const FOOTER_SYMBOL = '/';
-const FOOTER_YEAR = getArabicYear();
+import { RandomPoemSlug } from './random-poem-slug';
 
 type Props = {
   className?: string;
@@ -35,9 +31,9 @@ const footerLinks: readonly FooterLinkProps[] = [
   { label: 'القاعدة', href: DATABASE_DUMPS_URL, screenReadersOnly: false },
   { label: 'المطور', href: DEVELOPER_SITE_URL, screenReadersOnly: false },
   // screen readers only
-  { label: 'تويتر المطوّر', href: DEVELOPER_TWITTER_URL, screenReadersOnly: true },
-  { label: 'إنستغرام المطوّر', href: DEVELOPER_INSTAGRAM_URL, screenReadersOnly: true },
-  { label: 'قتهب المطوّر', href: DEVELOPER_GITHUB_URL, screenReadersOnly: true },
+  { label: 'تويتر المطور', href: DEVELOPER_TWITTER_URL, screenReadersOnly: true },
+  { label: 'إنستغرام المطور', href: DEVELOPER_INSTAGRAM_URL, screenReadersOnly: true },
+  { label: 'قتهب المطور', href: DEVELOPER_GITHUB_URL, screenReadersOnly: true },
 ] as const;
 
 function FooterLink({ label, href, screenReadersOnly }: FooterLinkProps) {
@@ -79,7 +75,7 @@ export function Footer({ className }: Props) {
           ))}
       </div>
 
-      <p>{`${FOOTER_TITLE} ${FOOTER_SYMBOL} ${FOOTER_YEAR}`}</p>
+      <RandomPoemSlug />
     </footer>
   );
 }

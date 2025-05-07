@@ -26,7 +26,7 @@ export function NavLinks({ links, className = '', isMobile = false, onLinkClick 
         className={
           isMobile
             ? 'flex flex-col items-end gap-4 text-sm xxs:text-xl'
-            : 'flex flex-row gap-4 text-base lg:text-lg'
+            : 'flex flex-row gap-4 text-base lg:text-lg 2xl:text-xl'
         }
       >
         {links.map((link) => (

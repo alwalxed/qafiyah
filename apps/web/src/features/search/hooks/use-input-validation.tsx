@@ -10,7 +10,7 @@ export function useInputValidation() {
     const arabicRegex = /^[\u0600-\u06FF\s]+$/;
 
     if (!arabicRegex.test(input)) {
-      return 'كلمات عربية فقط (Arabic Words Only)';
+      return 'كلمات عربية فقط';
     }
 
     if (input.length > 50) {
