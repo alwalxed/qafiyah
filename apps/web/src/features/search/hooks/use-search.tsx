@@ -18,7 +18,6 @@ export function useSearch() {
     searchType,
     matchType,
     data,
-    error,
     fetchNextPage,
     setQuery,
     setSearchType,
@@ -221,6 +220,14 @@ export function useSearch() {
     resetValidation();
   }, [resetAllParamStates, resetInput, resetValidation]);
 
+  const hasActiveFiltersOrInput =
+    !isLoading &&
+    (Boolean(inputValue.trim()) ||
+      selectedEras.length > 0 ||
+      selectedRhymes.length > 0 ||
+      selectedMeters.length > 0 ||
+      selectedThemes.length > 0);
+
   const searchTypeText = searchType === 'poems' ? 'بيت' : 'شاعر';
   const matchTypeText =
     matchType === 'any'
@@ -359,11 +366,11 @@ export function useSearch() {
       isFetchingNextPage,
       hasSubmitted,
       filtersVisible,
+      hasActiveFiltersOrInput,
 
       loadMoreRef,
 
       data,
-      error,
       validationError,
       inputValue,
       searchParams,
@@ -393,8 +400,8 @@ export function useSearch() {
     }),
     [
       data,
-      error,
       filtersVisible,
+      hasActiveFiltersOrInput,
       handleCustomInputChange,
       handleCustomKeyDown,
       handleCustomSearch,

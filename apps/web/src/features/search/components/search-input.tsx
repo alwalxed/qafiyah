@@ -7,7 +7,6 @@ import { type ChangeEventHandler, type KeyboardEventHandler } from 'react';
 
 type Props = {
   hasSubmitted: boolean;
-  isLoading: boolean;
 
   inputValue: string;
   validationError: string | null;
@@ -16,6 +15,7 @@ type Props = {
   handleCustomKeyDown: KeyboardEventHandler<HTMLInputElement>;
   handleCustomInputChange: ChangeEventHandler<HTMLInputElement>;
   resetAllStates: () => void;
+  hasActiveFiltersOrInput: boolean;
 
   effectText: string;
   handleTypingEffect: (show: boolean) => void;
@@ -23,7 +23,6 @@ type Props = {
 
 export function SearchInput({
   hasSubmitted,
-  isLoading,
 
   inputValue,
   validationError,
@@ -35,6 +34,7 @@ export function SearchInput({
 
   effectText,
   handleTypingEffect,
+  hasActiveFiltersOrInput,
 }: Props) {
   return (
     <div className="w-full">
@@ -64,7 +64,7 @@ export function SearchInput({
           dir="rtl"
         />
         <div className="bg-white pr-2 absolute left-3 top-1/2 -translate-y-1/2 flex items-center h-full">
-          {inputValue.trim() && !isLoading && (
+          {hasActiveFiltersOrInput && (
             <button
               onClick={resetAllStates}
               className="text-zinc-400 hover:text-zinc-700 focus:outline-none"

@@ -19,13 +19,13 @@ import { SearchInput } from './search-input';
 export function SearchContainer() {
   const {
     text,
-
     isLoading,
     isError,
     isSuccess,
     isFetchingNextPage,
     hasSubmitted,
     filtersVisible,
+    hasActiveFiltersOrInput,
     loadMoreRef,
     data,
     validationError,
@@ -66,13 +66,13 @@ export function SearchContainer() {
                 effectText={text.currentInputPlaceholder}
                 handleTypingEffect={handleTypingEffect}
                 hasSubmitted={hasSubmitted}
-                isLoading={isLoading}
                 searchLabel={text.search}
                 inputValue={inputValue}
                 validationError={validationError}
                 handleCustomKeyDown={handleCustomKeyDown}
                 handleCustomInputChange={handleCustomInputChange}
                 resetAllStates={resetAllStates}
+                hasActiveFiltersOrInput={hasActiveFiltersOrInput}
               />
               <div className="flex items-center justify-between">
                 <FiltersButton toggleFilters={toggleFilters} filtersVisible={filtersVisible} />
