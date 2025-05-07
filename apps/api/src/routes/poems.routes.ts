@@ -26,9 +26,10 @@ app
       const { option } = c.req.valid("query");
       const db = c.get("db");
 
-      try {
-        c.header("Cache-Control", "no-store");
+      c.header("Cache-Control", "no-store");
+      c.header("Content-Type", "text/plain; charset=utf-8");
 
+      try {
         if (option === "lines") {
           const result = await db.execute(
             sql`SELECT get_random_eligible_poem()`
@@ -55,30 +56,36 @@ app
             throw new Error("Poem excerpt too long");
           }
 
-          c.header("Content-Type", "text/plain; charset=utf-8");
           return c.text(content);
         } else {
           const result = await db.execute(
             sql`SELECT get_random_eligible_poem_slug()`
           );
 
-          if (
-            !result?.rows?.length ||
-            !result.rows[0]?.get_random_eligible_poem_slug
-          ) {
+          const row = result?.rows?.[0];
+
+          if (!row || !row.get_random_eligible_poem_slug) {
             throw new Error("No poem slug found");
           }
 
-          return c.json(result.rows[0].get_random_eligible_poem_slug);
+          const slug =
+            typeof row.get_random_eligible_poem_slug === "object" &&
+            row.get_random_eligible_poem_slug !== null &&
+            "slug" in row.get_random_eligible_poem_slug &&
+            typeof row.get_random_eligible_poem_slug.slug === "string"
+              ? row.get_random_eligible_poem_slug.slug
+              : FALLBACK_RANDOM_POEM_SLUG;
+
+          return c.text(slug);
         }
       } catch (error) {
         console.error("Error fetching random poem:", error);
+        c.header("Content-Type", "text/plain; charset=utf-8");
 
         if (option === "lines") {
-          c.header("Content-Type", "text/plain; charset=utf-8");
           return c.text(FALLBACK_RANDOM_POEM_LINES);
         } else {
-          return c.json({ slug: FALLBACK_RANDOM_POEM_SLUG });
+          return c.text(FALLBACK_RANDOM_POEM_SLUG);
         }
       }
     }

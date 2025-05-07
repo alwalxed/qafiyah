@@ -48,9 +48,14 @@ export const queries = {
     return client.search({ q, searchType, page, matchType, meterIds, eraIds, rhymeIds, themeIds });
   },
 
-  // Random Line
-  async getRandomLine(): Promise<string> {
-    return client.getRandomLine();
+  // Random Lines
+  async getRandomLines(): Promise<string> {
+    return client.getRandomLines();
+  },
+
+  // Random Slug
+  async getRandomSlug(): Promise<string> {
+    return client.getRandomSlug();
   },
 
   // Eras
@@ -131,7 +136,8 @@ export const queries = {
 // For convenience, also export individual functions
 export const {
   search,
-  getRandomLine,
+  getRandomLines,
+  getRandomSlug,
   getEras,
   getEraPoems,
   getMeters,

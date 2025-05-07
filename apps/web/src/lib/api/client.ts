@@ -127,9 +127,9 @@ const apiClient = (baseUrl: string) => {
     },
 
     // Random Line
-    async getRandomLine(): Promise<string> {
+    async getRandomLines(): Promise<string> {
       try {
-        const response = await fetch(`${API_URL}/poems/random`);
+        const response = await fetch(`${API_URL}/poems/random?option=lines`);
         if (!response.ok) {
           return `إن الذي سمك السماء بنى لنا`;
         }
@@ -139,6 +139,21 @@ const apiClient = (baseUrl: string) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         return `إن الذي سمك السماء بنى لنا`;
+      }
+    },
+
+    async getRandomSlug(): Promise<string> {
+      try {
+        const response = await fetch(`${API_URL}/poems/random?option=slug`);
+        if (!response.ok) {
+          return `eabca780-811f-4ea4-949e-21df6efba15d`;
+        }
+        const slug = await response.text();
+
+        return slug;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        return `eabca780-811f-4ea4-949e-21df6efba15d`;
       }
     },
 
