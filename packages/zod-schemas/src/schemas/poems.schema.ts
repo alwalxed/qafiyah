@@ -36,7 +36,7 @@ export const poemDetailResponseSchema = apiResponseSchema(
     metadata: poemMetadataSchema,
     clearTitle: z.string(),
     processedContent: processedPoemContentSchema,
-    related_poems: z.array(relatedPoemSchema).optional(),
+    relatedPoems: z.array(relatedPoemSchema).optional(),
   })
 );
 

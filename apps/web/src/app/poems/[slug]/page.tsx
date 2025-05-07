@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     const clearTitle = poem?.clearTitle || 'قصيدة';
 
-    const data = poem?.data || {};
+    const data = poem?.metadata || {};
     const poet_name = data.poet_name || 'شاعر غير معروف';
 
     const processedContent = poem?.processedContent || {};

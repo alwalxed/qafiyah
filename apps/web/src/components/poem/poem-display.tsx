@@ -2,29 +2,21 @@
 
 import { useFontSize } from '@/hooks/use-font-size';
 import { useTweetUrl } from '@/hooks/use-tweet-url';
+import type { PoemMetadata, RelatedPoems } from '@/lib/api/types';
 import { getFormattedVersesCount } from '@/utils/texts/get-verse-count';
 import { Minus, Plus } from 'lucide-react';
-import type { Metadata } from 'next';
 import { ListCard } from '../ui/list-card';
 import { SectionList } from '../ui/section-list';
 
 export type PoemProps = {
   clearTitle: string;
-  data: {
-    poet_name: string;
-    poet_slug: string;
-    era_name: string;
-    era_slug: string;
-    meter_name: string;
-    theme_name: string;
-    type_name?: string;
-  };
+  metadata: PoemMetadata;
   verses: string[][];
   verseCount: string | number;
-  metadata: Metadata;
+  relatedPoems: RelatedPoems[];
 };
 
-export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps) {
+export function PoemDisplay({ clearTitle, metadata, verses, verseCount, relatedPoems }: PoemProps) {
   const { decreaseFontSize, increaseFontSize, getVerseFontSize, getVerseGap } = useFontSize();
   const { handleTwitterShare } = useTweetUrl();
   const verseCountNum = parseInt(String(verseCount), 10) || 0;
@@ -40,11 +32,11 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
             </h1>
 
             <h2 className="text-sm xxs:text-base md:text-2xl text-zinc-700">
-              <a href={`/poets/${data.poet_slug}/page/1`} className="hover:underline">
-                {data.poet_name}
+              <a href={`/poets/${metadata.poet_slug}/page/1`} className="hover:underline">
+                {metadata.poet_name}
               </a>{' '}
-              <a href={`/eras/${data.era_slug}/page/1`} className="hover:underline">
-                {`(${data.era_name})`}
+              <a href={`/eras/${metadata.era_slug}/page/1`} className="hover:underline">
+                {`(${metadata.era_name})`}
               </a>
             </h2>
 
@@ -59,11 +51,11 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
           </div>
 
           <div className="flex w-full md:w-8/12 border border-zinc-300/80 px-2.5 md:px-8 lg:px-16 text-[10px] xxs:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl justify-between items-center text-zinc-600 rounded-full">
-            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">{data.meter_name || ''}</p>
+            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">{metadata.meter_name || ''}</p>
             <p className="flex-1 py-0.5 md:py-1 lg:py-1.5 border-l">
               {`${getFormattedVersesCount(verseCountNum)}` || ''}
             </p>
-            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5">{data.theme_name || ''}</p>
+            <p className="flex-1 py-0.5 md:py-1 lg:py-1.5">{metadata.theme_name || ''}</p>
           </div>
         </header>
 
@@ -114,30 +106,14 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
         </div>
 
         <SectionList dynamicTitle="اقرأ المزيد">
-          {Array.from({ length: 10 }).length > 0 ? (
-            Array.from({ length: 10 }).map((_, index) => {
-              // Generate random poem data
-              const poemId = `poem-${Math.floor(Math.random() * 1000)}`;
-              const titles = [
-                'قصيدة الحنين',
-                'على ضفاف النيل',
-                'أغنية الصحراء',
-                'حكاية المطر',
-                'نجوم الليل',
-                'صدى الزمان',
-                'أوراق الخريف',
-                'رحلة الغروب',
-                'همس الفجر',
-                'أسرار القلب',
-              ];
-              const randomTitle = titles[Math.floor(Math.random() * titles.length)];
-
+          {relatedPoems.length > 0 ? (
+            relatedPoems.map((item: RelatedPoems) => {
               return (
                 <ListCard
-                  key={index}
-                  name={`الشاعر ${Math.floor(Math.random() * 5) + 1}`}
-                  href={`/poems/${poemId}`}
-                  title={randomTitle}
+                  key={`${item.poem_slug} ${metadata.poet_slug}`}
+                  title={item.poet_name}
+                  href={`/poems/${item.poem_slug}`}
+                  name={item.poem_title}
                 />
               );
             })

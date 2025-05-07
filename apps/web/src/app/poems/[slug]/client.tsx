@@ -81,16 +81,8 @@ export default function PoemSlugClientPage() {
     return <ErrorMessage message="لم يعثر على القصيدة" />;
   }
 
-  const { data, clearTitle, processedContent } = poem;
-  const { verses, verseCount, sample, keywords } = processedContent;
-
-  const metadata = {
-    title: `${clearTitle} | ${data.poet_name}`,
-    description: `قصيدة (${clearTitle}) لـ«${data.poet_name}» من بحر ${data.meter_name}، عدد أبياتها ${verseCount}، ومنها: «${sample}»`,
-    url: `${SITE_URL}/poems/${slug}/`,
-    keywords,
-    author: data.poet_name,
-  };
+  const { metadata, clearTitle, processedContent, relatedPoems } = poem;
+  const { verses, verseCount, keywords } = processedContent;
 
   const joinedVerses = verses.flat().join(' - ');
 
@@ -98,11 +90,11 @@ export default function PoemSlugClientPage() {
     '@context': 'https://schema.org',
     '@type': 'CreativeWork',
     name: poem.clearTitle,
-    headline: `${poem.clearTitle} | ${poem.data.poet_name}`,
+    headline: `${poem.clearTitle} | ${poem.metadata.poet_name}`,
     author: {
       '@type': 'Person',
-      name: poem.data.poet_name,
-      url: poem.data.poet_slug,
+      name: poem.metadata.poet_name,
+      url: poem.metadata.poet_slug,
     },
     inLanguage: 'ar',
     datePublished: new Date().toISOString(),
@@ -110,13 +102,13 @@ export default function PoemSlugClientPage() {
     isPartOf: [
       {
         '@type': 'Collection',
-        name: poem.data.poet_name,
-        url: poem.data.poet_slug,
+        name: poem.metadata.poet_name,
+        url: poem.metadata.poet_slug,
       },
       {
         '@type': 'Collection',
-        name: poem.data.era_name,
-        url: poem.data.era_slug,
+        name: poem.metadata.era_name,
+        url: poem.metadata.era_slug,
       },
     ],
     description: joinedVerses,
@@ -135,13 +127,12 @@ export default function PoemSlugClientPage() {
     <Suspense fallback={<Loading />}>
       <>
         <JsonLd data={jsonLd} />
-
         <PoemDisplay
           clearTitle={clearTitle}
-          data={data}
+          metadata={metadata}
           verses={verses}
           verseCount={verseCount}
-          metadata={metadata}
+          relatedPoems={relatedPoems}
         />
       </>
     </Suspense>

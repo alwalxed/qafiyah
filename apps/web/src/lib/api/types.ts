@@ -17,6 +17,7 @@ import type {
   poetSchema,
   poetsListResponseSchema,
   processedPoemContentSchema,
+  relatedPoemSchema,
   rhymeDetailsSchema,
   rhymePoemSchema,
   rhymePoemsResponseSchema,
@@ -81,13 +82,15 @@ export type PoetDetails = z.infer<typeof poetDetailsSchema>;
 export type RhymeDetails = z.infer<typeof rhymeDetailsSchema>;
 export type ThemeDetails = z.infer<typeof themeDetailsSchema>;
 
-export type PoemData = z.infer<typeof poemMetadataSchema>;
+export type PoemMetadata = z.infer<typeof poemMetadataSchema>;
 export type ProcessedPoemContent = z.infer<typeof processedPoemContentSchema>;
+export type RelatedPoems = z.infer<typeof relatedPoemSchema>;
 
 type PoemDetailData = {
-  data: z.infer<typeof poemMetadataSchema>;
+  metadata: PoemMetadata;
   clearTitle: string;
-  processedContent: z.infer<typeof processedPoemContentSchema>;
+  processedContent: ProcessedPoemContent;
+  relatedPoems: RelatedPoems[];
 };
 
 export type ProcessedPoem = PoemDetailData;

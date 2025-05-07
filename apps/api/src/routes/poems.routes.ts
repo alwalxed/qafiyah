@@ -153,7 +153,7 @@ app
         },
         clearTitle,
         processedContent,
-        related_poems,
+        relatedPoems: related_poems,
       };
 
       return c.json(createValidatedResponse("poemDetail", responseData));
