@@ -1,38 +1,43 @@
-# Database Restore Guide
+# 🛠️ Database Restore Guide
 
-## Prerequisites
+This guide provides a step-by-step process to decompress a PostgreSQL SQL dump from split `.7z` files (if present), extract the `.sql`, and restore it into PostgreSQL.
 
-- 7-Zip installed
+## 📅 Data Freshness
 
-## Compression Command
+Last updated: May 8, 2025
+
+## 📦 Compression Reference
 
 ```bash
+# Command used to create the compressed dump:
+# Splits dump.sql into 30MB .7z chunks using maximum compression.
+
 7z a -t7z -m0=lzma2 -mx=9 -mfb=273 -md=64m -ms=on -v30m dump.7z dump.sql
 ```
 
-## Restore Process
+## ✅ Prerequisites
 
-### 1. Merge Split Files
+- 7-Zip installed
 
-#### Linux/macOS:
+## ♻️ Restore Process
 
-```bash
-cat dump.7z.00\* > dump.7z
-```
-
-#### Windows:
+### 🔗 1. Merge Split Files (if split)
 
 ```bash
-copy /b dump.7z.00\* dump.7z
+# Linux/macOS:
+cat dump.7z.00* > dump.7z
+
+# Windows:
+copy /b dump.7z.00* dump.7z
 ```
 
-### 2. Extract SQL Dump
+### 📤 2. Extract SQL Dump
 
 ```bash
 7z x dump.7z
 ```
 
-### 3. Restore to Database
+### 🧱 3. Restore to PostgreSQL
 
 ```bash
 psql -h hostname -U username -d database_name < dump.sql
