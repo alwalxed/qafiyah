@@ -82,7 +82,7 @@ export default function PoemSlugClientPage() {
   }
 
   const { data, clearTitle, processedContent } = poem;
-  const { verses, readTime, verseCount, sample, keywords } = processedContent;
+  const { verses, verseCount, sample, keywords } = processedContent;
 
   const metadata = {
     title: `${clearTitle} | ${data.poet_name}`,
@@ -90,7 +90,6 @@ export default function PoemSlugClientPage() {
     url: `${SITE_URL}/poems/${slug}/`,
     keywords,
     author: data.poet_name,
-    readingTime: readTime,
   };
 
   const joinedVerses = verses.flat().join(' - ');

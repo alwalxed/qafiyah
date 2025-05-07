@@ -5,6 +5,8 @@ import { useTweetUrl } from '@/hooks/use-tweet-url';
 import { getFormattedVersesCount } from '@/utils/texts/get-verse-count';
 import { Minus, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
+import { ListCard } from '../ui/list-card';
+import { SectionList } from '../ui/section-list';
 
 export type PoemProps = {
   clearTitle: string;
@@ -110,6 +112,41 @@ export function PoemDisplay({ clearTitle, data, verses, verseCount }: PoemProps)
             </div>
           </article>
         </div>
+
+        <SectionList dynamicTitle="اقرأ المزيد">
+          {Array.from({ length: 10 }).length > 0 ? (
+            Array.from({ length: 10 }).map((_, index) => {
+              // Generate random poem data
+              const poemId = `poem-${Math.floor(Math.random() * 1000)}`;
+              const titles = [
+                'قصيدة الحنين',
+                'على ضفاف النيل',
+                'أغنية الصحراء',
+                'حكاية المطر',
+                'نجوم الليل',
+                'صدى الزمان',
+                'أوراق الخريف',
+                'رحلة الغروب',
+                'همس الفجر',
+                'أسرار القلب',
+              ];
+              const randomTitle = titles[Math.floor(Math.random() * titles.length)];
+
+              return (
+                <ListCard
+                  key={index}
+                  name={`الشاعر ${Math.floor(Math.random() * 5) + 1}`}
+                  href={`/poems/${poemId}`}
+                  title={randomTitle}
+                />
+              );
+            })
+          ) : (
+            <div className="text-red-500 text-center py-8">
+              حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.
+            </div>
+          )}
+        </SectionList>
       </div>
     </div>
   );

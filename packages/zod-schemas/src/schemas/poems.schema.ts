@@ -9,7 +9,6 @@ export const poemMetadataSchema = z.object({
   era_slug: z.string(),
   meter_name: z.string(),
   theme_name: z.string(),
-  type_name: z.string().optional(),
 });
 
 // Schema for a processed poem verse
@@ -18,7 +17,6 @@ export const poemVerseSchema = z.tuple([z.string(), z.string()]);
 // Schema for processed poem content
 export const processedPoemContentSchema = z.object({
   verses: z.array(poemVerseSchema),
-  readTime: z.string(),
   verseCount: z.number().int().positive(),
   sample: z.string(),
   keywords: z.string(),

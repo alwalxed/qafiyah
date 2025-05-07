@@ -1,4 +1,3 @@
-import { formatArabicCount } from "arabic-count-format";
 import { removeTashkeel } from "./remove-tashkeel";
 
 /**
@@ -22,10 +21,6 @@ export function processPoemContent(content: string) {
     verses[j] = [lines[i] || "", lines[i + 1] || ""];
   }
 
-  const readTime = formatArabicCount({
-    count: lineCount,
-    nounForms: { singular: "دقيقة", dual: "دقيقتان", plural: "دقائق" },
-  });
   const verseCount = verses.length;
 
   // Process sample and keywords only once
@@ -38,7 +33,6 @@ export function processPoemContent(content: string) {
 
   return {
     verses,
-    readTime,
     verseCount,
     sample,
     keywords,
