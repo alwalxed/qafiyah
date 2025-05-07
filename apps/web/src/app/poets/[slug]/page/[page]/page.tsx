@@ -66,6 +66,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       robots: {
         index: true,
         follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          notranslate: false,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
       },
       openGraph: {
         url: `${SITE_URL}/poets/slug/${slug}/page/${page || 1}`,

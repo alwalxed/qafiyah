@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   keywords: htmlHeadMetadata.keywords,
   authors: [{ name: htmlHeadMetadata.author }],
   creator: htmlHeadMetadata.poetName,
+  category: 'Poetry',
   publisher: SITE_NAME,
   metadataBase: new URL(SITE_URL),
   alternates: {
@@ -32,9 +33,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
+      notranslate: false,
       'max-image-preview': 'large',
       'max-snippet': -1,
-      'max-video-preview': -1,
     },
   },
   openGraph: {
@@ -104,6 +105,7 @@ export default function RootLayout({
       <head>
         <link rel="dns-prefetch" href="https://api.qafiyah.com" />
         <link rel="preconnect" href="https://api.qafiyah.com" />
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
       </head>
       <body
         className={cn(
@@ -137,15 +139,27 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               '@context': 'https://schema.org',
-              '@type': 'Website',
+              '@type': 'WebSite',
               name: htmlHeadMetadata.title,
               url: SITE_URL,
               description: htmlHeadMetadata.description,
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: `${SITE_URL}?q={search_term_string}`,
+                'query-input': 'required name=search_term_string',
+              },
               publisher: {
                 '@type': 'Organization',
                 name: SITE_NAME,
-                logo: `${SITE_URL}/logo.png`,
+                logo: {
+                  '@type': 'ImageObject',
+                  url: `${SITE_URL}/logo.png`,
+                  width: '112',
+                  height: '112',
+                },
+                sameAs: [`https://x.com/qafiyahdotcom`, `https://github.com/alwalxed/qafiyah`],
               },
+              inLanguage: 'ar',
             }),
           }}
         />
