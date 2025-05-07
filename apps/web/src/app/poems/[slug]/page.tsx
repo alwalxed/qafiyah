@@ -1,7 +1,7 @@
 import Loading from '@/app/loading';
 import { API_URL, NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
-import type { ProcessedPoem } from '@/lib/api/types';
+import type { PoemResponseData } from '@/lib/api/types';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import PoemSlugClientPage from './client';
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
-    const responseJson = (await response.json()) as { success: boolean; data: ProcessedPoem };
+    const responseJson = (await response.json()) as { success: boolean; data: PoemResponseData };
 
     if (!responseJson.success) {
       return {
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
-    const poem = responseJson.data as ProcessedPoem;
+    const poem = responseJson.data as PoemResponseData;
 
     const clearTitle = poem?.clearTitle || 'قصيدة';
 

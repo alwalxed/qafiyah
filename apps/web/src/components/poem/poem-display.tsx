@@ -13,7 +13,7 @@ export type PoemProps = {
   metadata: PoemMetadata;
   verses: string[][];
   verseCount: string | number;
-  relatedPoems: RelatedPoems[];
+  relatedPoems: RelatedPoems[] | undefined;
 };
 
 export function PoemDisplay({ clearTitle, metadata, verses, verseCount, relatedPoems }: PoemProps) {
@@ -105,8 +105,8 @@ export function PoemDisplay({ clearTitle, metadata, verses, verseCount, relatedP
           </article>
         </div>
 
-        <SectionList dynamicTitle="اقرأ المزيد">
-          {relatedPoems.length > 0 ? (
+        <SectionList dynamicTitle="استزد">
+          {relatedPoems && relatedPoems.length > 0 ? (
             relatedPoems.map((item: RelatedPoems) => {
               return (
                 <ListCard

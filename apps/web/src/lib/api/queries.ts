@@ -9,7 +9,6 @@ import type {
   PoetPoems,
   PoetsData,
   PoetsSearchResponseData,
-  ProcessedPoem,
   Rhyme,
   RhymePoems,
   Theme,
@@ -95,7 +94,7 @@ export const queries = {
   },
 
   // Poems
-  async getPoem(slug: string): Promise<ProcessedPoem> {
+  async getPoem(slug: string) {
     return client.getPoem(slug);
   },
 

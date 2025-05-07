@@ -11,7 +11,6 @@ import type {
   PoetPoems,
   PoetsData,
   PoetsSearchResponseData,
-  ProcessedPoem,
   Rhyme,
   RhymePoems,
   Theme,
@@ -246,8 +245,7 @@ const apiClient = (baseUrl: string) => {
     },
 
     // Poems
-    async getPoem(slug: string): Promise<ProcessedPoem> {
-      // Validate parameters before sending
+    async getPoem(slug: string) {
       const validParams = validateParams('getPoemBySlug', { slug });
 
       const response = await fetchWithValidation(

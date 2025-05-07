@@ -86,15 +86,12 @@ export type PoemMetadata = z.infer<typeof poemMetadataSchema>;
 export type ProcessedPoemContent = z.infer<typeof processedPoemContentSchema>;
 export type RelatedPoems = z.infer<typeof relatedPoemSchema>;
 
-type PoemDetailData = {
+export type PoemResponseData = {
   metadata: PoemMetadata;
   clearTitle: string;
   processedContent: ProcessedPoemContent;
-  relatedPoems: RelatedPoems[];
+  relatedPoems: RelatedPoems;
 };
-
-export type ProcessedPoem = PoemDetailData;
-
 // Response data types
 export type EraResponseData = z.infer<typeof eraPoemsResponseSchema>['data'];
 export type MeterResponseData = z.infer<typeof meterPoemsResponseSchema>['data'];
