@@ -32,9 +32,9 @@ const footerLinks: readonly FooterLinkProps[] = [
   { label: 'البريد', href: 'mailto:contact@qafiyah.com', screenReadersOnly: false },
   { label: 'التويتر', href: TWITTER_URL, screenReadersOnly: false },
   { label: 'الكود', href: GITHUB_REPO_URL, screenReadersOnly: false },
+  { label: 'القاعدة', href: DATABASE_DUMPS_URL, screenReadersOnly: false },
   { label: 'المطور', href: DEVELOPER_SITE_URL, screenReadersOnly: false },
   // screen readers only
-  { label: 'قاعدة البيانات', href: DATABASE_DUMPS_URL, screenReadersOnly: true },
   { label: 'تويتر المطوّر', href: DEVELOPER_TWITTER_URL, screenReadersOnly: true },
   { label: 'إنستغرام المطوّر', href: DEVELOPER_INSTAGRAM_URL, screenReadersOnly: true },
   { label: 'قتهب المطوّر', href: DEVELOPER_GITHUB_URL, screenReadersOnly: true },

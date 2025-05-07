@@ -8,8 +8,8 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
-import { logger } from "hono/logger";
-import { dbMiddleware } from "./middlewares/drizzle.middleware";
+import { dbMiddleware } from "./middlewares/db.middleware";
+import serveEmojiFavicon from "./middlewares/favicon.middleware";
 import eras from "./routes/eras.routes";
 import index from "./routes/index.routes";
 import meters from "./routes/meters.routes";
@@ -31,8 +31,8 @@ const app = new Hono<AppContext>();
  *
  * Order is important:
  * 1. CORS - Handle cross-origin requests
- * 2. Logger - Log all requests before processing
- * 3. Database - Connect to the database for data access
+ * 2. Database - Connect to the database for data access
+ * 3. Favicon - Serve custom emoji favicon
  */
 app.use(
   cors({
@@ -43,8 +43,8 @@ app.use(
     credentials: true,
   })
 );
-app.use(logger());
 app.use(dbMiddleware);
+app.use(serveEmojiFavicon("📜"));
 
 /**
  * Register API routes
