@@ -6,9 +6,8 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import type { AppContext } from "../types";
-import { log } from "../utils/devlopment";
-import { parseIds } from "../utils/number";
-import { cleanArabicQuery } from "../utils/text";
+import { cleanArabicQuery } from "../utils/clean-arabic-query";
+import { parseIds } from "../utils/parse-ids";
 
 type ErrorTypeDefinition = {
   code: ContentfulStatusCode;
@@ -72,7 +71,6 @@ const app = new Hono<AppContext>().get(
       const sanitizedQuery = decodeURIComponent(cleanArabicQuery(q));
 
       if (!sanitizedQuery) {
-        log(c, `sanitizedQuery`);
         throw new HTTPException(ERROR_TYPES.EMPTY_QUERY.code, {
           message: "لا نقل إلا الحروف العربية",
         });
@@ -112,7 +110,6 @@ const app = new Hono<AppContext>().get(
           break;
         }
         default: {
-          log(c, "Default Block");
           throw new HTTPException(ERROR_TYPES.INVALID_SEARCH_TYPE.code, {
             message: "نوع البحث غير صالح",
           });
@@ -180,7 +177,6 @@ const app = new Hono<AppContext>().get(
           break;
         }
         default: {
-          log(c, "Default Block");
           throw new HTTPException(ERROR_TYPES.INVALID_SEARCH_TYPE.code, {
             message: "نوع البحث غير صالح",
           });

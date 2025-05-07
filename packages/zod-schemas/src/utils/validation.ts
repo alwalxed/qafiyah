@@ -71,6 +71,7 @@ export const requestSchemas = {
   getErasPoems: erasSchemas.getErasPoemsRequestSchema,
   getMetersPoems: metersSchemas.getMetersPoemsRequestSchema,
   getPoemBySlug: poemsSchemas.getPoemBySlugRequestSchema,
+  getRandomPoem: poemsSchemas.getRandomPoemRequestSchema,
   getPoets: poetsSchemas.getPoetsRequestSchema,
   getPoetPoems: poetsSchemas.getPoetPoemsRequestSchema,
   getPoetInfo: poetsSchemas.getPoetRequestSchema,

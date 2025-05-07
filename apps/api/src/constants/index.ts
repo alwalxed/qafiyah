@@ -95,3 +95,7 @@ export const NAV_LINKS = [
   { name: "الشعراء", href: "/poets/page/1", external: false },
   { name: "الرئيسة", href: "/", external: false },
 ];
+
+export const FALLBACK_RANDOM_POEM_LINES = `تُضحي إِذا دَقَّ المَطِيُّ كَأَنَّها\nفَدَنُ اِبنِ حَيَّةَ شادَهُ بِالآجُرِ\n\nثعلبة المازني`;
+
+export const FALLBACK_RANDOM_POEM_SLUG = "eabca780-811f-4ea4-949e-21df6efba15d";

@@ -1,51 +1,88 @@
 import { zValidator } from "@hono/zod-validator";
-import { getPoemBySlugRequestSchema } from "@qaf/zod-schemas";
+import {
+  getPoemBySlugRequestSchema,
+  getRandomPoemRequestSchema,
+} from "@qaf/zod-schemas";
 import { createValidatedResponse } from "@qaf/zod-schemas/server";
 import { eq, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { MAX_EXCERPT_LENGTH } from "../constants";
+import {
+  FALLBACK_RANDOM_POEM_LINES,
+  FALLBACK_RANDOM_POEM_SLUG,
+  MAX_EXCERPT_LENGTH,
+} from "../constants";
 import { poemsFullData } from "../schemas/db";
 import type { AppContext, Poem, PoemData } from "../types";
-import { extractPoemExcerpt, processPoemContent } from "../utils/poem";
+import { extractPoemExcerpt } from "../utils/extract-poem-excerpt";
+import { processPoemContent } from "../utils/process-poem-content";
 
-const app = new Hono<AppContext>()
-  .get("/random", async (c) => {
-    const db = c.get("db");
-    try {
-      let result = await db.execute(sql`SELECT get_random_eligible_poem()`);
-      let poemField = "get_random_eligible_poem";
+const app = new Hono<AppContext>();
+app
+  .get(
+    "/random",
+    zValidator("query", getRandomPoemRequestSchema),
+    async (c) => {
+      const { option } = c.req.valid("query");
+      const db = c.get("db");
 
-      if (!result?.rows?.length || !result.rows[0]?.[poemField]) {
-        result = await db.execute(sql`SELECT get_a_random_poem()`);
-        poemField = "get_a_random_poem";
-      }
+      try {
+        c.header("Cache-Control", "no-store");
 
-      if (result?.rows?.length && result.rows[0]?.[poemField]) {
-        const poemJson = result.rows[0][poemField];
-        const poem: Poem =
-          typeof poemJson === "string" ? JSON.parse(poemJson) : poemJson;
+        if (option === "lines") {
+          const result = await db.execute(
+            sql`SELECT get_random_eligible_poem()`
+          );
 
-        if (poem?.content) {
+          if (
+            !result?.rows?.length ||
+            !result.rows[0]?.get_random_eligible_poem
+          ) {
+            throw new Error("No poem found");
+          }
+
+          const poemJson = result.rows[0].get_random_eligible_poem;
+          const poem: Poem =
+            typeof poemJson === "string" ? JSON.parse(poemJson) : poemJson;
+
+          if (!poem?.content) {
+            throw new Error("Invalid poem format");
+          }
+
           const content = extractPoemExcerpt(poem);
 
-          if (content.length <= MAX_EXCERPT_LENGTH) {
-            c.header("Content-Type", "text/plain; charset=utf-8");
-            c.header("Cache-Control", "no-store");
-            return c.text(content);
+          if (content.length > MAX_EXCERPT_LENGTH) {
+            throw new Error("Poem excerpt too long");
           }
+
+          c.header("Content-Type", "text/plain; charset=utf-8");
+          return c.text(content);
+        } else {
+          const result = await db.execute(
+            sql`SELECT get_random_eligible_poem_slug()`
+          );
+
+          if (
+            !result?.rows?.length ||
+            !result.rows[0]?.get_random_eligible_poem_slug
+          ) {
+            throw new Error("No poem slug found");
+          }
+
+          return c.json(result.rows[0].get_random_eligible_poem_slug);
+        }
+      } catch (error) {
+        console.error("Error fetching random poem:", error);
+
+        if (option === "lines") {
+          c.header("Content-Type", "text/plain; charset=utf-8");
+          return c.text(FALLBACK_RANDOM_POEM_LINES);
+        } else {
+          return c.json({ slug: FALLBACK_RANDOM_POEM_SLUG });
         }
       }
-
-      throw new Error("Could not retrieve valid poem");
-    } catch (error) {
-      const staticPoem = `تُضحي إِذا دَقَّ المَطِيُّ كَأَنَّها\nفَدَنُ اِبنِ حَيَّةَ شادَهُ بِالآجُرِ\n\nثعلبة المازني`;
-
-      c.header("Content-Type", "text/plain; charset=utf-8");
-      c.header("Cache-Control", "no-store");
-      return c.text(staticPoem);
     }
-  })
+  )
   .get(
     "/slug/:slug",
     zValidator("param", getPoemBySlugRequestSchema),

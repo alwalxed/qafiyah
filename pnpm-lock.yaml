@@ -32,6 +32,9 @@ importers:
       '@qaf/zod-schemas':
         specifier: workspace:*
         version: link:../../packages/zod-schemas
+      arabic-count-format:
+        specifier: ^1.0.0
+        version: 1.0.0(typescript@5.8.3)
       drizzle-kit:
         specifier: ^0.30.6
         version: 0.30.6
@@ -6776,6 +6779,10 @@ snapshots:
   arabic-count-format@1.0.0(typescript@5.8.2):
     dependencies:
       typescript: 5.8.2
+
+  arabic-count-format@1.0.0(typescript@5.8.3):
+    dependencies:
+      typescript: 5.8.3
 
   arg@4.1.0: {}
 

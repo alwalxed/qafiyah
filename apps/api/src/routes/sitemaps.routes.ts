@@ -1,7 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
+import { paginationSchema } from "@qaf/zod-schemas";
 import { sql } from "drizzle-orm";
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
 import {
   API_URL,
   FETCH_PER_PAGE,
@@ -17,9 +17,7 @@ import {
   rhymeStats,
   themeStats,
 } from "../schemas/db";
-import { paginationSchema } from "../schemas/zod";
 import type { AppContext } from "../types";
-import { sendErrorResponse } from "../utils/error";
 
 const app = new Hono<AppContext>()
   // Main sitemap index
@@ -467,11 +465,14 @@ const app = new Hono<AppContext>()
   .onError((error, c) => {
     console.error(error);
 
-    if (error instanceof HTTPException) {
-      return sendErrorResponse(c, error.message, error.status);
-    }
-
-    return sendErrorResponse(c, "Internal Server Error. SITEMAPS Route", 500);
+    return c.json(
+      {
+        success: false,
+        error: "Internal Server Error. SITEMAPS Route",
+        status: 500,
+      },
+      500
+    );
   });
 
 export default app;

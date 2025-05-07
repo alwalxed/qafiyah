@@ -11,6 +11,7 @@
     "@neondatabase/serverless": "^1.0.0",
     "@qaf/typescript-config": "workspace:*",
     "@qaf/zod-schemas": "workspace:*",
+    "arabic-count-format": "^1.0.0",
     "drizzle-kit": "^0.30.6",
     "drizzle-orm": "^0.41.0",
     "hono": "^4.7.6",

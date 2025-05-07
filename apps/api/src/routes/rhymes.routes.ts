@@ -7,7 +7,7 @@ import { HTTPException } from "hono/http-exception";
 import { ARABIC_LETTERS_MAP, FETCH_PER_PAGE } from "../constants";
 import { rhymePoems, rhymeStats } from "../schemas/db";
 import type { AppContext } from "../types";
-import { normalizeRhymePattern } from "../utils/rhyme";
+import { normalizeRhymePattern } from "../utils/normalize-rhyme-pattern";
 
 const app = new Hono<AppContext>()
   .get("/", async (c) => {

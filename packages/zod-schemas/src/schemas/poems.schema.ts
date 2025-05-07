@@ -38,3 +38,6 @@ export const randomPoemExcerptSchema = z.string();
 
 // Request schemas
 export const getPoemBySlugRequestSchema = slugSchema;
+export const getRandomPoemRequestSchema = z.object({
+  option: z.enum(["lines", "slug"]).default("lines"),
+});
