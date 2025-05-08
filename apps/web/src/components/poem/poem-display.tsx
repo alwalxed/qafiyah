@@ -6,7 +6,6 @@ import type { PoemMetadata, RelatedPoems } from '@/lib/api/types';
 import { getFormattedVersesCount } from '@/utils/texts/get-verse-count';
 import { Minus, Plus } from 'lucide-react';
 import { ListCard } from '../ui/list-card';
-import { SectionList } from '../ui/section-list';
 
 export type PoemProps = {
   clearTitle: string;
@@ -23,7 +22,7 @@ export function PoemDisplay({ clearTitle, metadata, verses, verseCount, relatedP
 
   return (
     <div className="w-full flex justify-center items-start my-14 xs:my-20 lg:my-28">
-      <div className="w-full flex flex-col gap-8 justify-center items-center">
+      <div className="w-full flex flex-col gap-10 justify-center items-center">
         {/* Header */}
         <header className="flex justify-center items-center flex-col gap-4 xxs:gap-6 text-center w-full">
           <div className="flex flex-col gap-2 xx:gap-4">
@@ -105,7 +104,7 @@ export function PoemDisplay({ clearTitle, metadata, verses, verseCount, relatedP
           </article>
         </div>
 
-        <SectionList dynamicTitle="استزد">
+        <div className="md:w-10/12 xl:w-9/12 grid grid-cols-1 2xl:grid-cols-2 w-full gap-1 sm:gap-4 2xl:gap-6">
           {relatedPoems && relatedPoems.length > 0 ? (
             relatedPoems.map((item: RelatedPoems) => {
               return (
@@ -122,7 +121,7 @@ export function PoemDisplay({ clearTitle, metadata, verses, verseCount, relatedP
               حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.
             </div>
           )}
-        </SectionList>
+        </div>
       </div>
     </div>
   );
