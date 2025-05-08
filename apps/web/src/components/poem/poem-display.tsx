@@ -110,7 +110,7 @@ export function PoemDisplay({ clearTitle, metadata, verses, verseCount, relatedP
               استزد
             </h3>
             <p className="text-xs md:text-sm xl:text-base font-normal text-zinc-600">
-              عشرة قصائد مشابهة
+              عشر قصائد مشابهة
             </p>
           </div>
           <div className="w-full grid grid-cols-1 2xl:grid-cols-2 gap-2 sm:gap-4 2xl:gap-6">
