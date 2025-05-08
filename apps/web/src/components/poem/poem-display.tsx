@@ -44,7 +44,7 @@ export function PoemDisplay({ clearTitle, metadata, verses, verseCount, relatedP
               className="flex w-full justify-center items-center mt-1 sm:mt-2 cursor-pointer"
             >
               <div className="bg-white/5 px-2 lg:px-4 rounded-md border border-zinc-300/60 flex justify-center items-center text-zinc-600 text-[8px] xxs:text-xs md:text-base">
-                <p>غردها</p>
+                <p>غرد</p>
               </div>
             </a>
           </div>
@@ -104,23 +104,34 @@ export function PoemDisplay({ clearTitle, metadata, verses, verseCount, relatedP
           </article>
         </div>
 
-        <div className="md:w-10/12 xl:w-9/12 grid grid-cols-1 2xl:grid-cols-2 w-full gap-1 sm:gap-4 2xl:gap-6">
-          {relatedPoems && relatedPoems.length > 0 ? (
-            relatedPoems.map((item: RelatedPoems) => {
-              return (
-                <ListCard
-                  key={`${item.poem_slug} ${metadata.poet_slug}`}
-                  title={item.poet_name}
-                  href={`/poems/${item.poem_slug}`}
-                  name={item.poem_title}
-                />
-              );
-            })
-          ) : (
-            <div className="text-red-500 text-center py-8">
-              حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.
-            </div>
-          )}
+        <div className="w-full md:w-10/12 xl:w-9/12 flex flex-col gap-6 py-6 xl:gap-8 xl:py-8">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg xxs:text-xl xs:text-2xl sm:text-3xl md:text-4xl font-bold">
+              استزد
+            </h3>
+            <p className="text-xs md:text-sm xl:text-base font-normal text-zinc-600">
+              عشرة قصائد مشابهة
+            </p>
+          </div>
+          <div className="w-full grid grid-cols-1 2xl:grid-cols-2 gap-2 sm:gap-4 2xl:gap-6">
+            {relatedPoems && relatedPoems.length > 0 ? (
+              relatedPoems.map((item: RelatedPoems) => {
+                return (
+                  <ListCard
+                    className="rounded-2xl"
+                    key={`${item.poem_slug} ${metadata.poet_slug}`}
+                    title={item.poet_name}
+                    href={`/poems/${item.poem_slug}`}
+                    name={item.poem_title}
+                  />
+                );
+              })
+            ) : (
+              <div className="text-red-500 text-center py-8">
+                حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
