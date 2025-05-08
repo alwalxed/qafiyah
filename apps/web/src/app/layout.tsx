@@ -102,11 +102,6 @@ export default function RootLayout({
         }
       )}
     >
-      <head>
-        <link rel="dns-prefetch" href="https://api.qafiyah.com" />
-        <link rel="preconnect" href="https://api.qafiyah.com" />
-        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
-      </head>
       <body
         className={cn(
           'relative overflow-x-hidden',
