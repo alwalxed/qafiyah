@@ -1,2 +1,0 @@
-- Fixed names
-- Added new functions

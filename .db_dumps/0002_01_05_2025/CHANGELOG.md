@@ -1,5 +1,0 @@
-- Removed all materialized views and replaced them with normal views, except for the poem_full_data view, as it involves many joins and contains the most central data in my whole app.
-- Fixed some poem names, especially those starting with أ, إ, and ا.
-- Added a new method for getting random poems, improving the response time from 110ms to 7ms.
-- Added new search functions.
-- Removed unused tables and functions.

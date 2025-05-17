@@ -1,44 +1,38 @@
-# 🛠️ Database Restore Guide
+# Restore Guide
 
-This guide provides a step-by-step process to decompress a PostgreSQL SQL dump from split `.7z` files (if present), extract the `.sql`, and restore it into PostgreSQL.
+This guide restores the database dump into your local PostgreSQL instance.
 
-## 📅 Data Freshness
-
-Last updated: May 8, 2025
-
-## 📦 Compression Reference
+## 1. Create a new database
 
 ```bash
-# Command used to create the compressed dump:
-# Splits dump.sql into 30MB .7z chunks using maximum compression.
-
-7z a -t7z -m0=lzma2 -mx=9 -mfb=273 -md=64m -ms=on -v30m dump.7z dump.sql
+createdb -U postgres qafiyah
 ```
 
-## ✅ Prerequisites
-
-- 7-Zip installed
-
-## ♻️ Restore Process
-
-### 🔗 1. Merge Split Files (if split)
+## 2. Restore the dump
 
 ```bash
-# Linux/macOS:
-cat dump.7z.00* > dump.7z
-
-# Windows:
-copy /b dump.7z.00* dump.7z
+pg_restore \
+  -U postgres \
+  -d qafiyah \
+  -F c \
+  --no-owner \
+  --no-acl \
+  /path/to/qafiyah_public_YYYYMMDD_HHMM.dump
 ```
 
-### 📤 2. Extract SQL Dump
+> Note: You can ignore the harmless `schema "public" already exists` warning.
+
+## Dump creation command
 
 ```bash
-7z x dump.7z
-```
-
-### 🧱 3. Restore to PostgreSQL
-
-```bash
-psql -h hostname -U username -d database_name < dump.sql
+PGSSLMODE=require pg_dump \
+  -h aws-0-us-east-2.pooler.supabase.com \
+  -p 5432 \
+  -U postgres.<secret> \
+  -d postgres \
+  --schema=public \
+  --no-owner \
+  --no-acl \
+  -F c \
+  -f qafiyah_public_$(date +%Y%m%d_%H%M).dump
 ```
