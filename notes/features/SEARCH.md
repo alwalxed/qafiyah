@@ -1,4 +1,4 @@
-# Our Search Implementation Guide
+# Qafiyah Search – Reproducible Setup Guide
 
 ## Overview
 
@@ -46,56 +46,34 @@ SELECT * from poets LIMIT 1;
 
 ## Implementation Steps
 
-### 1. Create Text Processing Functions
+### 1. Normalize Arabic Text
 
-Strip diacritics — this is applied to user input as well, since we don't expect users to include them.
-
-```sql
--- Remove Arabic diacritics (tashkeel) from text.
--- This includes: ً ٌ ٍ َ ُ ِ ّ ْ ٰ ٓ ٔ and tatweel ـ
-CREATE OR REPLACE FUNCTION strip_diacritics(input_text TEXT)
-RETURNS TEXT AS $$
-BEGIN
- -- Use Unicode range for Arabic diacritics (tashkeel) and tatweel
- RETURN regexp_replace(input_text, '[\u064B-\u0652\u0670\u06D6\u06DC\u06DF\u06E0\u06E1\u06E2\u06E3\u06E4\u06E5\u06E6\u06E7\u06E8\u06E9\u06EA\u06EB\u06EC\u06ED\u06EE\u06EF\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9\u06FA\u06FB\u06FC\u06FD\u06FE\u06FF]', '', 'g');
-END;
-$$
-LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER;
-```
-
-Filter Arabic text — optionally preserving or removing the separator (the asterisk that separates lines). We preserve separators in the search function but remove them when creating `tsvector` columns.
-
-```sql
--- Keep only Arabic letters and optionally the verse separator '*'.
--- This function ALWAYS preserves spaces as word boundaries.
--- If keep_separator is TRUE, '*' is preserved. If FALSE, '*' is removed.
-CREATE OR REPLACE FUNCTION filter_arabic_text(input_text TEXT, keep_asterisk BOOLEAN)
-RETURNS TEXT AS $$
-DECLARE
- pattern TEXT;
-BEGIN
- IF keep_asterisk THEN
-   pattern := '[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FFء *]';  -- Arabic letters and asterisk
- ELSE
-   pattern := '[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FFء ]';  -- Arabic letter no asterisk
- END IF;
-
- RETURN regexp_replace(input_text, pattern, '', 'g');
-END;
-$$
-LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER;
-```
-
-Wrapper function to apply all text processing steps:
+Removes diacritics and tatweel, and filters out non-Arabic characters. Optionally preserves `*`.
 
 ```sql
 -- Normalize Arabic text:
--- 1. strip diacritics and 2. filter letters. 3. spaces
--- 4. and optionally verse separator '*'
+-- 1. Strip diacritics and tatweel
+-- 2. Keep only Arabic letters, spaces, and optionally '*'
 CREATE OR REPLACE FUNCTION normalize_arabic_text(input_text TEXT, keep_asterisk BOOLEAN)
 RETURNS TEXT AS $$
+DECLARE
+  pattern TEXT;
+  cleaned TEXT;
 BEGIN
- RETURN filter_arabic_text(strip_diacritics(input_text), keep_asterisk);
+  cleaned := regexp_replace(
+    input_text,
+    '[\u064B-\u0652\u0670\u06D6\u06DC\u06DF\u06E0\u06E1\u06E2\u06E3\u06E4\u06E5\u06E6\u06E7\u06E8\u06E9\u06EA\u06EB\u06EC\u06ED\u06EE\u06EF\u06F0-\u06FF]',
+    '',
+    'g'
+  );
+
+  IF keep_asterisk THEN
+    pattern := '[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FFء *]';
+  ELSE
+    pattern := '[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FFء ]';
+  END IF;
+
+  RETURN regexp_replace(cleaned, pattern, '', 'g');
 END;
 $$
 LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER;
