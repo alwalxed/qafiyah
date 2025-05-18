@@ -41,7 +41,9 @@ export default function Page() {
         <ul>
           {seoKeywords.map((item) => (
             <li key={item} tabIndex={-1}>
-              <a href={SITE_URL}>{item}</a>
+              <a href={SITE_URL} tabIndex={-1} aria-hidden="true">
+                {item}
+              </a>
             </li>
           ))}
         </ul>
