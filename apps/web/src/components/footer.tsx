@@ -11,7 +11,7 @@ import {
 } from '@/constants/GLOBALS';
 import { cn } from '@/utils/conversions/cn';
 import React from 'react';
-import { RandomPoemSlug } from './random-poem-slug';
+import { RandomPoemButton } from './random-poem-button';
 
 type Props = {
   className?: string;
@@ -75,7 +75,7 @@ export function Footer({ className }: Props) {
           ))}
       </div>
 
-      <RandomPoemSlug />
+      <RandomPoemButton />
     </footer>
   );
 }

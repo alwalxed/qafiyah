@@ -3,7 +3,7 @@
 import { useRandomPoem } from '@/hooks/use-random-slug';
 import { Loader2 } from 'lucide-react';
 
-export function RandomPoemSlug() {
+export function RandomPoemButton() {
   const { handleClick, isLoading, isError } = useRandomPoem();
 
   return (
