@@ -40,7 +40,7 @@ export default function Page() {
         <h3 className="sr-only">{htmlHeadMetadata.title}</h3>
         <ul>
           {seoKeywords.map((item) => (
-            <li key={item}>
+            <li key={item} tabIndex={-1}>
               <a href={SITE_URL}>{item}</a>
             </li>
           ))}
