@@ -66,6 +66,8 @@ export function SearchInput({
         <div className="bg-white pr-2 absolute left-3 top-1/2 -translate-y-1/2 flex items-center h-full">
           {hasActiveFiltersOrInput && (
             <button
+              aria-hidden={hasActiveFiltersOrInput}
+              tabIndex={hasActiveFiltersOrInput ? 0 : -1}
               onClick={resetAllStates}
               className="text-zinc-400 hover:text-zinc-700 focus:outline-none"
               aria-label="Clear search"

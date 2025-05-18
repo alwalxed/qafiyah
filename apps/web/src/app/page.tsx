@@ -25,8 +25,14 @@ export default function Page() {
   return (
     <>
       {/* HIDDEN */}
-      <section className="sr-only pointer-events-none text-opacity-0 opacity-0" aria-hidden="true">
-        <h1>{htmlHeadMetadata.description}</h1>
+      <section
+        className="sr-only pointer-events-none text-opacity-0 opacity-0"
+        aria-hidden="true"
+        tabIndex={-1}
+      >
+        <h1 aria-hidden="true" tabIndex={-1}>
+          {htmlHeadMetadata.description}
+        </h1>
       </section>
 
       {/* ACTUAL Content */}
@@ -36,11 +42,17 @@ export default function Page() {
       </Suspense>
 
       {/* HIDDEN */}
-      <section className="sr-only pointer-events-none text-opacity-0 opacity-0" aria-hidden="true">
-        <h3 className="sr-only">{htmlHeadMetadata.title}</h3>
+      <section
+        className="sr-only pointer-events-none text-opacity-0 opacity-0"
+        aria-hidden="true"
+        tabIndex={-1}
+      >
+        <h3 className="sr-only" aria-hidden="true" tabIndex={-1}>
+          {htmlHeadMetadata.title}
+        </h3>
         <ul>
           {seoKeywords.map((item) => (
-            <li key={item} tabIndex={-1}>
+            <li key={item} aria-hidden="true" tabIndex={-1}>
               <a href={SITE_URL} tabIndex={-1} aria-hidden="true">
                 {item}
               </a>

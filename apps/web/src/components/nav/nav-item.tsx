@@ -14,6 +14,7 @@ export function NavItem({ isMobile = false, href, external, isActive, onClick, c
   return (
     <li className={cn(isMobile && 'w-full text-right border-b border-zinc-300/30 pb-2')}>
       <a
+        tabIndex={isMobile ? -1 : 0}
         href={href}
         target={external ? '_blank' : undefined}
         className={cn(
