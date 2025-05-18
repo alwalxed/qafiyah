@@ -11,6 +11,7 @@ type Props = {
 export function FiltersButton({ toggleFilters, filtersVisible }: Props) {
   return (
     <Button
+      tabIndex={0}
       variant="default"
       onClick={toggleFilters}
       className={cn(
@@ -21,8 +22,12 @@ export function FiltersButton({ toggleFilters, filtersVisible }: Props) {
       )}
       aria-label={filtersVisible ? 'Collapse filters' : 'Expand filters'}
     >
-      <Filter className="h-2 w-2" />
-      {filtersVisible ? <ChevronUp className="h-2 w-2" /> : <ChevronDown className="h-2 w-2" />}
+      <Filter tabIndex={-1} className="h-2 w-2" />
+      {filtersVisible ? (
+        <ChevronUp tabIndex={-1} className="h-2 w-2" />
+      ) : (
+        <ChevronDown tabIndex={-1} className="h-2 w-2" />
+      )}
     </Button>
   );
 }

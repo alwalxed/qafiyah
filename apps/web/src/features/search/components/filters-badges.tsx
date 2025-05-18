@@ -25,7 +25,7 @@ export function FilterBadges({
 }: Props) {
   const badgeClassname = 'text-xs md:text-sm font-normal text-zinc-600 border-zinc-300/50 bg-white';
   return (
-    <div className="flex flex-wrap gap-1 justify-end">
+    <div tabIndex={-1} className="flex flex-wrap gap-1 justify-end">
       {selectedErasLength > 0 && (
         <Badge variant="outline" className={badgeClassname}>
           {badgeErasCountText}

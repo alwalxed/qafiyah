@@ -31,6 +31,7 @@ export function MobileMenu() {
 
       {/* CLOSE BUTTON */}
       <button
+        tabIndex={-1}
         id="close-menu"
         className="absolute top-4 left-4 p-2 text-zinc-500 hover:text-zinc-700"
         aria-label="إغلاق القائمة"
