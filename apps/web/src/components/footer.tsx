@@ -7,8 +7,10 @@ import {
   DEVELOPER_SITE_URL,
   DEVELOPER_TWITTER_URL,
   GITHUB_REPO_URL,
+  SITE_URL,
   TWITTER_URL,
 } from '@/constants/GLOBALS';
+import { seoKeywords } from '@/constants/SEO_KEYWORDS';
 import { cn } from '@/utils/conversions/cn';
 import React from 'react';
 import { RandomPoemButton } from './random-poem-button';
@@ -61,6 +63,28 @@ export function Footer({ className }: Props) {
         className
       )}
     >
+      {/* --------------------------------------------- */}
+      {/* --------------------------------------------------- */}
+      {/* HIDDEN --------------------------------------------------- */}
+      <section
+        className="sr-only pointer-events-none text-opacity-0 opacity-0"
+        aria-hidden="true"
+        tabIndex={-1}
+      >
+        <ul>
+          {seoKeywords.map((item) => (
+            <li key={item} aria-hidden="true" tabIndex={-1}>
+              <a href={SITE_URL} tabIndex={-1} aria-hidden="true">
+                {item}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+      {/* ---------------------------------------------------------- */}
+      {/* --------------------------------------------------- */}
+      {/* --------------------------------------------- */}
+
       <div className="flex md:gap-3 gap-[6px]">
         {visibleLinks.map((link, index) => (
           <React.Fragment key={link.href}>
