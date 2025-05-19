@@ -1,6 +1,6 @@
 # Restore Guide
 
-This guide restores the database dump into your local PostgreSQL instance.
+This guide restores the database dump into your local PostgreSQL instance. The dump was created with **PostgreSQL 15.8**. Check your version: `pg_restore --version`. And update if it's lower.
 
 ## 1. Create a new database
 
