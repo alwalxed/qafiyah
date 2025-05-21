@@ -2,13 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { paginationSchema } from "@qaf/zod-schemas";
 import { sql } from "drizzle-orm";
 import { Hono } from "hono";
-import {
-  API_URL,
-  FETCH_PER_PAGE,
-  MAX_URLS_PER_SITEMAP,
-  NAV_LINKS,
-  SITE_URL,
-} from "../constants";
+import { API_URL, MAX_URLS_PER_SITEMAP, SITE_URL } from "../constants";
 import {
   eraStats,
   meterStats,
@@ -18,453 +12,327 @@ import {
   themeStats,
 } from "../schemas/db";
 import type { AppContext } from "../types";
+import {
+  createPagedEntries,
+  generateSitemapIndexXml,
+  generateUrlEntriesXml,
+  toPriority,
+  type UrlEntry,
+} from "../utils/xml-sitemaps";
 
 const app = new Hono<AppContext>()
-  // Main sitemap index
+
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* ENTRY -------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+
   .get("/", async (c) => {
     const db = c.get("db");
 
-    const poemsCountResult = await db
+    const [{ count } = { count: 0 }] = await db
       .select({ count: sql`count(*)` })
       .from(poemsFullData);
 
-    if (!poemsCountResult[0]) {
-      throw new Error();
-    }
+    const totalPoemSitemaps = Math.ceil(Number(count) / MAX_URLS_PER_SITEMAP);
 
-    const totalPoems = Number(poemsCountResult[0].count);
-    const totalPoemSitemaps = Math.ceil(totalPoems / MAX_URLS_PER_SITEMAP);
+    const staticSitemaps: UrlEntry[] = [
+      "main",
+      "poets",
+      "eras",
+      "meters",
+      "rhymes",
+      "themes",
+    ].map((name) => ({
+      url: `${API_URL}/sitemaps/${name}`,
+      lastmod: new Date().toISOString(),
+    }));
 
-    const sitemapEntries = [
-      {
-        url: `${API_URL}/sitemaps/nav`,
+    const poemSitemaps: UrlEntry[] = Array.from(
+      { length: totalPoemSitemaps },
+      (_, i) => ({
+        url: `${API_URL}/sitemaps/poems/${i + 1}`,
         lastmod: new Date().toISOString(),
-      },
-      {
-        url: `${API_URL}/sitemaps/poets`,
-        lastmod: new Date().toISOString(),
-      },
-      {
-        url: `${API_URL}/sitemaps/eras`,
-        lastmod: new Date().toISOString(),
-      },
-      {
-        url: `${API_URL}/sitemaps/meters`,
-        lastmod: new Date().toISOString(),
-      },
-      {
-        url: `${API_URL}/sitemaps/rhymes`,
-        lastmod: new Date().toISOString(),
-      },
-      {
-        url: `${API_URL}/sitemaps/themes`,
-        lastmod: new Date().toISOString(),
-      },
-    ];
-
-    for (let i = 1; i <= totalPoemSitemaps; i++) {
-      sitemapEntries.push({
-        url: `${API_URL}/sitemaps/poems/${i}`,
-        lastmod: new Date().toISOString(),
-      });
-    }
-
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-      <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${sitemapEntries
-          .map(
-            (entry) => `
-          <sitemap>
-            <loc>${entry.url}</loc>
-            <lastmod>${entry.lastmod}</lastmod>
-          </sitemap>
-        `
-          )
-          .join("")}
-      </sitemapindex>`;
-
-    c.header("Content-Type", "application/xml");
-    return c.body(xml);
-  })
-  // Nav sitemap
-  .get("/nav", async (c) => {
-    // Filter out external links
-    const navEntries = NAV_LINKS.filter((link) => !link.external).map(
-      (link) => ({
-        url: `${SITE_URL}${link.href}`,
-        lastmod: new Date().toISOString(),
-        changefreq: "weekly",
-        priority: link.href === "/" ? 1.0 : 0.8,
       })
     );
 
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${navEntries
-          .map(
-            (entry) => `
-          <url>
-            <loc>${entry.url}</loc>
-            <lastmod>${entry.lastmod}</lastmod>
-            <changefreq>${entry.changefreq}</changefreq>
-            <priority>${entry.priority}</priority>
-          </url>
-        `
-          )
-          .join("")}
-      </urlset>`;
+    const xml = generateSitemapIndexXml([...staticSitemaps, ...poemSitemaps]);
 
     c.header("Content-Type", "application/xml");
     return c.body(xml);
   })
-  // Eras sitemap
-  .get("/eras", async (c) => {
-    const db = c.get("db");
-    const eras = await db.select().from(eraStats);
 
-    const eraListEntries = [
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* MAIN --------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+
+  .get("/main", async (c) => {
+    const xml = generateUrlEntriesXml([
       {
-        url: `${SITE_URL}/eras`,
+        url: SITE_URL,
         lastmod: new Date().toISOString(),
-        changefreq: "monthly",
-        priority: 0.8,
+        changefreq: "hourly",
+        priority: toPriority(1.0),
       },
-    ];
-
-    const eraEntries = eras.flatMap((era) => {
-      const totalPages = Math.ceil(era.poemsCount / FETCH_PER_PAGE);
-
-      return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
-        // Updated URL format to match your app structure
-        url: `${SITE_URL}/eras/${era.slug}/page/${i + 1}`,
-        lastmod: new Date().toISOString(),
-        changefreq: "monthly",
-        priority: 0.7,
-      }));
-    });
-
-    const allEntries = [...eraListEntries, ...eraEntries];
-
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${allEntries
-          .map(
-            (entry) => `
-          <url>
-            <loc>${entry.url}</loc>
-            <lastmod>${entry.lastmod}</lastmod>
-            <changefreq>${entry.changefreq}</changefreq>
-            <priority>${entry.priority}</priority>
-          </url>
-        `
-          )
-          .join("")}
-      </urlset>`;
+    ]);
 
     c.header("Content-Type", "application/xml");
     return c.body(xml);
   })
-  // Meters sitemap
-  .get("/meters", async (c) => {
-    const db = c.get("db");
-    const meters = await db.select().from(meterStats);
 
-    const meterListEntries = [
-      {
-        url: `${SITE_URL}/meters`,
-        lastmod: new Date().toISOString(),
-        changefreq: "monthly",
-        priority: 0.8,
-      },
-    ];
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* POEMS/:PAGE -------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
 
-    const meterEntries = meters.flatMap((meter) => {
-      const totalPages = Math.ceil(meter.poemsCount / FETCH_PER_PAGE);
-
-      return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
-        // Updated URL format to match your app structure
-        url: `${SITE_URL}/meters/${meter.slug}/page/${i + 1}`,
-        lastmod: new Date().toISOString(),
-        changefreq: "monthly",
-        priority: 0.7,
-      }));
-    });
-
-    const allEntries = [...meterListEntries, ...meterEntries];
-
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${allEntries
-          .map(
-            (entry) => `
-          <url>
-            <loc>${entry.url}</loc>
-            <lastmod>${entry.lastmod}</lastmod>
-            <changefreq>${entry.changefreq}</changefreq>
-            <priority>${entry.priority}</priority>
-          </url>
-        `
-          )
-          .join("")}
-      </urlset>`;
-
-    c.header("Content-Type", "application/xml");
-    return c.body(xml);
-  })
-  // Poets sitemap
-  .get("/poets", async (c) => {
-    const db = c.get("db");
-    const totalPoetsResult = await db
-      .select({ count: sql`count(*)` })
-      .from(poetStats);
-    const totalPoets = Number(totalPoetsResult[0]?.count) || 0;
-
-    // Calculate total pages for poets based on actual FETCH_PER_PAGE
-    const totalPoetPages = Math.ceil(totalPoets / FETCH_PER_PAGE);
-
-    // Create entries for poet list pages
-    const poetListEntries = Array.from({ length: totalPoetPages }, (_, i) => ({
-      // Updated URL format to match your app structure
-      url: `${SITE_URL}/poets/page/${i + 1}`,
-      lastmod: new Date().toISOString(),
-      changefreq: "weekly",
-      priority: 0.8,
-    }));
-
-    // Get all poets to generate individual poet page URLs
-    const poets = await db.select().from(poetStats);
-
-    // Create entries for individual poet pages
-    const poetEntries = poets.flatMap((poet) => {
-      // Calculate total pages for this poet's poems based on actual FETCH_PER_PAGE
-      const totalPages = Math.ceil(poet.poemsCount / FETCH_PER_PAGE);
-
-      // Create an array of entries for each page of this poet's poems
-      return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
-        // Updated URL format to match your app structure
-        url: `${SITE_URL}/poets/${poet.slug}/page/${i + 1}`,
-        lastmod: new Date().toISOString(),
-        changefreq: "monthly",
-        priority: 0.7,
-      }));
-    });
-
-    // Combine all entries
-    const allEntries = [...poetListEntries, ...poetEntries];
-
-    // Create XML sitemap
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${allEntries
-          .map(
-            (entry) => `
-          <url>
-            <loc>${entry.url}</loc>
-            <lastmod>${entry.lastmod}</lastmod>
-            <changefreq>${entry.changefreq}</changefreq>
-            <priority>${entry.priority}</priority>
-          </url>
-        `
-          )
-          .join("")}
-      </urlset>`;
-
-    c.header("Content-Type", "application/xml");
-    return c.body(xml);
-  })
-  // Rhymes sitemap
-  .get("/rhymes", async (c) => {
-    const db = c.get("db");
-    const rhymes = await db.select().from(rhymeStats);
-
-    // Create entries for rhyme list page
-    const rhymeListEntries = [
-      {
-        url: `${SITE_URL}/rhymes`,
-        lastmod: new Date().toISOString(),
-        changefreq: "monthly",
-        priority: 0.8,
-      },
-    ];
-
-    // Create entries for individual rhyme pages
-    const rhymeEntries = rhymes.flatMap((rhyme) => {
-      // Calculate total pages for this rhyme's poems based on actual FETCH_PER_PAGE
-      const totalPages = Math.ceil(rhyme.poemsCount / FETCH_PER_PAGE);
-
-      // Create an array of entries for each page of this rhyme's poems
-      return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
-        // Updated URL format to match your app structure
-        url: `${SITE_URL}/rhymes/${rhyme.slug}/page/${i + 1}`,
-        lastmod: new Date().toISOString(),
-        changefreq: "monthly",
-        priority: 0.7,
-      }));
-    });
-
-    // Combine all entries
-    const allEntries = [...rhymeListEntries, ...rhymeEntries];
-
-    // Create XML sitemap
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${allEntries
-          .map(
-            (entry) => `
-          <url>
-            <loc>${entry.url}</loc>
-            <lastmod>${entry.lastmod}</lastmod>
-            <changefreq>${entry.changefreq}</changefreq>
-            <priority>${entry.priority}</priority>
-          </url>
-        `
-          )
-          .join("")}
-      </urlset>`;
-
-    c.header("Content-Type", "application/xml");
-    return c.body(xml);
-  })
-  // Themes sitemap
-  .get("/themes", async (c) => {
-    const db = c.get("db");
-    const themes = await db.select().from(themeStats);
-
-    // Create entries for theme list page
-    const themeListEntries = [
-      {
-        url: `${SITE_URL}/themes`,
-        lastmod: new Date().toISOString(),
-        changefreq: "monthly",
-        priority: 0.8,
-      },
-    ];
-
-    // Create entries for individual theme pages
-    const themeEntries = themes.flatMap((theme) => {
-      // Calculate total pages for this theme's poems based on actual FETCH_PER_PAGE
-      const totalPages = Math.ceil(theme.poemsCount / FETCH_PER_PAGE);
-
-      // Create an array of entries for each page of this theme's poems
-      return Array.from({ length: Math.max(1, totalPages) }, (_, i) => ({
-        // Updated URL format to match your app structure
-        url: `${SITE_URL}/themes/${theme.slug}/page/${i + 1}`,
-        lastmod: new Date().toISOString(),
-        changefreq: "monthly",
-        priority: 0.7,
-      }));
-    });
-
-    // Combine all entries
-    const allEntries = [...themeListEntries, ...themeEntries];
-
-    // Create XML sitemap
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${allEntries
-          .map(
-            (entry) => `
-          <url>
-            <loc>${entry.url}</loc>
-            <lastmod>${entry.lastmod}</lastmod>
-            <changefreq>${entry.changefreq}</changefreq>
-            <priority>${entry.priority}</priority>
-          </url>
-        `
-          )
-          .join("")}
-      </urlset>`;
-
-    c.header("Content-Type", "application/xml");
-    return c.body(xml);
-  })
-  // Poems sitemap index
-  .get("/poems", async (c) => {
-    const db = c.get("db");
-
-    // Count total poems
-    const poemsCountResult = await db
-      .select({ count: sql`count(*)` })
-      .from(poemsFullData);
-
-    if (!poemsCountResult[0]) {
-      throw new Error();
-    }
-
-    const totalPoems = Number(poemsCountResult[0].count);
-    const totalSitemaps = Math.ceil(totalPoems / MAX_URLS_PER_SITEMAP);
-
-    // Create sitemap index entries
-    const sitemapEntries = Array.from({ length: totalSitemaps }, (_, i) => ({
-      url: `${API_URL}/sitemaps/poems/${i + 1}`,
-      lastmod: new Date().toISOString(),
-    }));
-
-    // Create XML sitemap index
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-      <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${sitemapEntries
-          .map(
-            (entry) => `
-          <sitemap>
-            <loc>${entry.url}</loc>
-            <lastmod>${entry.lastmod}</lastmod>
-          </sitemap>
-        `
-          )
-          .join("")}
-      </sitemapindex>`;
-
-    c.header("Content-Type", "application/xml");
-    return c.body(xml);
-  })
-  // Poems sitemap for a specific page
   .get("/poems/:page", zValidator("param", paginationSchema), async (c) => {
     const db = c.get("db");
     const { page } = c.req.valid("param");
 
-    // Calculate offset
     const offset = (page - 1) * MAX_URLS_PER_SITEMAP;
-
-    // Get poems for this page
     const poems = await db
       .select()
       .from(poemsFullData)
       .limit(MAX_URLS_PER_SITEMAP)
       .offset(offset);
 
-    // Create entries for poems
-    const poemEntries = poems.map((poem) => ({
+    const entries: UrlEntry[] = poems.map((poem) => ({
       url: `${SITE_URL}/poems/${poem.slug}`,
       lastmod: new Date().toISOString(),
-      changefreq: "yearly",
-      priority: 0.6,
+      changefreq: "weekly",
+      priority: toPriority(0.9),
     }));
 
-    // Create XML sitemap
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-          ${poemEntries
-            .map(
-              (entry) => `
-            <url>
-              <loc>${entry.url}</loc>
-              <lastmod>${entry.lastmod}</lastmod>
-              <changefreq>${entry.changefreq}</changefreq>
-              <priority>${entry.priority}</priority>
-            </url>
-          `
-            )
-            .join("")}
-        </urlset>`;
+    const xml = generateUrlEntriesXml(entries);
 
     c.header("Content-Type", "application/xml");
     return c.body(xml);
   })
-  //! ERR HANDLING ------------------------------------------>
+
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* POETS -------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+
+  .get("/poets", async (c) => {
+    const db = c.get("db");
+
+    const [{ count } = { count: 0 }] = await db
+      .select({ count: sql`count(*)` })
+      .from(poetStats);
+
+    const poetListEntries: UrlEntry[] = createPagedEntries({
+      baseUrl: `${SITE_URL}/poets`,
+      count: Number(count),
+      firstPageChangefreq: "weekly",
+      firstPagePriority: toPriority(0.7),
+      baseChangefreq: "monthly",
+      basePriority: toPriority(0.6),
+    });
+
+    const poets = await db.select().from(poetStats);
+
+    const poetEntries: UrlEntry[] = poets.flatMap((poet) =>
+      createPagedEntries({
+        baseUrl: `${SITE_URL}/poets/${poet.slug}`,
+        count: poet.poemsCount,
+        firstPageChangefreq: "weekly",
+        firstPagePriority: toPriority(0.8),
+        baseChangefreq: "monthly",
+        basePriority: toPriority(0.6),
+      })
+    );
+
+    const xml = generateUrlEntriesXml([...poetListEntries, ...poetEntries]);
+
+    c.header("Content-Type", "application/xml");
+    return c.body(xml);
+  })
+
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* ERAS --------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+
+  .get("/eras", async (c) => {
+    const db = c.get("db");
+    const eras = await db.select().from(eraStats);
+
+    const listEntries: UrlEntry[] = [
+      {
+        url: `${SITE_URL}/eras`,
+        lastmod: new Date().toISOString(),
+        changefreq: "monthly",
+        priority: toPriority(0.7),
+      },
+    ];
+
+    const itemEntries: UrlEntry[] = eras.flatMap((era) =>
+      createPagedEntries({
+        baseUrl: `${SITE_URL}/eras/${era.slug}`,
+        count: era.poemsCount,
+        firstPageChangefreq: "weekly",
+        firstPagePriority: toPriority(0.8),
+        baseChangefreq: "monthly",
+        basePriority: toPriority(0.6),
+      })
+    );
+
+    const xml = generateUrlEntriesXml([...listEntries, ...itemEntries]);
+
+    c.header("Content-Type", "application/xml");
+    return c.body(xml);
+  })
+
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* METERS ------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+
+  .get("/meters", async (c) => {
+    const db = c.get("db");
+    const meters = await db.select().from(meterStats);
+
+    const listEntries: UrlEntry[] = [
+      {
+        url: `${SITE_URL}/meters`,
+        lastmod: new Date().toISOString(),
+        changefreq: "monthly",
+        priority: toPriority(0.7),
+      },
+    ];
+
+    const itemEntries: UrlEntry[] = meters.flatMap((meter) =>
+      createPagedEntries({
+        baseUrl: `${SITE_URL}/meters/${meter.slug}`,
+        count: meter.poemsCount,
+        firstPageChangefreq: "weekly",
+        firstPagePriority: toPriority(0.8),
+        baseChangefreq: "monthly",
+        basePriority: toPriority(0.6),
+      })
+    );
+
+    const xml = generateUrlEntriesXml([...listEntries, ...itemEntries]);
+
+    c.header("Content-Type", "application/xml");
+    return c.body(xml);
+  })
+
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* RHYMES ------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+
+  .get("/rhymes", async (c) => {
+    const db = c.get("db");
+    const rhymes = await db.select().from(rhymeStats);
+
+    const listEntries: UrlEntry[] = [
+      {
+        url: `${SITE_URL}/rhymes`,
+        lastmod: new Date().toISOString(),
+        changefreq: "monthly",
+        priority: toPriority(0.7),
+      },
+    ];
+
+    const itemEntries: UrlEntry[] = rhymes.flatMap((rhyme) =>
+      createPagedEntries({
+        baseUrl: `${SITE_URL}/rhymes/${rhyme.slug}`,
+        count: rhyme.poemsCount,
+        firstPageChangefreq: "weekly",
+        firstPagePriority: toPriority(0.8),
+        baseChangefreq: "monthly",
+        basePriority: toPriority(0.6),
+      })
+    );
+
+    const xml = generateUrlEntriesXml([...listEntries, ...itemEntries]);
+
+    c.header("Content-Type", "application/xml");
+    return c.body(xml);
+  })
+
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* THEMES ------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+  //* -------------------------------------------------------->
+
+  .get("/themes", async (c) => {
+    const db = c.get("db");
+    const themes = await db.select().from(themeStats);
+
+    const listEntries: UrlEntry[] = [
+      {
+        url: `${SITE_URL}/themes`,
+        lastmod: new Date().toISOString(),
+        changefreq: "monthly",
+        priority: toPriority(0.7),
+      },
+    ];
+
+    const itemEntries: UrlEntry[] = themes.flatMap((theme) =>
+      createPagedEntries({
+        baseUrl: `${SITE_URL}/themes/${theme.slug}`,
+        count: theme.poemsCount,
+        firstPageChangefreq: "weekly",
+        firstPagePriority: toPriority(0.8),
+        baseChangefreq: "monthly",
+        basePriority: toPriority(0.6),
+      })
+    );
+
+    const xml = generateUrlEntriesXml([...listEntries, ...itemEntries]);
+
+    c.header("Content-Type", "application/xml");
+    return c.body(xml);
+  })
+
+  //! -------------------------------------------------------->
+  //! -------------------------------------------------------->
+  //! -------------------------------------------------------->
+  //! -------------------------------------------------------->
+  //! ERR HANDLING ------------------------------------------->
+  //! -------------------------------------------------------->
+  //! -------------------------------------------------------->
+  //! -------------------------------------------------------->
+
   .onError((error, c) => {
     console.error(error);
-
     return c.json(
       {
         success: false,
