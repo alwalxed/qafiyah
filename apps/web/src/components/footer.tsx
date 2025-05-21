@@ -7,10 +7,8 @@ import {
   DEVELOPER_SITE_URL,
   DEVELOPER_TWITTER_URL,
   GITHUB_REPO_URL,
-  SITE_URL,
   TWITTER_URL,
 } from '@/constants/GLOBALS';
-import { seoKeywords } from '@/constants/SEO_KEYWORDS';
 import { cn } from '@/utils/conversions/cn';
 import React from 'react';
 import { RandomPoemButton } from './random-poem-button';
@@ -30,7 +28,7 @@ const footerLinks: readonly FooterLinkProps[] = [
   { label: 'البريد', href: 'mailto:contact@qafiyah.com', screenReadersOnly: false },
   { label: 'التويتر', href: TWITTER_URL, screenReadersOnly: false },
   { label: 'الكود', href: GITHUB_REPO_URL, screenReadersOnly: false },
-  { label: 'القاعدة', href: DATABASE_DUMPS_URL, screenReadersOnly: false },
+  { label: 'البيانات', href: DATABASE_DUMPS_URL, screenReadersOnly: false },
   { label: 'المطور', href: DEVELOPER_SITE_URL, screenReadersOnly: false },
   // screen readers only
   { label: 'تويتر المطور', href: DEVELOPER_TWITTER_URL, screenReadersOnly: true },
@@ -63,32 +61,10 @@ export function Footer({ className }: Props) {
         className
       )}
     >
-      {/* --------------------------------------------- */}
-      {/* --------------------------------------------------- */}
-      {/* HIDDEN --------------------------------------------------- */}
-      <section
-        className="sr-only pointer-events-none text-opacity-0 opacity-0"
-        aria-hidden="true"
-        tabIndex={-1}
-      >
-        <ul>
-          {seoKeywords.map((item) => (
-            <li key={item} aria-hidden="true" tabIndex={-1}>
-              <a href={SITE_URL} tabIndex={-1} aria-hidden="true">
-                {item}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-      {/* ---------------------------------------------------------- */}
-      {/* --------------------------------------------------- */}
-      {/* --------------------------------------------- */}
-
-      <div className="flex md:gap-3 gap-[6px]">
+      <div className="flex md:gap-3 gap-[5px]">
         {visibleLinks.map((link, index) => (
           <React.Fragment key={link.href}>
-            {index > 0 && <p>•</p>}
+            {index > 0 && <p className="opacity-65">•</p>}
             <FooterLink {...link} />
           </React.Fragment>
         ))}

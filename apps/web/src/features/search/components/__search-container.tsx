@@ -56,9 +56,9 @@ export function SearchContainer() {
       <div className="h-[25svh] w-full"></div>
 
       <div className="w-full flex flex-col gap-10 md:gap-16" dir="rtl">
-        <h2 className="font-bold text-center justify-center items-center text-2xl xxs:text-3xl xs:text-4xl md:text-5xl text-zinc-800 flex py-2">
+        <h1 className="font-bold text-center justify-center items-center text-2xl xxs:text-3xl xs:text-4xl md:text-5xl text-zinc-800 flex py-2">
           {text.currentHeaderTitle}
-        </h2>
+        </h1>
         <Card className="border-0 shadow-none bg-transparent">
           <div className="p-0 bg">
             <div className="flex flex-col gap-4">
