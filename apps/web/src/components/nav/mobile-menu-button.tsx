@@ -1,6 +1,7 @@
 'use client';
 
 import { responsiveIconSize } from '@/constants/GLOBALS';
+import { cn } from '@/lib/utils';
 import { useNavStore } from '@/stores/nav-store';
 import { Menu } from 'lucide-react';
 
@@ -14,7 +15,7 @@ export function MobileMenuButton() {
       aria-label="فتح القائمة"
       onClick={toggleMobileMenu}
     >
-      <Menu className={responsiveIconSize} />
+      <Menu className={cn(responsiveIconSize, 'opacity-70')} />
     </button>
   );
 }

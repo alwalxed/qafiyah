@@ -27,7 +27,7 @@ export const DEVELOPER_GITHUB_URL = `https://github.com/alwalxed`;
 // ------------------------------------->
 
 // ------------------------------------->
-export const responsiveIconSize = 'w-4 h-4 xxs:w-8 xxs:w-8 xs:w-8 xs:h-8';
+export const responsiveIconSize = 'w-5 h-5 xxs:w-6 xxs:h-6 md:w-8 md:h-8';
 // ------------------------------------->
 
 // ------------------------------------->

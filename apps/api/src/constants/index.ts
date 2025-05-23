@@ -76,7 +76,7 @@ export const defaultMetadata = {
   description: "موقع يُعنى بجمع الشعر العربي وحفظه وتيسير الوصول إليه",
   keywords:
     "شعر، شعر عربي، قصائد، غزل، معلقات، شعر جاهلي، شعر حديث، قافية، ديوان العرب، أدب، قصائد مشهورة، شعر نبطي",
-  openGraphUrl: `${SITE_URL}/opengraph.png`,
+  openGraphUrl: `${SITE_URL}/open-graph-white.png`,
   poetName: "قافية",
   author: "قافية",
   articleSection: "شعر",

@@ -42,7 +42,7 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     screenshots: [
       {
-        src: '/opengraph.png',
+        src: '/open-graph-white.png',
         type: 'image/png',
         sizes: '1200x630',
         form_factor: 'wide',

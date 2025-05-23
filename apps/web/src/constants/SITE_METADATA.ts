@@ -18,7 +18,7 @@ export const htmlHeadMetadata = {
     'قصائد مشهورة',
     'شعر نبطي',
   ],
-  openGraphUrl: `${SITE_URL}/opengraph.png`,
+  openGraphUrl: `${SITE_URL}/open-graph-white.png`,
   twitterSummaryCardImageUrl: `${SITE_URL}/twitter-summary-card-white.png`,
   poetName: 'قافية',
   author: 'قافية',
