@@ -13,7 +13,7 @@ type Props = {
 export function Nav({ className }: Props) {
   return (
     <nav className={cn(`w-full z-10`, className)}>
-      <div className="w-full py-4 ">
+      <div className="w-full py-2">
         <div className="flex justify-between items-center gap-8">
           <Logo />
           <MobileMenuButton />
