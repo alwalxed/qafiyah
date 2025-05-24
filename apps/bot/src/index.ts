@@ -1,133 +1,165 @@
 import * as dotenv from "dotenv";
-dotenv.config();
-
 import fetch from "node-fetch";
 import { TwitterApi } from "twitter-api-v2";
+
+dotenv.config();
 
 const MAX_RETRY_ATTEMPTS = 3;
 const INITIAL_RETRY_DELAY_MS = 1000;
 const MAX_TWEET_LENGTH = 280;
 
-const validateEnvironmentVariable = (
-  name: string,
-  value: string | undefined
-): string => {
+type Result<T> = { ok: true; value: T } | { ok: false; error: Error };
+
+function ok<T>(value: T): Result<T> {
+  return { ok: true, value };
+}
+
+function err<T>(error: Error): Result<T> {
+  return { ok: false, error };
+}
+
+function getEnvVar(name: string): Result<string> {
+  const value = process.env[name];
   if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
+    return err(new Error(`Missing required environment variable: ${name}`));
   }
-  return value;
-};
+  return ok(value);
+}
 
-const initializeTwitterClient = (): TwitterApi => {
-  const {
-    TWITTER_APP_KEY,
-    TWITTER_APP_SECRET,
-    TWITTER_ACCESS_TOKEN,
-    TWITTER_ACCESS_SECRET,
-  } = process.env;
+function initializeTwitterClient(): Result<TwitterApi> {
+  const appKeyResult = getEnvVar("TWITTER_APP_KEY");
+  if (!appKeyResult.ok) return appKeyResult;
 
-  return new TwitterApi({
-    appKey: validateEnvironmentVariable("TWITTER_APP_KEY", TWITTER_APP_KEY),
-    appSecret: validateEnvironmentVariable(
-      "TWITTER_APP_SECRET",
-      TWITTER_APP_SECRET
-    ),
-    accessToken: validateEnvironmentVariable(
-      "TWITTER_ACCESS_TOKEN",
-      TWITTER_ACCESS_TOKEN
-    ),
-    accessSecret: validateEnvironmentVariable(
-      "TWITTER_ACCESS_SECRET",
-      TWITTER_ACCESS_SECRET
-    ),
-  });
-};
+  const appSecretResult = getEnvVar("TWITTER_APP_SECRET");
+  if (!appSecretResult.ok) return appSecretResult;
 
-const executeWithRetry = async <T>(
+  const accessTokenResult = getEnvVar("TWITTER_ACCESS_TOKEN");
+  if (!accessTokenResult.ok) return accessTokenResult;
+
+  const accessSecretResult = getEnvVar("TWITTER_ACCESS_SECRET");
+  if (!accessSecretResult.ok) return accessSecretResult;
+
+  try {
+    const client = new TwitterApi({
+      appKey: appKeyResult.value,
+      appSecret: appSecretResult.value,
+      accessToken: accessTokenResult.value,
+      accessSecret: accessSecretResult.value,
+    });
+    return ok(client);
+  } catch (error) {
+    return err(
+      error instanceof Error
+        ? error
+        : new Error("Failed to initialize Twitter client")
+    );
+  }
+}
+
+async function withRetry<T>(
   operation: () => Promise<T>,
-  operationName: string,
-  options = {
-    maxAttempts: MAX_RETRY_ATTEMPTS,
-    initialDelayMs: INITIAL_RETRY_DELAY_MS,
-  }
-): Promise<T> => {
-  let lastError: Error | undefined;
-
-  for (let attempt = 1; attempt <= options.maxAttempts; attempt++) {
+  operationName: string
+): Promise<Result<T>> {
+  for (let attempt = 1; attempt <= MAX_RETRY_ATTEMPTS; attempt++) {
     try {
-      return await operation();
-    } catch (error: any) {
-      lastError = error instanceof Error ? error : new Error(String(error));
-      const message = lastError.message.toLowerCase();
+      const result = await operation();
+      if (attempt > 1) {
+        console.log(`🔄 ${operationName} succeeded on attempt ${attempt}`);
+      }
+      return ok(result);
+    } catch (error) {
+      const errorObj =
+        error instanceof Error ? error : new Error(String(error));
+      const message = errorObj.message.toLowerCase();
 
+      // Don't retry rate limits
       if (message.includes("429") || message.includes("too many requests")) {
-        console.error(`🛑 ${operationName} rate limited on attempt ${attempt}`);
-        throw new Error("Rate limit hit. Aborting.");
+        console.log(`🚫 ${operationName}: Rate limited`);
+        return err(new Error("Rate limit hit. Aborting."));
       }
 
-      if (attempt < options.maxAttempts) {
-        const delay = options.initialDelayMs * Math.pow(2, attempt - 1);
-        console.warn(
-          `⚠️ ${operationName} failed (attempt ${attempt}): ${lastError.message}. Retrying in ${delay}ms...`
+      if (attempt < MAX_RETRY_ATTEMPTS) {
+        const delay = INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt - 1);
+        console.log(
+          `⚠️ ${operationName}: Attempt ${attempt}/${MAX_RETRY_ATTEMPTS} failed. Retrying in ${delay}ms...`
         );
         await new Promise((resolve) => setTimeout(resolve, delay));
+      } else {
+        console.log(
+          `❌ ${operationName}: All ${MAX_RETRY_ATTEMPTS} attempts failed`
+        );
+        return err(errorObj);
       }
     }
   }
+  return err(new Error(`${operationName} failed unexpectedly`));
+}
 
-  throw new Error(
-    `${operationName} failed after ${options.maxAttempts} attempts: ${lastError?.message}`
-  );
-};
-
-const fetchFormattedPoem = async (): Promise<string> => {
-  return executeWithRetry(async () => {
+async function fetchFormattedPoem(): Promise<Result<string>> {
+  return await withRetry(async () => {
     const res = await fetch("https://api.qafiyah.com/poems/random");
     if (!res.ok) {
       throw new Error(`API returned status ${res.status}`);
     }
+
     const text = await res.text();
     if (!text || text.trim().length === 0) {
       throw new Error("Empty poem returned from API");
     }
-    if (text.length > MAX_TWEET_LENGTH) {
+
+    const trimmedText = text.trim();
+    if (trimmedText.length > MAX_TWEET_LENGTH) {
       throw new Error(
-        `Poem too long for Twitter (${text.length}/${MAX_TWEET_LENGTH})`
+        `Poem too long for Twitter (${trimmedText.length}/${MAX_TWEET_LENGTH})`
       );
     }
-    return text.trim();
-  }, "Fetch formatted poem");
-};
 
-// Post to Twitter
-const postTweet = async (
+    return trimmedText;
+  }, "Fetch poem");
+}
+
+async function postTweet(
   twitterClient: TwitterApi,
   content: string
-): Promise<string> => {
-  return executeWithRetry(async () => {
+): Promise<Result<string>> {
+  return await withRetry(async () => {
     const response = await twitterClient.v2.tweet(content);
     if (!response?.data?.id) {
       throw new Error("Invalid response from Twitter API");
     }
     return response.data.id;
   }, "Post tweet");
-};
+}
 
-// Main function
-const run = async (): Promise<void> => {
-  try {
-    const twitterClient = initializeTwitterClient();
-    const poem = await fetchFormattedPoem();
-    console.log(`✓ Poem ready to post (${poem.length} chars):\n${poem}`);
+async function run(): Promise<void> {
+  console.log("🤖 Starting poem bot...");
 
-    const tweetId = await postTweet(twitterClient, poem);
-    console.log(`✅ Successfully tweeted! Tweet ID: ${tweetId}`);
-    process.exit(0);
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`❌ Failed to post poem: ${message}`);
+  const clientResult = initializeTwitterClient();
+  if (!clientResult.ok) {
+    console.error(`❌ Setup failed: ${clientResult.error.message}`);
     process.exit(1);
   }
-};
+
+  console.log("✅ Twitter client initialized");
+  const twitterClient = clientResult.value;
+
+  const poemResult = await fetchFormattedPoem();
+  if (!poemResult.ok) {
+    console.error(`❌ Failed to fetch poem: ${poemResult.error.message}`);
+    process.exit(1);
+  }
+
+  const poem = poemResult.value;
+  console.log(`📝 Poem ready (${poem.length}/${MAX_TWEET_LENGTH} chars)`);
+
+  const tweetResult = await postTweet(twitterClient, poem);
+  if (!tweetResult.ok) {
+    console.error(`❌ Failed to post tweet: ${tweetResult.error.message}`);
+    process.exit(1);
+  }
+
+  console.log(`🎉 Successfully tweeted! ID: ${tweetResult.value}`);
+  process.exit(0);
+}
 
 run();
