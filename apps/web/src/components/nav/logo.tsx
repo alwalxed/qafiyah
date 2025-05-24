@@ -9,7 +9,7 @@ export function Logo() {
         height="48"
         width="48"
         alt="Logo"
-        className={cn('size-8', 'xxs:size-10', 'xs:size-12', 'lg:size-14')}
+        className={cn('size-10', 'md:size-12', 'xl:size-14', '2xl:size-16', '4xl:size-20')}
       />
     </a>
   );
