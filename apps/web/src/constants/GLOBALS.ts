@@ -10,7 +10,7 @@ export const isDev = process.env.NODE_ENV === 'development';
 // ------------------------------------->
 
 // ------------------------------------->
-export const SITE_NAME = 'موقع قافية';
+export const SITE_NAME = 'قافية';
 export const DOMAIN = 'qafiyah.com';
 export const API_URL = isDev ? 'http://localhost:8787' : `https://api.${DOMAIN}`;
 export const SITE_URL = isDev ? 'http://localhost:3000' : `https://${DOMAIN}`;
