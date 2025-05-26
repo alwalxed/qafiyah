@@ -1,6 +1,6 @@
 # Qafiyah | قافية
 
-A free, open-source Arabic poetry database and platform featuring 944K+ verses from 932 poets across 10 eras. Built with Nextjs, Hono, and Supabase.
+Open-source Arabic poetry DB and website with 944K+ verses by 932 poets from 10 eras. Built with Nextjs, Hono, and Supabase.
 
 ## 📑 Table of Contents
 
