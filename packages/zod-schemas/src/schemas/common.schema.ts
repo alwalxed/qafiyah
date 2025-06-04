@@ -1,29 +1,34 @@
 import { z } from "zod";
 
+const positiveIntSchema = z.number().int().positive();
+const nonNegativeIntSchema = z.number().int().nonnegative();
+const stringMinOneSchema = z.string().min(1);
+const uuidStringSchema = z.string().uuid();
+
+const POSITIVE_NUMBER_REGEX = /^\d+$/;
+
 export const pageStringNumberSchema = z.preprocess((val) => {
   if (typeof val !== "string") return 1;
   const num = parseInt(val, 10);
   return isNaN(num) || num <= 0 ? 1 : num;
-}, z.number().positive());
+}, positiveIntSchema);
 
 export const paginationSchema = z.object({
   page: pageStringNumberSchema,
 });
 
 export const slugSchema = z.object({
-  slug: z.string().min(1, "Slug is required"),
+  slug: stringMinOneSchema,
 });
 
 export const uuidSlugStringSchema = z.object({
-  slug: z.string().uuid({
-    message: "Invalid UUID format",
-  }),
+  slug: uuidStringSchema,
 });
 
 export const paginatedSlugSchema = slugSchema.extend({
   page: z
     .string()
-    .regex(/^\d+$/, { message: "Page must be a positive number" })
+    .regex(POSITIVE_NUMBER_REGEX, { message: "Page must be a positive number" })
     .transform((val) => parseInt(val, 10))
     .refine((val) => val > 0, { message: "Page must be a positive number" })
     .default("1"),
@@ -31,15 +36,15 @@ export const paginatedSlugSchema = slugSchema.extend({
 
 export const paginationMetaSchema = z.object({
   pagination: z.object({
-    currentPage: z.number().int().positive(),
-    totalPages: z.number().int().nonnegative(),
+    currentPage: positiveIntSchema,
+    totalPages: nonNegativeIntSchema,
     hasNextPage: z.boolean(),
     hasPrevPage: z.boolean(),
-    totalItems: z.number().int().nonnegative().optional(),
+    totalItems: nonNegativeIntSchema.optional(),
   }),
 });
 
-export const successResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+export const createSuccessResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
     success: z.literal(true),
     data: dataSchema,
@@ -50,15 +55,20 @@ export const errorResponseSchema = z.object({
   success: z.literal(false),
   error: z.string(),
   message: z.string().optional(),
-  status: z.number().int(),
+  status: nonNegativeIntSchema,
 });
 
-export const apiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  z.union([successResponseSchema(dataSchema), errorResponseSchema]);
+export const createApiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+  z.union([ createSuccessResponseSchema(dataSchema), errorResponseSchema ]);
 
-export const paginatedResponseSchema = <T extends z.ZodTypeAny>(
+export const createPaginatedResponseSchema = <T extends z.ZodTypeAny>(
   dataSchema: T
 ) =>
-  successResponseSchema(dataSchema).extend({
+  createSuccessResponseSchema(dataSchema).extend({
     meta: paginationMetaSchema,
   });
+
+// Backwards compatibility (deprecated - use factory functions)
+export const successResponseSchema = createSuccessResponseSchema;
+export const apiResponseSchema = createApiResponseSchema;
+export const paginatedResponseSchema = createPaginatedResponseSchema;

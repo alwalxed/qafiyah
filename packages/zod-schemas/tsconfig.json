@@ -6,12 +6,24 @@
     "module": "ESNext",
     "declaration": true,
     "declarationDir": "./dist",
-    "moduleResolution": "node",
-    "resolveJsonModule": true
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noEmitOnError": false,
+    "preserveWatchOutput": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "watchOptions": {
-    "excludeDirectories": ["node_modules"]
+    "excludeDirectories": ["node_modules", "dist"],
+    "excludeFiles": ["dist/**/*"],
+    "fallbackPolling": "dynamicPriority"
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "swc": true
   }
 }

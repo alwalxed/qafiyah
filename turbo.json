@@ -5,17 +5,37 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**",
+        "!dist/**/*.tsbuildinfo"
+      ]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "inputs": ["src/**/*.{ts,tsx,js,jsx}", "*.{js,ts,json}"],
+      "outputs": []
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["^check-types"],
+      "inputs": ["src/**/*.{ts,tsx}", "*.{ts,json}"],
+      "outputs": ["**/*.tsbuildinfo"]
     },
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**/*.{ts,tsx}", "*.{ts,json}"],
+      "outputs": ["**/*.tsbuildinfo"]
+    },
+    "clean": {
+      "cache": false,
+      "inputs": [],
+      "outputs": []
     }
-  }
+  },
+  "globalDependencies": ["**/.env.*local", ".env", "turbo.json", "package.json"]
 }

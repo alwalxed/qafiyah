@@ -1,5 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+dist/
+*.tsbuildinfo
+.eslintcache
+node_modules/
 # Dependencies
 node_modules
 .pnp
@@ -37,3 +41,4 @@ yarn-error.log*
 .DS_Store
 *.pem
 packages/zod-schemas/tsup.config.bundled_jjm3lh3p4d.mjs
+*.tsbuildinfo

@@ -33,10 +33,12 @@
   "type": "module",
   "scripts": {
     "build": "tsup",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist .tsbuildinfo",
     "dev": "tsup --watch",
-    "lint": "eslint src/**/*.ts",
-    "test": "jest"
+    "dev:verbose": "tsup --watch",
+    "lint": "eslint src/**/*.ts --cache",
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
   },
   "types": "./dist/index.d.ts",
   "files": [
