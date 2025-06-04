@@ -1,5 +1,5 @@
 import Loading from '@/app/loading';
-import { API_URL, NOT_FOUND_TITLE, SITE_URL } from '@/constants/GLOBALS';
+import { API_URL, NOT_FOUND_TITLE, SITE_NAME, SITE_URL } from '@/constants/GLOBALS';
 import { htmlHeadMetadata } from '@/constants/SITE_METADATA';
 import type { PoemResponseData } from '@/lib/api/types';
 import type { Metadata } from 'next';
@@ -73,7 +73,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     const description = flattenVerses(processedContent.verses);
 
-    const title = `${clearTitle} — ${poet_name}`;
+    const title = `${clearTitle} - ${poet_name} - ${SITE_NAME}`;
     return {
       title,
       description,
