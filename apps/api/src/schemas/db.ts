@@ -6,14 +6,6 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-export const eraStats = pgView("era_stats", {
-  id: integer("id").notNull(),
-  name: text("name").notNull(),
-  slug: text("slug").notNull(),
-  poetsCount: integer("poets_count").notNull(),
-  poemsCount: integer("poems_count").notNull(),
-}).existing();
-
 export const eraPoems = pgView("era_poems", {
   poemId: integer("poem_id").notNull(),
   poemTitle: text("poem_title").notNull(),
@@ -26,12 +18,12 @@ export const eraPoems = pgView("era_poems", {
   totalPoemsInEra: integer("total_poems_in_era").notNull(),
 }).existing();
 
-export const meterStats = pgView("meter_stats", {
+export const eraStats = pgView("era_stats", {
   id: integer("id").notNull(),
   name: text("name").notNull(),
   slug: text("slug").notNull(),
-  poemsCount: integer("poems_count").notNull(),
   poetsCount: integer("poets_count").notNull(),
+  poemsCount: integer("poems_count").notNull(),
 }).existing();
 
 export const meterPoems = pgView("meter_poems", {
@@ -45,12 +37,12 @@ export const meterPoems = pgView("meter_poems", {
   totalPoemsInMeter: integer("total_poems_in_meter").notNull(),
 }).existing();
 
-export const poetStats = pgView("poet_stats", {
+export const meterStats = pgView("meter_stats", {
   id: integer("id").notNull(),
   name: text("name").notNull(),
   slug: text("slug").notNull(),
-  eraId: integer("era_id").notNull(),
   poemsCount: integer("poems_count").notNull(),
+  poetsCount: integer("poets_count").notNull(),
 }).existing();
 
 export const poetPoems = pgView("poet_poems", {
@@ -65,12 +57,12 @@ export const poetPoems = pgView("poet_poems", {
   totalPoemsByPoet: integer("total_poems_by_poet").notNull(),
 }).existing();
 
-export const rhymeStats = pgView("rhyme_stats", {
+export const poetStats = pgView("poet_stats", {
   id: integer("id").notNull(),
-  pattern: text("pattern").notNull(),
-  slug: uuid("slug").notNull(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull(),
+  eraId: integer("era_id").notNull(),
   poemsCount: integer("poems_count").notNull(),
-  poetsCount: integer("poets_count").notNull(),
 }).existing();
 
 export const rhymePoems = pgView("rhyme_poems", {
@@ -84,9 +76,9 @@ export const rhymePoems = pgView("rhyme_poems", {
   totalPoemsByRhyme: integer("total_poems_by_rhyme").notNull(),
 }).existing();
 
-export const themeStats = pgView("theme_stats", {
+export const rhymeStats = pgView("rhyme_stats", {
   id: integer("id").notNull(),
-  name: text("name").notNull(),
+  pattern: text("pattern").notNull(),
   slug: uuid("slug").notNull(),
   poemsCount: integer("poems_count").notNull(),
   poetsCount: integer("poets_count").notNull(),
@@ -104,11 +96,12 @@ export const themePoems = pgView("theme_poems", {
   totalPoemsByTheme: integer("total_poems_by_theme").notNull(),
 }).existing();
 
-export const topPoets = pgView("top_poets", {
+export const themeStats = pgView("theme_stats", {
   id: integer("id").notNull(),
   name: text("name").notNull(),
-  slug: text("slug").notNull(),
+  slug: uuid("slug").notNull(),
   poemsCount: integer("poems_count").notNull(),
+  poetsCount: integer("poets_count").notNull(),
 }).existing();
 
 export const poemsFullData = pgMaterializedView("poem_full_data", {
