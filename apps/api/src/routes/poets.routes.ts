@@ -22,7 +22,7 @@ const app = new Hono<AppContext>()
 
     const poets = await db.select().from(poetStats).limit(limit).offset(offset);
 
-    if (poets.length === 0 || !poets[0]) {
+    if (poets.length === 0 || !poets[ 0 ]) {
       throw new HTTPException(404, { message: "No poets found for this page" });
     }
 
@@ -61,7 +61,7 @@ const app = new Hono<AppContext>()
       .where(eq(poetPoems.poetSlug, slug))
       .limit(1);
 
-    if (!poetInfo.length || !poetInfo[0]) {
+    if (!poetInfo.length || !poetInfo[ 0 ]) {
       throw new HTTPException(404, { message: "Poet not found" });
     }
 
@@ -76,14 +76,14 @@ const app = new Hono<AppContext>()
 
     const responseData = {
       poet: {
-        name: poetInfo[0].poetName,
-        poemsCount: poetInfo[0].totalPoems,
+        name: poetInfo[ 0 ].poetName,
+        poemsCount: poetInfo[ 0 ].totalPoems,
         era:
-          eraInfo.length && eraInfo[0]
+          eraInfo.length && eraInfo[ 0 ]
             ? {
-                name: eraInfo[0].eraName,
-                slug: eraInfo[0].eraSlug,
-              }
+              name: eraInfo[ 0 ].eraName,
+              slug: eraInfo[ 0 ].eraSlug,
+            }
             : null,
       },
     };
@@ -110,7 +110,7 @@ const app = new Hono<AppContext>()
         .where(eq(poetPoems.poetSlug, slug))
         .limit(1);
 
-      if (!poetInfo.length || !poetInfo[0]) {
+      if (!poetInfo.length || !poetInfo[ 0 ]) {
         throw new HTTPException(404, { message: "Poet not found" });
       }
 
@@ -119,7 +119,6 @@ const app = new Hono<AppContext>()
           title: poetPoems.poemTitle,
           slug: poetPoems.poemSlug,
           meter: poetPoems.meterName,
-          numVerses: poetPoems.numVerses,
         })
         .from(poetPoems)
         .where(eq(poetPoems.poetSlug, slug))
@@ -127,13 +126,13 @@ const app = new Hono<AppContext>()
         .offset(offset);
 
       // Calculate pagination metadata
-      const totalPages = Math.ceil(poetInfo[0].totalPoems / limit);
+      const totalPages = Math.ceil(poetInfo[ 0 ].totalPoems / limit);
 
       const responseData = {
         poetDetails: {
-          id: poetInfo[0].poetId,
-          name: poetInfo[0].poetName,
-          poemsCount: poetInfo[0].totalPoems,
+          id: poetInfo[ 0 ].poetId,
+          name: poetInfo[ 0 ].poetName,
+          poemsCount: poetInfo[ 0 ].totalPoems,
         },
         poems,
       };

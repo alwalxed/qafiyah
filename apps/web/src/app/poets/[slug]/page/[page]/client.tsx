@@ -7,7 +7,6 @@ import { SectionPaginationControllers, SectionWrapper } from '@/components/ui/se
 import { SectionSkeleton } from '@/components/ui/skeleton-wrapper';
 import { SITE_URL } from '@/constants/GLOBALS';
 import { getPoetPoems } from '@/lib/api/queries';
-import { getFormattedVersesCount } from '@/utils/texts/get-verse-count';
 import { useQuery } from '@tanstack/react-query';
 import { formatArabicCount } from 'arabic-count-format';
 import { useParams } from 'next/navigation';
@@ -85,14 +84,7 @@ export default function PoetPoemsSlugPaginatedClientPage() {
     workExample: poems.slice(0, 10).map((poem) => ({
       '@type': 'CreativeWork',
       name: poem.title,
-      description: `قصيدة (${poem.title}) على ${poem.meter} من ${formatArabicCount({
-        count: poem.numVerses,
-        nounForms: {
-          singular: 'بيت',
-          dual: 'بيتان',
-          plural: 'بيوت',
-        },
-      })}`,
+      description: `قصيدة (${poem.title}) على ${poem.meter}`,
       url: `${SITE_URL}/poems/${poem.slug}`,
     })),
   };
@@ -115,21 +107,14 @@ export default function PoetPoemsSlugPaginatedClientPage() {
         }}
       >
         {poems.length > 0 ? (
-          poems.map(
-            (poem: {
-              slug: Key | null | undefined;
-              title: string;
-              meter: string;
-              numVerses: number;
-            }) => (
-              <ListCard
-                key={poem.slug}
-                href={`/poems/${poem.slug}`}
-                name={poem.title}
-                title={`${getFormattedVersesCount(poem.numVerses)} / ${poem.meter}`}
-              />
-            )
-          )
+          poems.map((poem: { slug: Key | null | undefined; title: string; meter: string }) => (
+            <ListCard
+              key={poem.slug}
+              href={`/poems/${poem.slug}`}
+              name={poem.title}
+              title={`${poem.meter}`}
+            />
+          ))
         ) : (
           <p className="text-center text-zinc-500">{content.noMore}</p>
         )}
