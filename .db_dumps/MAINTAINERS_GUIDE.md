@@ -6,7 +6,7 @@
 PGSSLMODE=require pg_dump \
   -h aws-0-us-east-2.pooler.supabase.com \
   -p 5432 \
-  -U postgres.<secret> \
+  -U postgres.<project_id> \
   -d postgres \
   --schema=public \
   --no-owner \

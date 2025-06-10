@@ -55,18 +55,16 @@ _For latest data, use our [DB dumps](https://github.com/alwalxed/qafiyah/tree/ma
 
 ### 📚 `poems`
 
-| Column     | Type    | Nullable | Description           |
-| ---------- | ------- | -------- | --------------------- |
-| id         | integer | NO       | Primary key           |
-| title      | text    | NO       | Poem title            |
-| meter_id   | integer | NO       | FK to `meters(id)`    |
-| num_verses | integer | NO       | Number of verses      |
-| theme_id   | integer | NO       | FK to `themes(id)`    |
-| poet_id    | integer | NO       | FK to `poets(id)`     |
-| slug       | uuid    | NO       | Unique URL identifier |
-| content    | text    | NO       | Full poem content     |
-| rhyme_id   | integer | YES      | FK to `rhymes(id)`    |
-| type_id    | integer | YES      | FK to `types(id)`     |
+| Column   | Type    | Nullable | Description           |
+| -------- | ------- | -------- | --------------------- |
+| id       | integer | NO       | Primary key           |
+| title    | text    | NO       | Poem title            |
+| meter_id | integer | NO       | FK to `meters(id)`    |
+| theme_id | integer | NO       | FK to `themes(id)`    |
+| poet_id  | integer | NO       | FK to `poets(id)`     |
+| slug     | uuid    | NO       | Unique URL identifier |
+| content  | text    | NO       | Full poem content     |
+| rhyme_id | integer | YES      | FK to `rhymes(id)`    |
 
 ### 🧑‍🎤 `poets`
 
@@ -109,13 +107,6 @@ _For latest data, use our [DB dumps](https://github.com/alwalxed/qafiyah/tree/ma
 | id     | integer | NO       | Primary key    |
 | name   | text    | NO       | Theme name     |
 | slug   | uuid    | NO       | URL identifier |
-
-### 📝 `types`
-
-| Column | Type    | Nullable | Description  |
-| ------ | ------- | -------- | ------------ |
-| id     | integer | NO       | Primary key  |
-| name   | text    | NO       | Type of poem |
 
 ## 🚀 Development Setup
 

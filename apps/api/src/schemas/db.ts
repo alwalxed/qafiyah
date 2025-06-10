@@ -112,7 +112,6 @@ export const poemsFullData = pgMaterializedView("poem_full_data", {
   poet_slug: text("poet_slug"),
   meter_name: text("meter_name"),
   theme_name: text("theme_name"),
-  type_name: text("type_name"),
   era_name: text("era_name"),
   era_slug: text("era_slug"),
 }).existing();
