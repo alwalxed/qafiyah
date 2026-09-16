@@ -1,2 +1,2 @@
 # qafiyah
-move to qafiyah.com
+moved to qafiyah.com
