@@ -1,1 +1,1 @@
-moved to [raaqimorg/qafiyah](github.com/raaqimorg/qafiyah)
+moved to [raaqimorg/qafiyah](https://github.com/raaqimorg/qafiyah)
