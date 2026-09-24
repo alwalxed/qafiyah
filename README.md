@@ -1,2 +1,2 @@
 # qafiyah
-moved to qafiyah.com
+moved to [raaqimorg/qafiyah](github.com/raaqimorg/qafiyah)
